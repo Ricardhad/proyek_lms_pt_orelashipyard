@@ -1,0 +1,785 @@
+{
+  "modelName": "New Model",
+  "collections": [
+    {
+      "collectionName": "anakMagang",
+      "type": "object",
+      "properties": [
+        {
+          "name": "id",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "objectId",
+          "error": {
+            "name": false
+          },
+          "GUID": "b650ca4e-e8b8-4949-934c-62a008ef8d62"
+        },
+        {
+          "name": "nama",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "e318bbb1-814c-4cdb-93f0-81b72d46fc25",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Email",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "3f06063e-ce54-4e98-84b8-9a56b687489f",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "ProfilePicture",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "854a57f4-171b-4348-948d-735af71fb0cd",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "AsalSekolah",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "208ca7aa-eca2-4643-9647-0166d4bc0741",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Course",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "7b34ba54-001b-4aef-a43c-4bc1bc2cd17d",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Absensi",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "275ebaa3-80dd-4a9b-8bb4-a1d381d02dad",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "New Field4",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "bde227a8-0e42-4a27-bf7a-ee98ab7f14c9"
+        },
+        {
+          "name": "New Field5",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "8206c9f1-4ed8-42ff-a1d2-f9062564fa9b"
+        },
+        {
+          "name": "New Field6",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "b5531da5-d4f1-4226-9ec7-77064bbe2376"
+        }
+      ],
+      "definitions": {
+        "type": "definitions",
+        "properties": [],
+        "GUID": "8a1610d8-ca6a-4983-8fdb-d92a8ce510a3"
+      },
+      "isActivated": true,
+      "additionalProperties": false,
+      "validationLevel": "Off",
+      "validationAction": "Warn",
+      "storageEngineName": "WiredTiger",
+      "collectionUsers": [],
+      "indexes": [],
+      "collation": {},
+      "sharding": {
+        "unique": true,
+        "collation": "null"
+      },
+      "GUID": "0ec49d53-1119-47c7-88ef-a252fb63610e",
+      "bucketId": "c653f553-b44e-4c2c-8b3c-c28a1562bffc"
+    },
+    {
+      "collectionName": "mentor",
+      "type": "object",
+      "properties": [
+        {
+          "name": "Id_Mentor",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "d8076115-b8b7-4d5c-ad51-e751205fe02c",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Nama_Mentor",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "dbc54b0c-3e40-44d1-8926-f2d250a9ad46",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Profile_Picture",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "c324dabe-0ca4-4477-aae2-648772c7f62a",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Email",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "2f86f9b4-4026-4a8f-80ae-f8831dd2e168",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Contact",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "7aa9223e-c365-4962-9326-06a99a5869e9",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Jabatan",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "1f82b2a8-b194-40a1-909a-2544dee64f4f",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "New Field6",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "862b5b54-f387-4a76-b48f-e4bfc54c6ec2"
+        },
+        {
+          "name": "New Field7",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "470b412e-cacb-4991-b5f2-86414e299163"
+        },
+        {
+          "name": "New Field8",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "8d381a33-c341-4bc1-b041-39dabcb09c81"
+        },
+        {
+          "name": "New Field9",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "c3b55322-32bc-4821-adf1-76f7526b242d",
+          "error": {
+            "name": false,
+            "code": false
+          }
+        }
+      ],
+      "definitions": {
+        "type": "definitions",
+        "properties": [],
+        "GUID": "1d9c03be-8f87-40bf-a006-eaa9f44e15ab"
+      },
+      "isActivated": true,
+      "additionalProperties": false,
+      "validationLevel": "Off",
+      "validationAction": "Warn",
+      "storageEngineName": "WiredTiger",
+      "collectionUsers": [],
+      "indexes": [],
+      "collation": {},
+      "sharding": {
+        "unique": true,
+        "collation": "null"
+      },
+      "GUID": "a5700ca9-4224-49d1-82f2-1c47b5effdd8",
+      "bucketId": "c653f553-b44e-4c2c-8b3c-c28a1562bffc"
+    },
+    {
+      "collectionName": "chat",
+      "type": "object",
+      "properties": [
+        {
+          "name": "Id_Chat",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "1d443e19-eee6-4606-a57b-de53680a920c",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Date",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "7cf0bd86-a0da-4e2a-b15f-aa5ad7bea421",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Id_User",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "43aad6d0-a063-4e7d-a003-60088424d560",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Content",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "fbacafb1-5352-4d4e-99b2-154b593870ee",
+          "error": {
+            "name": false
+          }
+        }
+      ],
+      "definitions": {
+        "type": "definitions",
+        "properties": [],
+        "GUID": "e22c00ea-7b60-45a5-a316-0deb51da2040"
+      },
+      "isActivated": true,
+      "additionalProperties": false,
+      "validationLevel": "Off",
+      "validationAction": "Warn",
+      "storageEngineName": "WiredTiger",
+      "collectionUsers": [],
+      "indexes": [],
+      "collation": {},
+      "sharding": {
+        "unique": true,
+        "collation": "null"
+      },
+      "GUID": "377aeff0-f387-4b70-9fff-d9d65a0f2e21",
+      "bucketId": "c653f553-b44e-4c2c-8b3c-c28a1562bffc"
+    },
+    {
+      "collectionName": "admin",
+      "type": "object",
+      "properties": [
+        {
+          "name": "Id_admin",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "objectId",
+          "error": {
+            "name": false
+          },
+          "GUID": "c2d4cad3-9417-49ce-bdac-34dbe7859509"
+        },
+        {
+          "name": "Nama_Admin",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "de7b040d-7877-4934-a59a-889c60dd8aaf",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Profile_Picture",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "9a561d7f-8175-449d-b93f-9400f6088956",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Email",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "07d3f31a-4b15-4a65-961a-ad70cf2eabc2",
+          "error": {
+            "name": false
+          }
+        }
+      ],
+      "definitions": {
+        "type": "definitions",
+        "properties": [],
+        "GUID": "50f5c542-ee46-4aa2-a625-34d25766594e"
+      },
+      "isActivated": true,
+      "additionalProperties": false,
+      "validationLevel": "Off",
+      "validationAction": "Warn",
+      "storageEngineName": "WiredTiger",
+      "collectionUsers": [],
+      "indexes": [],
+      "collation": {},
+      "sharding": {
+        "unique": true,
+        "collation": "null"
+      },
+      "GUID": "3b08a6aa-47a5-4be1-8319-d04ada4da81f",
+      "bucketId": "c653f553-b44e-4c2c-8b3c-c28a1562bffc"
+    },
+    {
+      "collectionName": "Course",
+      "type": "object",
+      "properties": [
+        {
+          "name": "Id_course",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "objectId",
+          "error": {
+            "name": false
+          },
+          "GUID": "de27ab51-302f-4efa-a0f9-3282f31a5527"
+        },
+        {
+          "name": "Nama_course",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "6a27cc95-4333-4a70-bae8-dd8e8a4f3b68",
+          "error": {
+            "name": false
+          }
+        },
+        {
+          "name": "Mentors",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "objectId",
+          "error": {
+            "name": false
+          },
+          "GUID": "743bcae5-0b3c-4fc1-a906-272de5cf29bb"
+        }
+      ],
+      "definitions": {
+        "type": "definitions",
+        "properties": [],
+        "GUID": "05314dd8-d3fe-427e-9a36-8fa8a3ee96c2"
+      },
+      "isActivated": true,
+      "additionalProperties": false,
+      "validationLevel": "Off",
+      "validationAction": "Warn",
+      "storageEngineName": "WiredTiger",
+      "collectionUsers": [],
+      "indexes": [],
+      "collation": {},
+      "sharding": {
+        "unique": true,
+        "collation": "null"
+      },
+      "GUID": "3289cf9c-65e1-4b86-bd69-783049f01698",
+      "bucketId": "c653f553-b44e-4c2c-8b3c-c28a1562bffc"
+    },
+    {
+      "collectionName": "materi",
+      "type": "object",
+      "properties": [
+        {
+          "name": "IdMateri",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "objectId",
+          "error": {},
+          "GUID": "40232af0-9fe2-4fc3-b829-9cd190a4a181"
+        },
+        {
+          "name": "namaMateri",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "5c4f4b06-2d87-4c41-80e2-ce9f5448d4ae",
+          "error": {}
+        },
+        {
+          "name": "deadline",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "date",
+          "primaryKey": false,
+          "error": {},
+          "GUID": "92b5b204-cf55-409f-aae6-b057653afda0"
+        },
+        {
+          "name": "typeSoal",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "numeric",
+          "error": {},
+          "GUID": "3b3927e7-8eb3-4b75-bab7-65ddd2f2de05"
+        },
+        {
+          "name": "soalEsai",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "f770deef-1f66-454a-96df-1d74ca442fdc",
+          "error": {}
+        },
+        {
+          "name": "gambarMateri",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "7e6a381c-6c71-45e2-bd1c-0aae355eeaf9",
+          "error": {}
+        }
+      ],
+      "definitions": {
+        "type": "definitions",
+        "properties": [],
+        "GUID": "62b7da64-7997-415a-b349-fc574f88236f"
+      },
+      "isActivated": true,
+      "additionalProperties": false,
+      "validationLevel": "Off",
+      "validationAction": "Warn",
+      "storageEngineName": "WiredTiger",
+      "collectionUsers": [],
+      "indexes": [],
+      "collation": {},
+      "sharding": {
+        "unique": true,
+        "collation": "null"
+      },
+      "GUID": "ba41c63d-d4cf-4f04-b6a0-fe4f8c6db368",
+      "bucketId": "c653f553-b44e-4c2c-8b3c-c28a1562bffc"
+    },
+    {
+      "collectionName": "soalPilgan",
+      "type": "object",
+      "properties": [
+        {
+          "name": "idSoal",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "objectId",
+          "error": {},
+          "GUID": "d3735288-8f6c-4edb-a62d-d75c99a815d1"
+        },
+        {
+          "name": "soal",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "array",
+          "properties": [
+            {
+              "hackoladeMeta": {},
+              "isActivated": true,
+              "type": "string",
+              "GUID": "ed3c819d-b761-48d1-a5f8-f6f134da441c",
+              "arrayItem": true
+            }
+          ],
+          "additionalItems": true,
+          "error": {},
+          "GUID": "1788329d-6056-4f0a-8fa0-b419b37f8337"
+        },
+        {
+          "name": "gambar",
+          "hackoladeMeta": {},
+          "isActivated": true,
+          "type": "string",
+          "GUID": "f6ca9d4d-6300-4ba8-bc55-6cce275c3229",
+          "error": {}
+        }
+      ],
+      "definitions": {
+        "type": "definitions",
+        "properties": [],
+        "GUID": "1f231196-81b6-48b5-ab4a-8661466a0fa5"
+      },
+      "isActivated": true,
+      "additionalProperties": false,
+      "validationLevel": "Off",
+      "validationAction": "Warn",
+      "storageEngineName": "WiredTiger",
+      "collectionUsers": [],
+      "indexes": [],
+      "collation": {},
+      "sharding": {
+        "unique": true,
+        "collation": "null"
+      },
+      "GUID": "6fe0b0dd-7796-44ce-ad9d-48275d98e911",
+      "bucketId": "c653f553-b44e-4c2c-8b3c-c28a1562bffc"
+    }
+  ],
+  "buckets": [
+    {
+      "name": "projectFPW",
+      "type": "bucket",
+      "collectionIds": [
+        "0ec49d53-1119-47c7-88ef-a252fb63610e",
+        "a5700ca9-4224-49d1-82f2-1c47b5effdd8",
+        "377aeff0-f387-4b70-9fff-d9d65a0f2e21",
+        "3b08a6aa-47a5-4be1-8319-d04ada4da81f",
+        "3289cf9c-65e1-4b86-bd69-783049f01698",
+        "ba41c63d-d4cf-4f04-b6a0-fe4f8c6db368",
+        "6fe0b0dd-7796-44ce-ad9d-48275d98e911"
+      ],
+      "backgroundColor": {
+        "r": 216,
+        "g": 0,
+        "b": 115,
+        "a": 1
+      },
+      "show": true,
+      "isActivated": true,
+      "GUID": "c653f553-b44e-4c2c-8b3c-c28a1562bffc"
+    }
+  ],
+  "views": [],
+  "relationships": [],
+  "users": [],
+  "diagramViews": [],
+  "idToNameHashTable": {
+    "c653f553-b44e-4c2c-8b3c-c28a1562bffc": "projectFPW",
+    "0ec49d53-1119-47c7-88ef-a252fb63610e": "anakMagang",
+    "b650ca4e-e8b8-4949-934c-62a008ef8d62": "id",
+    "e318bbb1-814c-4cdb-93f0-81b72d46fc25": "nama",
+    "3f06063e-ce54-4e98-84b8-9a56b687489f": "Email",
+    "a5700ca9-4224-49d1-82f2-1c47b5effdd8": "mentor",
+    "d8076115-b8b7-4d5c-ad51-e751205fe02c": "Id_Mentor",
+    "dbc54b0c-3e40-44d1-8926-f2d250a9ad46": "Nama_Mentor",
+    "c324dabe-0ca4-4477-aae2-648772c7f62a": "Profile_Picture",
+    "377aeff0-f387-4b70-9fff-d9d65a0f2e21": "chat",
+    "1d443e19-eee6-4606-a57b-de53680a920c": "Id_Chat",
+    "7cf0bd86-a0da-4e2a-b15f-aa5ad7bea421": "Date",
+    "43aad6d0-a063-4e7d-a003-60088424d560": "Id_User",
+    "3b08a6aa-47a5-4be1-8319-d04ada4da81f": "admin",
+    "c2d4cad3-9417-49ce-bdac-34dbe7859509": "Id_admin",
+    "de7b040d-7877-4934-a59a-889c60dd8aaf": "Nama_Admin",
+    "9a561d7f-8175-449d-b93f-9400f6088956": "Profile_Picture",
+    "854a57f4-171b-4348-948d-735af71fb0cd": "ProfilePicture",
+    "208ca7aa-eca2-4643-9647-0166d4bc0741": "AsalSekolah",
+    "7b34ba54-001b-4aef-a43c-4bc1bc2cd17d": "Course",
+    "275ebaa3-80dd-4a9b-8bb4-a1d381d02dad": "Absensi",
+    "bde227a8-0e42-4a27-bf7a-ee98ab7f14c9": "New Field4",
+    "8206c9f1-4ed8-42ff-a1d2-f9062564fa9b": "New Field5",
+    "b5531da5-d4f1-4226-9ec7-77064bbe2376": "New Field6",
+    "7aa9223e-c365-4962-9326-06a99a5869e9": "Contact",
+    "1f82b2a8-b194-40a1-909a-2544dee64f4f": "Jabatan",
+    "862b5b54-f387-4a76-b48f-e4bfc54c6ec2": "New Field6",
+    "470b412e-cacb-4991-b5f2-86414e299163": "New Field7",
+    "8d381a33-c341-4bc1-b041-39dabcb09c81": "New Field8",
+    "c3b55322-32bc-4821-adf1-76f7526b242d": "New Field9",
+    "fbacafb1-5352-4d4e-99b2-154b593870ee": "Content",
+    "2f86f9b4-4026-4a8f-80ae-f8831dd2e168": "Email",
+    "3289cf9c-65e1-4b86-bd69-783049f01698": "Course",
+    "6a27cc95-4333-4a70-bae8-dd8e8a4f3b68": "Nama_course",
+    "743bcae5-0b3c-4fc1-a906-272de5cf29bb": "Mentors",
+    "de27ab51-302f-4efa-a0f9-3282f31a5527": "Id_course",
+    "07d3f31a-4b15-4a65-961a-ad70cf2eabc2": "Email",
+    "ba41c63d-d4cf-4f04-b6a0-fe4f8c6db368": "materi",
+    "40232af0-9fe2-4fc3-b829-9cd190a4a181": "IdMateri",
+    "5c4f4b06-2d87-4c41-80e2-ce9f5448d4ae": "namaMateri",
+    "92b5b204-cf55-409f-aae6-b057653afda0": "deadline",
+    "3b3927e7-8eb3-4b75-bab7-65ddd2f2de05": "typeSoal",
+    "f770deef-1f66-454a-96df-1d74ca442fdc": "soalEsai",
+    "7e6a381c-6c71-45e2-bd1c-0aae355eeaf9": "gambarMateri",
+    "6fe0b0dd-7796-44ce-ad9d-48275d98e911": "soalPilgan",
+    "d3735288-8f6c-4edb-a62d-d75c99a815d1": "idSoal",
+    "1788329d-6056-4f0a-8fa0-b419b37f8337": "soal",
+    "f6ca9d4d-6300-4ba8-bc55-6cce275c3229": "gambar"
+  },
+  "definitions": {
+    "type": "definitions",
+    "properties": [],
+    "GUID": "505258f5-0792-4721-81a0-3d9ce2c39412"
+  },
+  "polyglotDefinitions": {
+    "type": "polyglotDefinitions",
+    "properties": [],
+    "GUID": "01e8ac01-783a-4759-9499-695dc9c20c94"
+  },
+  "externalDefinitions": {
+    "type": "externalDefinitions",
+    "properties": [],
+    "GUID": "190f8d44-4126-4e74-9154-5b693b2def4a"
+  },
+  "sources": [],
+  "decorativeSymbols": [],
+  "dbVersion": "v7.x",
+  "dbVendor": "MongoDB",
+  "appTarget": "MONGODB",
+  "creationTS": "2024-11-29T02:24:00.635Z",
+  "GUID": "33f8c120-d0a0-4f51-84ab-8fcc24e10b27",
+  "isLineageEnabled": false,
+  "lastModifTS": "2024-11-29T03:19:17.776Z",
+  "persistenceSchemaVersion": "7",
+  "isCreatedByPlugin": true,
+  "pluginInformation": {
+    "pluginEngineVersion": "1.0.0"
+  },
+  "applicationInformation": {
+    "version": "7.8.6"
+  },
+  "settings": {
+    "centralPane": {
+      "dbLevel": {
+        "erd": [
+          {
+            "GUID": "0ec49d53-1119-47c7-88ef-a252fb63610e",
+            "x": 1013,
+            "y": 1283.3333740234375,
+            "width": 196,
+            "height": 238,
+            "color": {}
+          },
+          {
+            "GUID": "a5700ca9-4224-49d1-82f2-1c47b5effdd8",
+            "x": 1547,
+            "y": 1109.3333740234375,
+            "width": 198,
+            "height": 242,
+            "color": {}
+          },
+          {
+            "GUID": "377aeff0-f387-4b70-9fff-d9d65a0f2e21",
+            "x": 1269,
+            "y": 940.3333740234375,
+            "width": 163,
+            "height": 122,
+            "color": {}
+          },
+          {
+            "GUID": "3b08a6aa-47a5-4be1-8319-d04ada4da81f",
+            "x": 1051,
+            "y": 963.3333740234375,
+            "width": 201,
+            "height": 105,
+            "color": {}
+          },
+          {
+            "GUID": "3289cf9c-65e1-4b86-bd69-783049f01698",
+            "x": 1042,
+            "y": 1119,
+            "width": 197,
+            "height": 87,
+            "color": {}
+          },
+          {
+            "GUID": "ba41c63d-d4cf-4f04-b6a0-fe4f8c6db368",
+            "x": 1666,
+            "y": 942,
+            "width": 207,
+            "height": 141,
+            "color": {}
+          },
+          {
+            "GUID": "6fe0b0dd-7796-44ce-ad9d-48275d98e911",
+            "x": 1454,
+            "y": 941.6666870117188,
+            "width": 178,
+            "height": 105,
+            "color": {}
+          }
+        ],
+        "erdDefinitions": {
+          "erd": [],
+          "rootPath": [],
+          "entities": [],
+          "decorativeSymbols": []
+        },
+        "buckets": [
+          {
+            "x": 973,
+            "y": 900.3333740234375,
+            "GUID": "c653f553-b44e-4c2c-8b3c-c28a1562bffc"
+          }
+        ],
+        "collapsedNodes": [],
+        "activeRelationship": "",
+        "activeRelationshipFields": {
+          "childField": [],
+          "parentField": []
+        },
+        "selectedCollections": [],
+        "displayColorPicker": false,
+        "graphView": {
+          "erd": [],
+          "buckets": [],
+          "decorativeSymbols": [],
+          "forceLayout": true,
+          "defaultLinkLength": 300
+        },
+        "diagramViews": [],
+        "decorativeSymbols": [],
+        "nestedCollectionsLayout": "horizontal",
+        "options": [
+          {
+            "autoWidth": false,
+            "autoHeight": false,
+            "GUID": "a5700ca9-4224-49d1-82f2-1c47b5effdd8"
+          },
+          {
+            "autoWidth": false,
+            "autoHeight": false,
+            "GUID": "0ec49d53-1119-47c7-88ef-a252fb63610e"
+          },
+          {
+            "autoWidth": false,
+            "autoHeight": false,
+            "GUID": "377aeff0-f387-4b70-9fff-d9d65a0f2e21"
+          }
+        ],
+        "relationshipUpdateDisabled": false
+      },
+      "collectionLevel": {},
+      "changed": false
+    },
+    "dtDiagram": {
+      "collapsedNodes": [],
+      "shouldDistributeCollections": false
+    }
+  }
+}
