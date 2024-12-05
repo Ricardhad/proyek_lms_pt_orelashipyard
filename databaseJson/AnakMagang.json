@@ -1,0 +1,12 @@
+{
+    "_id": {
+      "$oid": "675155ef05cc9384d8a4cfec"
+    },
+    "AsalSekolah": "Lorem",
+    "idCourse": {
+        "$oid": "09a194510c14dd2177d4e2cf"
+    },
+    "userID": {
+    "$oid": "09a194510c14dd2177d4e2cf"
+    }
+}

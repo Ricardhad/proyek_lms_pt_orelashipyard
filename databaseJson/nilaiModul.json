@@ -1,0 +1,17 @@
+{
+    "_id": {
+        "$oid": "675155ef05cc9384d8a4cfec"
+    },
+    "modulID": {
+        "$oid": "675155ef05cc9384d8a4cfec"
+    },
+    "mentorID": {
+        "$oid": "e0fc5050b0dc8ae00fcb4bac"
+    },
+    "anakMagangID": {
+        "$oid": "e0fc5050b0dc8ae00fcb4bac"
+    },
+    "catatan":"",
+    "nilai": 0
+    
+}

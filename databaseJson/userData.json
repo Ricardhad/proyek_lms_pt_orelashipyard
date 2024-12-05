@@ -1,0 +1,11 @@
+{
+    "_id": {
+      "$oid": "675155ef05cc9384d8a4cfec"
+    },
+    "namaUser": "Lorem",
+    "Profile_Picture": "Lorem",
+    "roleType": 2,
+    "noTelpon": "Lorem",
+    "email": "example@example.com",
+    "password":"example"
+}

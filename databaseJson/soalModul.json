@@ -1,0 +1,16 @@
+{
+    "_id": {
+      "$oid": "675155f605cc9384d8a4cfee"
+    },
+    "namaSoal": "Lorem",
+    "Gambar": "Lorem",
+    "soalType": 0,
+    "Pilihan": [
+      { "option": "Option A" },
+      { "option": "Option D" },
+      { "option": "Option C" },
+      { "option": "Option B" }
+    ],
+    "kunciJawaban": "Option A"
+}
+  

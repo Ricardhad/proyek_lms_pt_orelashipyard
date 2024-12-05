@@ -1,0 +1,16 @@
+{
+    "_id": { "$oid": "675155f605cc9384d8a4cfee" },
+    "anakMagangID": { "$oid": "675155ef05cc9384d8a4cfec" },
+    "soalModulID": { "$oid": "675155f605cc9384d8a4cfee" },
+    "jawaban": "",
+    "uploadJawaban": {
+      "fileName": "gravity_essay.pdf",
+      "filePath": "/uploads/answers/gravity_essay.pdf",
+      "fileType": "application/pdf",
+      "uploadDate": { "$date": "2024-12-05T10:00:00.000Z" }
+    },
+    "jawabanType": "file",
+    "createdAt": { "$date": "2024-12-05T09:00:00.000Z" },
+    "updatedAt": { "$date": "2024-12-05T10:00:00.000Z" }
+  }
+  
