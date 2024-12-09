@@ -3,7 +3,7 @@
 */
 
 //  Activate database
-// use bazaar
+use bazaar
 
 /*  mengakses database dan fungsi lainnya seperti mengakses object
     untuk mengakses collection stands, gunakan db.stands

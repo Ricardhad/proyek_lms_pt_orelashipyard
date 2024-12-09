@@ -1,0 +1,60 @@
+[{
+  "_id": {
+    "$oid": "6554939d56615728382f6840"
+  },
+  "name": "Fruit Stand",
+  "owner": "John Doe",
+  "items": [
+    "Apples",
+    "Oranges",
+    "Bananas"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6554939d56615728382f6841"
+  },
+  "name": "Bakery Stand",
+  "owner": "Jane Doe",
+  "items": [
+    "Bread",
+    "Croissant",
+    "Baguette"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6554939d56615728382f6842"
+  },
+  "name": "Vegetable Stand",
+  "owner": "John Doe",
+  "items": [
+    "Carrots",
+    "Potatoes",
+    "Tomatoes"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6554939d56615728382f6843"
+  },
+  "name": "Seafood Stand",
+  "owner": "Jill Doe",
+  "items": [
+    "Fish",
+    "Shrimp",
+    "Crab"
+  ]
+},
+{
+  "_id": {
+    "$oid": "6554939d56615728382f6844"
+  },
+  "name": "Meat Stand",
+  "owner": "Jack Doe",
+  "items": [
+    "Chicken",
+    "Beef",
+    "Pork"
+  ]
+}]

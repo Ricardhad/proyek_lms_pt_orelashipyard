@@ -1,0 +1,165 @@
+[
+    {
+      "customer_id": {
+        "$oid": "6554937856615728382f683a"
+      },
+      "stand_id": {
+        "$oid": "6554939d56615728382f6840"
+      },
+      "items_bought": [
+        {
+          "item":"Apples",
+          "qty": 2
+        }, 
+        {
+          "item": "Oranges",
+          "qty": 1
+        }
+      ],
+      "total": 5.0
+    },
+    {
+      "customer_id": {
+        "$oid": "6554937856615728382f683b"
+      },
+      "stand_id": {
+        "$oid": "6554939d56615728382f6840"
+      },
+      "items_bought": [
+        {
+          "item":"Apples",
+          "qty": 5
+        }, 
+        {
+          "item": "Oranges",
+          "qty": 2
+        }
+      ],
+      "total": 12.0
+    },
+    {
+      "customer_id": {
+        "$oid": "6554937856615728382f683a"
+      },
+      "stand_id": {
+        "$oid": "6554939d56615728382f6841"
+      },
+      "items_bought": [
+        {
+          "item":"Croissant",
+          "qty": 2
+        }
+      ],
+      "total": 7.0
+    },
+    {
+      "customer_id": {
+        "$oid": "6554937856615728382f683c"
+      },
+      "stand_id": {
+        "$oid": "6554939d56615728382f6842"
+      },
+      "items_bought": [
+        {
+          "item":"Carrots",
+          "qty": 2
+        }, 
+        {
+          "item": "Tomatoes",
+          "qty": 3
+        }
+      ],
+      "total": 5.0
+    },
+    {
+      "customer_id": {
+        "$oid": "6554937856615728382f683d"
+      },
+      "stand_id": {
+        "$oid": "6554939d56615728382f6843"
+      },
+      "items_bought": [
+        {
+          "item":"Fish",
+          "qty": 1
+        }, 
+        {
+          "item": "Crab",
+          "qty": 1
+        }
+      ],
+      "total": 15.0
+    },
+    {
+      "customer_id": {
+        "$oid": "6554937856615728382f683d"
+      },
+      "stand_id": {
+        "$oid": "6554939d56615728382f6844"
+      },
+      "items_bought": [
+        {
+          "item":"Chicken",
+          "qty": 2
+        }
+      ],
+      "total": 5.0
+    },
+    {
+      "customer_id": {
+        "$oid": "6554937856615728382f683e"
+      },
+      "stand_id": {
+        "$oid": "6554939d56615728382f6844"
+      },
+      "items_bought": [
+        {
+          "item":"Beef",
+          "qty": 1
+        }, 
+        {
+          "item": "Pork",
+          "qty": 1
+        }
+      ],
+      "total": 13.5
+    },
+    {
+      "customer_id": {
+        "$oid": "6554937856615728382f683e"
+      },
+      "stand_id": {
+        "$oid": "6554939d56615728382f6842"
+      },
+      "items_bought": [
+        {
+          "item":"Potatoes",
+          "qty": 5
+        }, 
+        {
+          "item": "Tomatoes",
+          "qty": 3
+        }
+      ],
+      "total": 8.0
+    },
+    {
+      "customer_id": {
+        "$oid": "6554937856615728382f683a"
+      },
+      "stand_id": {
+        "$oid": "6554939d56615728382f6841"
+      },
+      "items_bought": [
+        {
+          "item":"Bread",
+          "qty": 3
+        }, 
+        {
+          "item": "Croissant",
+          "qty": 1
+        }
+      ],
+      "total": 9.0
+    }
+  ]
