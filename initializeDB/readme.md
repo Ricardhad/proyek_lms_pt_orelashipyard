@@ -34,15 +34,16 @@ cara installnya
 3. buka environment variables
 ![alt text](image-2.png)
 
-4. ![alt text](image-3.png)
-ketuk path habis itu pencet edit 
+4. ketuk path habis itu pencet edit 
+![alt text](image-3.png)
 
-5. ![alt text](image-4.png)
- ini kalau sudah masukin pathnya, kalau belum ketuk new baru ketik 
+5. ini kalau sudah masukin pathnya, kalau belum ketuk new baru ketik 
+ <br>
  cd C:\Program Files\MongoDB\Server\<version>\bin
  <version> sesuai sama versi mongodb nya 
+ ![alt text](image-4.png)
 
-6. kalau sudah untuk check nya ulangi step 1 - 2 cara importnya
+6. kalau sudah untuk check nya ulangi step 1 - 2 cara importnya <br>
 lalu ketik mongodump --version
 
 7. kalau muncul versinya berhasil download nya 
