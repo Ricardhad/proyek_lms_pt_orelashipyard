@@ -6,10 +6,16 @@ const UserData = require('../models/UserData')
 
 
 router.get('/', async (req, res) => {
-    //Untuk melakukan pengambilan data, gunakan find.
-    const result = await UserData.find();
-    if(!result) return res.status(400).send("Error")
-    return res.status(200).json(result)
-})
+    try {
+        const result = await UserData.find();
+        if (result.length === 0) {
+            return res.status(404).send("No users found");
+        }
+        return res.status(200).json(result);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return res.status(500).send("Server error");
+    }
+});
 
 module.exports= router;
