@@ -11,7 +11,7 @@ app.get('/', (req, res) => res.send('Hello World!'))
 
 app.listen(port, async () => {
     try{
-        await mongoose.connect('mongodb://127.0.0.1:27017/bazaar')
+        await mongoose.connect('mongodb://127.0.0.1:27017/projectFPW')
         console.log('Database connected')
     }
     catch(e){
