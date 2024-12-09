@@ -17,6 +17,7 @@ mongorestore --gzip --archive=projectFPW.gz --db projectFPW
 
 optional
 5. mongodump --archive=projectFPW.gz --gzip --db projectFPW ini untuk ngedump nya (export nya )
+nanti sudah ada filenya di bin 
 
 note:
 harus install mongoDB database tools
