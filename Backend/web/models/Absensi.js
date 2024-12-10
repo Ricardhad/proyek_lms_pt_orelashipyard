@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const absensiSchema = new mongoose.Schema({
     courseID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Course' }, 
     tanggalAbsensi: { type: Date, required: true}, 
-    absensiKelas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'userID' }],
+    absensiKelas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'userData' }],
 });
 
 const Absensi = mongoose.model('Absensi', absensiSchema);
