@@ -1,9 +1,9 @@
 
 const userDataRouter = require('./userData.route')
-const adminRouter = require('./userData.route')
-const anakMagangRouter = require('./userData.route')
-const mentorRouter = require('./userData.route')
-const modulRouter = require('./userData.route')
+const adminRouter = require('./Admin.route')
+const anakMagangRouter = require('./anakMagang.route')
+const mentorRouter = require('./Mentor.route')
+const modulRouter = require('./Modul.route')
 const express = require('express')
 const router = express()
 
