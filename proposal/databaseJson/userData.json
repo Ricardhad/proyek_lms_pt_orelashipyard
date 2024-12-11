@@ -7,5 +7,6 @@
     "roleType": 2,
     "noTelpon": "Lorem",
     "email": "example@example.com",
-    "password":"example"
+    "password":"example",
+    "isVerified":false
 }
