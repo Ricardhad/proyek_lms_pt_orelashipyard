@@ -5,9 +5,9 @@
     "mentorID": {
         "$oid": "e0fc5050b0dc8ae00fcb4bac"
     },
-    "anakMagangID": {
+    "addressAnakMagangID": [{
         "$oid": "e0fc5050b0dc8ae00fcb4bac"
-    },
+    }],
     "chatDate": "2016-04-08T15:06:21.595Z",
     "Content": "Lorem"
 }

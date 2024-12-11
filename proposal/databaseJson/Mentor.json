@@ -2,7 +2,10 @@
     "_id": {
       "$oid": "675155ef05cc9384d8a4cfec"
     },
-    "Jabatan": "Lorem",
+    "courseID": [
+      { "$oid": "675155ef05cc9384d8a4cfed" },
+      { "$oid": "675155ef05cc9384d8a4cfee" }
+    ],
     "userID": {
         "$oid": "09a194510c14dd2177d4e2cf"
     }

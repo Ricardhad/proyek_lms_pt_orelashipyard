@@ -3,9 +3,14 @@
       "$oid": "675155ef05cc9384d8a4cfec"
     },
     "NamaCourse": "Lorem",
-    "mentorID": {
-        "$oid": "09a194510c14dd2177d4e2cf"
-    },
+    "Deskripsi": "Lorem",
+    "mentorID": 
+    [
+
+        {
+            "$oid": "09a194510c14dd2177d4e2cf"
+        }
+    ],
     "daftarKelas":[
         { "$oid": "675155ef05cc9384d8a4cfed" },
         { "$oid": "675155ef05cc9384d8a4cfee" }

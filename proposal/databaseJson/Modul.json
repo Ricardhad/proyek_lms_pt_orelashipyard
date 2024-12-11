@@ -6,6 +6,7 @@
       "$oid": "675155ef05cc9384d8a4cfec"
     },
     "namaModul": "Lorem",
+    "Deskripsi": "Lorem", 
     "Deadline": "2016-04-08T15:06:21.595Z",
     "soalID": [
       { "$oid": "675155ef05cc9384d8a4cfed" },
