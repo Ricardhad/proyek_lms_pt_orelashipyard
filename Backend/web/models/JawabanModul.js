@@ -5,7 +5,7 @@ const jawabanModulSchema = new mongoose.Schema({
     anakMagangID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'AnakMagang' }, 
     soalModulID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'SoalModul' }, 
     jawaban: { type: String, default:null }, 
-    jawabanType: { type: String, default:null }, 
+    jawabanType: { type: Number, default:0 }, 
     uploadJawaban: {
         fileName: { type: String, required: true }, // Uploaded file name
         filePath: { type: String, required: true }, // Path to the uploaded file
