@@ -1,15 +1,16 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const UserDataSchema = new mongoose.Schema({
   namaUser: { type: String, required: true },
-  Profile_Picture: { type: String, default: null },
-  roleType: { type: Number, required: true }, 
-  noTelpon: { type: String, required: true }, 
-  email: { type: String, required: true, unique: true }, 
-  password: { type: String, required: true }, 
-  isVerified:{ type:Boolean,default: false },
-}); 
-const UserData = mongoose.model('userData', userSchema);
+  Profile_Picture: { type: String, default: '' },
+  roleType: { type: Number, required: true },
+  noTelpon: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  isVerified: { type: Boolean, default: false },
+}, { collection: 'UserData' });
+
+module.exports = mongoose.model('UserData', UserDataSchema);
 
 // untuk save data dummy
 // const dummyUser = new UserData({
@@ -25,4 +26,4 @@ const UserData = mongoose.model('userData', userSchema);
 //     console.log('Dummy user saved');
 //   }).catch(console.error);
 
-module.exports = UserData;
+// module.exports = UserData;

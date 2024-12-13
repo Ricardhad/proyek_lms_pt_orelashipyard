@@ -1,26 +1,160 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "../style.css";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import client from '../client';
+import '../style.css';
 
-const Register = () => {
+const RegisterForm = () => {
+  const [formData, setFormData] = useState({
+    namaUser: '',
+    Profile_Picture: '',
+    roleType: '2', // Default: Anak Magang
+    noTelpon: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
+
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  // Handle form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    const { namaUser, Profile_Picture, roleType, noTelpon, email, password, confirmPassword } = formData;
+
+    // Validate roleType (Only allow 1 or 2)
+    if (roleType !== '1' && roleType !== '2') {
+      setError('Invalid role type');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match!');
+      return;
+    }
+
+    // Debugging: Lihat isi formData sebelum request
+    console.log('FormData:', formData);
+
+    try {
+      const response = await client.post('api/user/register', {
+        namaUser: formData.namaUser,
+        Profile_Picture: formData.Profile_Picture || null,
+        roleType: parseInt(formData.roleType, 10), // Pastikan roleType adalah angka
+        noTelpon: formData.noTelpon,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      console.log('Response:', response.data);
+      setSuccess(response.data.message || 'Registration successful!');
+      navigate('/');
+    } catch (err) {
+      console.error('Error:', err.response?.data?.message || err.message);
+      setError(err.response?.data?.message || 'Something went wrong');
+    }
+  };
+
   return (
     <div className="wrapper">
-      <form>
+      <style>
+      <style>
+        {`
+          body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url("https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTB8fHxlbnwwfHx8fHw%3D");
+            background-position: center;
+            background-size: cover;
+          }
+        `}
+      </style>
+      </style>
+      <form onSubmit={handleSubmit}>
         <h2>Register</h2>
+        {error && <p className="error">{error}</p>}
+        {success && <p className="success">{success}</p>}
         <div className="input-field">
-          <input type="text" required />
+          <input
+            type="text"
+            name="namaUser"
+            value={formData.namaUser}
+            onChange={handleChange}
+            required
+          />
           <label>Enter your username</label>
         </div>
         <div className="input-field">
-          <input type="email" required />
+          <input
+            type="text"
+            name="Profile_Picture"
+            value={formData.Profile_Picture}
+            onChange={handleChange}
+          />
+          <label>Profile picture URL (optional)</label>
+        </div>
+        <div className="input-field">
+          <select
+            name="roleType"
+            value={formData.roleType}
+            onChange={handleChange}
+            required
+          >
+            <option value="2">Anak Magang</option>
+            <option value="1">Mentor</option>
+          </select>
+          <label>Select your role</label>
+        </div>
+        <div className="input-field">
+          <input
+            type="text"
+            name="noTelpon"
+            value={formData.noTelpon}
+            onChange={handleChange}
+            required
+          />
+          <label>Enter your phone number</label>
+        </div>
+        <div className="input-field">
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
           <label>Enter your email</label>
         </div>
         <div className="input-field">
-          <input type="password" required />
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
           <label>Create your password</label>
         </div>
         <div className="input-field">
-          <input type="password" required />
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
           <label>Confirm your password</label>
         </div>
         <button type="submit">Register</button>
@@ -34,4 +168,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterForm;

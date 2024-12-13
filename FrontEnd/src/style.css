@@ -16,7 +16,7 @@ body {
   padding: 0 10px;
 }
 
-body::before {
+/* body::before {
   content: "";
   position: absolute;
   width: 100%;
@@ -24,7 +24,7 @@ body::before {
   background: url("https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTB8fHxlbnwwfHx8fHw%3D");
   background-position: center;
   background-size: cover;
-}
+} */
 
 .wrapper {
   width: 400px;

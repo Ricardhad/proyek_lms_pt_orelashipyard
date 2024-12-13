@@ -1,34 +1,198 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "../style.css";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+  
+    if (!email || !password) {
+      setError("Email and password are required!");
+      return;
+    }
+  
+    setLoading(true);
+  
+    try {
+      const response = await axios.post("http://localhost:3000/api/user/login", {
+        email,
+        password,
+      });
+  
+      // Debug log untuk mengecek respons
+      console.log("Login Response:", response.data);
+  
+      localStorage.setItem("token", response.data.token);
+  
+      // Pastikan roleType ada dalam response dan merupakan angka
+      const roleType = response.data.roleType;
+      console.log("roleType:", roleType); // Debug log untuk roleType
+  
+      // Periksa nilai roleType dan arahkan sesuai
+      if (roleType === 0) {
+        navigate("/home"); // Halaman untuk roleType 0 (admin)
+      } else if (!roleType == 1) {
+        navigate("/homeMentor"); // Halaman untuk roleType 1 (mentor)
+      } else if (!roleType === 2) {
+        navigate("/homeMagang"); // Halaman untuk roleType 2 (magang)
+      } else {
+        setError("Invalid role type"); // Pesan error jika roleType tidak valid
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed! Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
+
+  // Gaya CSS sebagai objek JavaScript
+  const style = {
+    
+    body: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      minHeight: "100vh",
+      width: "100%",
+      padding: "0 10px",
+      backgroundImage: `url("https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTB8fHxlbnwwfHx8fHw%3D")`,
+      backgroundPosition: "center",
+      backgroundSize: "cover",
+    },
+    wrapper: {
+      width: "400px",
+      borderRadius: "8px",
+      padding: "30px",
+      textAlign: "center",
+      border: "1px solid rgba(255, 255, 255, 0.5)",
+      backdropFilter: "blur(8px)",
+      WebkitBackdropFilter: "blur(8px)",
+    },
+    form: {
+      display: "flex",
+      flexDirection: "column",
+    },
+    h2: {
+      fontSize: "2rem",
+      marginBottom: "20px",
+      color: "#fff",
+    },
+    inputField: {
+      position: "relative",
+      borderBottom: "2px solid #ccc",
+      margin: "15px 0",
+    },
+    input: {
+      width: "100%",
+      height: "40px",
+      background: "transparent",
+      border: "none",
+      outline: "none",
+      fontSize: "16px",
+      color: "#fff",
+    },
+    label: {
+      position: "absolute",
+      top: "50%",
+      left: "0",
+      transform: "translateY(-50%)",
+      color: "#fff",
+      fontSize: "16px",
+      pointerEvents: "none",
+      transition: "0.15s ease",
+    },
+    button: {
+      background: "#fff",
+      color: "#000",
+      fontWeight: "600",
+      border: "none",
+      padding: "12px 20px",
+      cursor: "pointer",
+      borderRadius: "3px",
+      fontSize: "16px",
+      borderColor: "transparent",
+      transition: "0.3s ease",
+      marginTop: "20px",
+    },
+    error: {
+      color: "red",
+      marginBottom: "15px",
+    },
+    register: {
+      textAlign: "center",
+      marginTop: "30px",
+      color: "#fff",
+    },
+    link: {
+      color: "#efefef",
+      textDecoration: "none",
+    },
+  };
+
   return (
-    <div className="wrapper">
-      <form>
-        <h2>Login</h2>
-        <div className="input-field">
-          <input type="text" required />
-          <label>Enter your email</label>
-        </div>
-        <div className="input-field">
-          <input type="password" required />
-          <label>Enter your password</label>
-        </div>
-        <div className="forget">
-          <label>
-            <input type="checkbox" />
-            <p>Remember me</p>
-          </label>
-          <a href="#">Forgot password?</a>
-        </div>
-        <button type="submit">Log In</button>
-        <div className="register">
-          <p>
-            Don't have an account? <Link to="/register">Register</Link>
-          </p>
-        </div>
-      </form>
+    
+    <div style={style.body}>
+      <style>
+        {`
+          body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url("https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTB8fHxlbnwwfHx8fHw%3D");
+            background-position: center;
+            background-size: cover;
+          }
+        `}
+      </style>
+      <div style={style.wrapper}>
+        <form style={style.form} onSubmit={handleSubmit}>
+          <h2 style={style.h2}>Login</h2>
+
+          {error && <p style={style.error}>{error}</p>}
+
+          <div style={style.inputField}>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              style={style.input}
+            />
+            <label style={style.label}>Enter your email</label>
+          </div>
+
+          <div style={style.inputField}>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={style.input}
+            />
+            <label style={style.label}>Enter your password</label>
+          </div>
+
+          <button type="submit" style={style.button} disabled={loading}>
+            {loading ? "Logging in..." : "Log In"}
+          </button>
+
+          <div style={style.register}>
+            <p>
+              Don't have an account? <Link to="/register" style={style.link}>Register</Link>
+            </p>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

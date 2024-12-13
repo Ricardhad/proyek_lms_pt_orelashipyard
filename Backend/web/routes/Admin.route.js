@@ -4,7 +4,6 @@ const router = express()
 //Kita akan memanggil model yang sudah diexport, untuk digunakan kembali
 const Admin = require('../models/Admin')
 
-
 router.get('/', async (req, res) => {
     try {
         const result = await Admin.find();
