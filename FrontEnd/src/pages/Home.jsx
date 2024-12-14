@@ -35,7 +35,7 @@ const Home = () => {
 
       // Send PUT request with proper headers and JSON body
       const response = await client.put(
-        `/api/user/${userId}/verify`,
+        `/api/admin/${userId}/verify`,
         { isVerified: true },
         {
           headers: {
