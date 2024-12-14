@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import * as jwtdecode from 'jwt-decode';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -30,10 +31,14 @@ const Login = () => {
       console.log("Login Response:", response.data);
   
       localStorage.setItem("token", response.data.token);
-  
+      const token = localStorage.getItem("token");
+      // console.log(jwtdecode.jwtDecode)
+      const decode =jwtdecode.jwtDecode
+      const decodedToken = decode(token);
+      // console.log(jwt_decode(token))
       // Pastikan roleType ada dalam response dan merupakan angka
-      const roleType = response.data.roleType;
-      console.log("roleType:", roleType); // Debug log untuk roleType
+      const roleType = decodedToken.roleType;
+      // console.log("roleType:", roleType); // Debug log untuk roleType
   
       // Periksa nilai roleType dan arahkan sesuai
       if (roleType === 0) {
