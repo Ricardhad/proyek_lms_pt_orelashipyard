@@ -8,22 +8,15 @@ const UserDataSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   isVerified: { type: Boolean, default: false },
-}, { collection: 'UserData' });
+}, {
+  collection: 'UserData',
+  timestamps: true
+});
 
 module.exports = mongoose.model('UserData', UserDataSchema);
 
 // untuk save data dummy
-// const dummyUser = new UserData({
-//     namaUser: 'Test User',
-//     Profile_Picture: 'http://example.com/pic.jpg',
-//     roleType: 1,
-//     noTelpon: '1234567890',
-//     email: 'test@example.com',
-//     password: 'testpassword'
-//   });
-  
-//   dummyUser.save().then(() => {
-//     console.log('Dummy user saved');
-//   }).catch(console.error);
 
-// module.exports = UserData;
+
+
+
