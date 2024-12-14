@@ -1,3 +1,5 @@
+-- SECTION 1
+
 ini buat yang mau masukin db nya tanpa lewat import satu per satu 
 lewat mongodbcompass
 
@@ -24,13 +26,15 @@ note:
 harus install mongoDB database tools
 kalau sudah di skip
 
-cara installnya
+-- SECTION 2
+
+cara install MongoDB db Tools
 
 1. pergi ke https://www.mongodb.com/try/download/database-tools
 ![alt text](./initializeDB/image.png)
  lalu click download package nya dianjurkan bentuk msi
 
-2. lalu cari environment variables ![alt text](image-1.png)
+2. lalu cari environment variables ![alt text](./initializeDB/image-1.png)
 
 3. buka environment variables
 ![alt text](./initializeDB/image-2.png)
@@ -48,3 +52,18 @@ cara installnya
 lalu ketik mongodump --version
 
 7. kalau muncul versinya berhasil download nya 
+
+-- SECTION 3
+
+tambah datadummy (sudah buat db dan collection sudah ada)
+pakai mongosh,
+
+1. buka mongoDB compass
+![alt text](./initializeDB/image-5.png)
+
+2. buka terminal mongoDB Shell di kanan atas
+
+3. ambil code dari ./Backend/initDBProject.sh
+
+4. paste ke dalam shell nya
+
