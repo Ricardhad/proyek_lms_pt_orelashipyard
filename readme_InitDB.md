@@ -63,7 +63,7 @@ pakai mongosh,
 
 2. buka terminal mongoDB Shell di kanan atas
 
-3. ambil code dari ./Backend/initDBProject.sh
+3. ambil code dari ./Backend/initDBProject
 
 4. paste ke dalam shell nya
 
