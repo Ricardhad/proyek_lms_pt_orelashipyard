@@ -27,22 +27,22 @@ kalau sudah di skip
 cara installnya
 
 1. pergi ke https://www.mongodb.com/try/download/database-tools
-![alt text](image.png)
+![alt text](./initializeDB/image.png)
  lalu click download package nya dianjurkan bentuk msi
 
 2. lalu cari environment variables ![alt text](image-1.png)
 
 3. buka environment variables
-![alt text](image-2.png)
+![alt text](./initializeDB/image-2.png)
 
 4. ketuk path habis itu pencet edit 
-![alt text](image-3.png)
+![alt text](./initializeDB/image-3.png)
 
 5. ini kalau sudah masukin pathnya, kalau belum ketuk new baru ketik 
  <br>
  cd C:\Program Files\MongoDB\Server\<version>\bin
  <version> sesuai sama versi mongodb nya 
- ![alt text](image-4.png)
+ ![alt text](./initializeDB/image-4.png)
 
 6. kalau sudah untuk check nya ulangi step 1 - 2 cara importnya <br>
 lalu ketik mongodump --version
