@@ -3,7 +3,8 @@ lewat mongodbcompass
 
 cara import:
 
-1. buka cmd atau powershell atau vscode, yang ada terminalnya lah
+1. buka cmd sebagai admin, kalau sudah import kalau mau import ulang harus
+ke mongoDBCompass lalu drop database sebelum import lagi
 
 2. cd C:\Program Files\MongoDB\Server\7.0\bin
 7.0 nya itu versinya , sesuaikan sama versi sekarang
