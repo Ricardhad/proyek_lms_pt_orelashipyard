@@ -13,9 +13,10 @@ const UserDataSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('UserData', UserDataSchema);
+const UserData = mongoose.model('UserData', UserDataSchema);
 
-// untuk save data dummy
+module.exports = UserData;
+
 
 
 
