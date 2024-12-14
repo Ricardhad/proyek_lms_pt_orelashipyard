@@ -136,6 +136,9 @@ const Login = () => {
       color: "#efefef",
       textDecoration: "none",
     },
+    inputPlaceholder: {
+      color: '#fff'
+    }
   };
 
   return (
@@ -164,22 +167,24 @@ const Login = () => {
             <input
               type="email"
               value={email}
+              placeholder="Enter your email"
               onChange={(e) => setEmail(e.target.value)}
               required
               style={style.input}
             />
-            <label style={style.label}>Enter your email</label>
+            
           </div>
 
           <div style={style.inputField}>
             <input
               type="password"
               value={password}
+              placeholder="Enter your password"
               onChange={(e) => setPassword(e.target.value)}
               required
               style={style.input}
             />
-            <label style={style.label}>Enter your password</label>
+            
           </div>
 
           <button type="submit" style={style.button} disabled={loading}>
