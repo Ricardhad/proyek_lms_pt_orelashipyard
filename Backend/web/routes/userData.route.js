@@ -7,6 +7,9 @@ const Joi = require('joi');
 
 //Kita akan memanggil model yang sudah diexport, untuk digunakan kembali
 const UserData = require('../models/UserData')
+const Mentor = require('../models/Mentor')
+const Admin = require('../models/Admin')
+const AnakMagang = require('../models/AnakMagang')
 
 // Middleware untuk autentikasi (contoh sederhana)
 const authenticate = (req, res, next) => {
@@ -85,6 +88,20 @@ router.post('/register', async (req, res) => {
         // Simpan pengguna baru ke database
         const savedUser = await newUser.save();
         console.info(savedUser);
+
+        switch (roleType) {
+          case 0:
+            
+            break;
+        
+          case 1:
+            
+            break;
+        
+          case 2:
+            
+            break;
+        }
 
         // Generate JWT token tanpa payload, hanya ID pengguna
         const token = jwt.sign(
