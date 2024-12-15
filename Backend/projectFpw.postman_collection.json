@@ -1,0 +1,118 @@
+{
+	"info": {
+		"_postman_id": "72bd0335-9cd6-468a-81f0-b0402e06ba92",
+		"name": "projectFpw",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32821974"
+	},
+	"item": [
+		{
+			"name": "getuser",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/anakMagang",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"anakMagang"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getadmin",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/admin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update AnakMagang",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "courseID",
+							"value": "605c72ef1532073d1b2c3c1d",
+							"type": "text"
+						},
+						{
+							"key": "asalSekolah",
+							"value": "smk graphic",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/admin/675d2e2c3c0125faada1512f/anakMagang",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"admin",
+						"675d2e2c3c0125faada1512f",
+						"anakMagang"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update Mentor",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"courseID\": [\r\n    \"605c72ef1532073d1b2c3c1a\",\r\n    \"605c72ef1532073d1b2c3c1b\",\r\n    \"605c72ef1532073d1b2c3c1c\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/admin/675155ef05cc9384d8a4cfec/Mentor",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"admin",
+						"675155ef05cc9384d8a4cfec",
+						"Mentor"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
