@@ -1,14 +1,15 @@
 const express = require('express')
 const router = express()
 
-const { 
-    Course,Mentor,Admin,UserData,AnakMagang,
-    Modul,JawabanModul,SoalModul,NilaiModul
-} =require("./functions");
+const {
+    Course, Mentor, Admin, UserData, AnakMagang,
+    Modul, JawabanModul, SoalModul, NilaiModul,
+    validateArrayOfIDs
+} = require("./functions");
 
 const Joi = require('joi');
+const mongoose= require('mongoose');
 
-const {validateArrayOfIDs} =require("./functions")
 
 
 
@@ -27,50 +28,44 @@ router.get('/', async (req, res) => {
 
 
 router.post("/Modul", async (req, res) => {
-    const { name, desc, soalID,deadline } = req.body;
-  
+    const { name, desc, courseID, soalID, deadline } = req.body;
+
     // Joi validation schema
     const schema = Joi.object({
-      name: Joi.string().required(),
-      desc: Joi.string().optional().allow(""),
-      courseID: Joi.string().required(),
-      soalID: Joi.array().items(Joi.string()).optional(),
-      deadline: Joi.date().required(),
+        name: Joi.string().required(),
+        desc: Joi.string().optional().allow(""),
+        courseID: Joi.string().custom(checkIdValid, "ObjectId validation").optional(),
+        soalID: Joi.array().items(Joi.string().custom(checkIdValid, "ObjectId validation")).optional(),
+        deadline: Joi.date().iso().required(), // ISO date format validation
     });
-  
+
     // Validate request body
     const { error } = schema.validate({ ...req.body });
     if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+        return res.status(400).json({ message: error.details[0].message });
     }
-  
-    try {
-      // Validate daftarKelas if provided
-      let daftarCourse
-      if (daftarKelas) {
-        daftarCourse= await validateArrayOfIDs(AnakMagang,daftarKelas,"AnakMagang")
-      }
-      // Check if MentorID exists\
-      let daftarMentor
-      if (MentorID) {
-         daftarMentor= await validateArrayOfIDs(Mentor,MentorID,"Mentor")
-      }
-      // Create new course
-      const newCourse = new Course({
-        namaCourse: name,
-        Deskripsi: desc,
-        mentorID: daftarMentor || [],
-        daftarKelas: daftarCourse || [],
-      });
-  
-      const savedCourse = await newCourse.save();
-  
-      // Send success response
-      res.status(201).json(savedCourse);
-    } catch (err) {
-      console.error("Error creating course:", err);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
 
-module.exports= router;
+
+    try {
+        // Validate daftarKelas if provided
+        const soalIDs = validateArrayOfIDs(Modul, soalID, "soalID");
+
+        // Create new course
+        const newModul = new Modul({
+            namaCourse: name,
+            Deskripsi: desc,
+            courseID:courseID||[],
+            soalID: soalIDs||[],
+            Deadline: deadline,
+            Dinilai: false,
+        });
+        const savedCourse = await newModul.save();
+        // Send success response
+        res.status(201).json(savedCourse);
+    } catch (err) {
+        console.error("Error creating course:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+module.exports = router;

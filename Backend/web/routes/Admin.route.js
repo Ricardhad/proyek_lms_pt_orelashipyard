@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 
 const { 
   Course,Mentor,Admin,UserData,AnakMagang,
-  Modul,JawabanModul,SoalModul,NilaiModul
+  Modul,JawabanModul,SoalModul,NilaiModul,
+  validateArrayOfIDs,checkIdValid
 } =require("./functions");
 
 const Joi = require('joi');
-const {validateArrayOfIDs} =require("./functions")
 
 
 router.get('/', async (req, res) => {
@@ -201,7 +201,6 @@ router.post("/Course", async (req, res) => {
     if (daftarKelas) {
       daftarCourse= await validateArrayOfIDs(AnakMagang,daftarKelas,"AnakMagang")
     }
-    // Check if MentorID exists\
     let daftarMentor
     if (MentorID) {
        daftarMentor= await validateArrayOfIDs(Mentor,MentorID,"Mentor")

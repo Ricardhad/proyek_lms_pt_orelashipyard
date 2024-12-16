@@ -34,9 +34,16 @@ const validateArrayOfIDs = async (model, mappedId, modelName) => {
 
     return validDocuments.map((doc) => doc._id);
 };
+const checkIdValid = (value, helpers) => {
+    if (!mongoose.Types.ObjectId.isValid(value)) {
+        return helpers.error("any.invalid", { value });
+    }
+    return value;
+}
 
 module.exports = {
     validateArrayOfIDs,
+    checkIdValid,
     Course,
     Mentor,
     Admin,
