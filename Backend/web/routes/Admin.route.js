@@ -2,36 +2,15 @@ const express = require('express')
 const router = express()
 const mongoose = require('mongoose');
 
+const { 
+  Course,Mentor,Admin,UserData,AnakMagang,
+  Modul,JawabanModul,SoalModul,NilaiModul
+} =require("./functions");
 
-const Admin = require('../models/Admin')
-const Mentor = require('../models/Mentor')
-const UserData = require('../models/UserData')
-const AnakMagang = require('../models/AnakMagang');
-const Course = require('../models/Course');
 const Joi = require('joi');
+const {validateArrayOfIDs} =require("./functions")
 
 
-const validateArrayOfIDs = async (model, mappedId, modelName) => {
-
-  if (!Array.isArray(mappedId)) {
-    throw new Error(`${modelName} IDs must be provided as an array.`);
-  }
-
-  let ids;
-  try {
-    ids = mappedId.map((id) => new mongoose.Types.ObjectId(id));
-  } catch (err) {
-    throw new Error(`Invalid ${modelName} ID format.`);
-  }
-
-  const validDocuments = await model.find({ _id: { $in: ids } });
-
-  if (validDocuments.length !== ids.length) {
-    throw new Error(`One or more IDs do not exist in the ${modelName} collection.`);
-  }
-
-  return validDocuments.map((doc) => doc._id);
-};
 router.get('/', async (req, res) => {
   // const token = localStorage.getItem('token');
   // console.log(token)

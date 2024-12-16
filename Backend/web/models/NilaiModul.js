@@ -5,7 +5,7 @@ const nilaiModulSchema = new mongoose.Schema({
     modulID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Modul' },
     mentorID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Mentor' },
     anakMagangID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'AnakMagang' },
-    catatan: { type: string, default: null },
+    catatan: { type: String, default: null },
     nilai: { type: Number, default: 0 },
 
 }, {

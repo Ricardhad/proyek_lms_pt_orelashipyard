@@ -1,14 +1,15 @@
 const express = require('express')
 const router = express()
 
-const mongoose = require('mongoose');
+const { 
+    Course,Mentor,Admin,UserData,AnakMagang,
+    Modul,JawabanModul,SoalModul,NilaiModul
+} =require("./functions");
 
-const Mentor = require('../models/Mentor');
-const Admin = require('../models/Admin')
-const UserData = require('../models/UserData')
-const AnakMagang = require('../models/AnakMagang');
-const Course = require('../models/Course');
 const Joi = require('joi');
+
+const {validateArrayOfIDs} =require("./functions")
+
 
 
 router.get('/', async (req, res) => {
@@ -26,18 +27,19 @@ router.get('/', async (req, res) => {
 
 
 router.post("/Modul", async (req, res) => {
-    const { name, desc, MentorID, daftarKelas } = req.body;
+    const { name, desc, soalID,deadline } = req.body;
   
     // Joi validation schema
     const schema = Joi.object({
       name: Joi.string().required(),
       desc: Joi.string().optional().allow(""),
-      MentorID: Joi.array().items(Joi.string()).optional(),
-      daftarKelas: Joi.array().items(Joi.string()).optional(),
+      courseID: Joi.string().required(),
+      soalID: Joi.array().items(Joi.string()).optional(),
+      deadline: Joi.date().required(),
     });
   
     // Validate request body
-    const { error } = schema.validate({ name, desc, MentorID, daftarKelas });
+    const { error } = schema.validate({ ...req.body });
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
