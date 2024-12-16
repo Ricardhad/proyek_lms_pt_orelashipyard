@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const courseSchema = new mongoose.Schema({
-    namaCourse: { type: String, required: true },
+    namaCourse: { type: String, required: true ,unique:true},
     Deskripsi: { type: String },
     mentorID: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'Mentor' }

@@ -181,28 +181,6 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// // Endpoint Update Status Verified
-// router.put('/:userId/verify', async (req, res) => {
-//   const { userId } = req.params;
-//   const { isVerified } = req.body; // Pastikan ini boolean
-
-//   if (typeof isVerified !== 'boolean') {
-//     return res.status(400).json({ message: 'isVerified must be a boolean.' });
-//   }
-
-//   // Update user with the boolean value
-//   try {
-//     const updatedUser = await UserData.findByIdAndUpdate(
-//       userId,
-//       { isVerified },
-//       { new: true }
-//     );
-//     res.status(200).json(updatedUser);
-//   } catch (err) {
-//     console.error("Error updating verification:", err);
-//     res.status(500).json({ message: "Error updating verification status." });
-//   }
-// });
 
 
 
