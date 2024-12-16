@@ -174,6 +174,128 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "addModul",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\":\"modul siji\",\r\n  \"desc\":\"siji\",\r\n  \"deadline\":\"2025-05-12\",\r\n  \"courseID\":\"675fbf59b48a0ea9ba4d11c2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/Mentor/Modul",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Mentor",
+						"Modul"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateModul",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n       \"soalID\": [\"675155f605cc9384d8a4cfee\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/Mentor/676022790bb79864c488b8c8/Modul",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Mentor",
+						"676022790bb79864c488b8c8",
+						"Modul"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addSoal",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\":\"soal 2\",\r\n  \"desc\":\"sijADSA\",\r\n  \"Gambar\":\"\",\r\n  \"SoalType\":0,\r\n  \"Pilihan\":[\"123\",\"123\",\"123\",\"123\"],\r\n  \"kunciJawaban\":3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/Mentor/Soal",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Mentor",
+						"Soal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateSoal",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Updated Soal\",\r\n  \"desc\": \"Updated description\",\r\n  \"SoalType\": 0,\r\n   \"Pilihan\":[\"123\",\"123\",\"123\",\"123\"],\r\n  \"kunciJawaban\":2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/Mentor/676040871370885801b4208a/Soal",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"Mentor",
+						"676040871370885801b4208a",
+						"Soal"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

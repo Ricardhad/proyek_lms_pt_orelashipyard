@@ -87,7 +87,7 @@ router.post("/Soal", async (req, res) => {
             Pilihan: Joi.array().items(Joi.string().required()).length(4).required(),
             kunciJawaban: Joi.number().required().min(0).max(3),
         }),
-        
+
     }).when(Joi.object({ SoalType: 1 }).unknown(), {
         then: Joi.object({
             Gambar: Joi.string().required().uri(), // assuming Gambar is a URL for the image
@@ -100,9 +100,6 @@ router.post("/Soal", async (req, res) => {
         return res.status(400).json({ message: error.details[0].message });
     }
     try {
-
-        // console.log({...req.body})
-        
         const newSoal = new SoalModul({
             namaSoal: name,
             Deskripsi: desc,
@@ -119,6 +116,64 @@ router.post("/Soal", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+router.put("/:id/Soal", async (req, res) => {
+    const { id } = req.params;  // Get the ID from the request params
+    const { name, desc, Gambar, SoalType, Pilihan, kunciJawaban } = req.body;
+
+    // Joi validation schema
+    const schema = Joi.object({
+        name: Joi.string().required(),
+        desc: Joi.string().optional().allow(""),
+        Gambar: Joi.string().optional().allow(""), // bakal harus diganti save local pake multer, save db, ato aws(cloud)
+        SoalType: Joi.number().required().min(0).max(1),
+        Pilihan: Joi.array().items(Joi.string().required()).length(4).optional(),
+        kunciJawaban: Joi.number().optional().min(0).max(3),
+        
+    }).when(Joi.object({ SoalType: 0 }).unknown(), {
+        then: Joi.object({
+            Pilihan: Joi.array().items(Joi.string().required()).length(4).required(),
+            kunciJawaban: Joi.number().required().min(0).max(3),
+        }),
+    }).when(Joi.object({ SoalType: 1 }).unknown(), {
+        then: Joi.object({
+            Gambar: Joi.string().required().uri(), // assuming Gambar is a URL for the image
+        }),
+    });
+
+    // Validate request body
+    const { error } = schema.validate({ ...req.body });
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
+
+    try {
+        // Find and update the existing Soal
+        const updatedSoal = await SoalModul.findByIdAndUpdate(
+            id,  // Find the Soal by its ID
+            {
+                namaSoal: name,
+                Deskripsi: desc,
+                Gambar: Gambar,
+                SoalType: SoalType,
+                Pilihan: Pilihan,
+                kunciJawaban: kunciJawaban,
+            },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedSoal) {
+            return res.status(404).json({ message: "Soal not found" });
+        }
+
+        // Send success response
+        res.status(200).json(updatedSoal);
+    } catch (err) {
+        console.error("Error updating soal:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 
 router.put("/:modulId/Modul", async (req, res) => {
     const { name, desc, courseID, soalID, deadline } = req.body;
