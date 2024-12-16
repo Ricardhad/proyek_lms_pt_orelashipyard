@@ -4,7 +4,8 @@ const router = express()
 const {
     Course, Mentor, Admin, UserData, AnakMagang,
     Modul, JawabanModul, SoalModul, NilaiModul,
-    validateArrayOfIDs
+    validateArrayOfIDs,
+    checkIdValid
 } = require("./functions");
 
 const Joi = require('joi');
@@ -34,7 +35,7 @@ router.post("/Modul", async (req, res) => {
     const schema = Joi.object({
         name: Joi.string().required(),
         desc: Joi.string().optional().allow(""),
-        courseID: Joi.string().custom(checkIdValid, "ObjectId validation").optional(),
+        courseID: Joi.string().custom(checkIdValid, "ObjectId validation").required(),
         soalID: Joi.array().items(Joi.string().custom(checkIdValid, "ObjectId validation")).optional(),
         deadline: Joi.date().iso().required(), // ISO date format validation
     });
@@ -48,13 +49,17 @@ router.post("/Modul", async (req, res) => {
 
     try {
         // Validate daftarKelas if provided
-        const soalIDs = validateArrayOfIDs(Modul, soalID, "soalID");
-
+        let soalIDs
+        if(soalID&& soalID != []){
+             soalIDs = validateArrayOfIDs(Modul, soalID, "Modul");
+        }
+        const findCourse = await Course.findById(courseID)
+        if(!findCourse) {  return res.status(404).json({ message: "course not found" })}
         // Create new course
         const newModul = new Modul({
-            namaCourse: name,
+            namaModul: name,
             Deskripsi: desc,
-            courseID:courseID||[],
+            courseID: findCourse,
             soalID: soalIDs||[],
             Deadline: deadline,
             Dinilai: false,
