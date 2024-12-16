@@ -4,9 +4,9 @@ const courseSchema = new mongoose.Schema({
     namaCourse: { type: String, required: true },
     Deskripsi: { type: String },
     mentorID: [
-        { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Mentor' }
+        { type: mongoose.Schema.Types.ObjectId, ref: 'Mentor' }
     ],
-    daftarKelas: [{ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'anakMagang' }],
+    daftarKelas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'anakMagang' }],
 }, {
     collection: 'Course',
     timestamps: true

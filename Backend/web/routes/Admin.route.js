@@ -3,11 +3,9 @@ const router = express()
 const mongoose = require('mongoose');
 
 
-//Kita akan memanggil model yang sudah diexport, untuk digunakan kembali
 const Admin = require('../models/Admin')
 const Mentor = require('../models/Mentor')
 const UserData = require('../models/UserData')
-// const decode = require('jwt-decode');
 const AnakMagang = require('../models/AnakMagang');
 const Course = require('../models/Course');
 
@@ -105,12 +103,9 @@ router.put("/:MentorId/Mentor", async (req, res) => {
   const { courseID } = req.body; // courseID should be an array of ObjectIds
 
   try {
-    // Ensure courseID contains valid ObjectIds
     const courseIDs = courseID.map(id => new mongoose.Types.ObjectId(id)); 
 
     const validCourses = await Course.find({ _id: { $in: courseIDs } });
-    // console.log(validCourses)
-    // console.log(courseID)
 
     if (validCourses.length !== courseID.length) {
       return res.status(400).json({
@@ -135,5 +130,10 @@ router.put("/:MentorId/Mentor", async (req, res) => {
     res.status(500).json({ error: "An error occurred while updating the mentor" });
   }
 });
+
+router.post("/Course",async (req,res)=>{
+  const {name,desc,MentorID,daftarKelas} = req.body
+  const newCourse = await Course.schema
+})
 
 module.exports = router;
