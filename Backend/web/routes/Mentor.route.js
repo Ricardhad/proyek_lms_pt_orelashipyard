@@ -72,16 +72,26 @@ router.post("/Modul", async (req, res) => {
 });
 
 router.post("/Soal", async (req, res) => {
-    const { name, desc, Gambar, soalType, Pilihan, kunciJawaban } = req.body;
+    const { name, desc, Gambar, SoalType, Pilihan, kunciJawaban } = req.body;
 
     // Joi validation schema
     const schema = Joi.object({
         name: Joi.string().required(),
         desc: Joi.string().optional().allow(""),
-        gambar: Joi.string().optional().allow(""),
-        soalType: Joi.number().required().min(0).max(1),
+        Gambar: Joi.string().optional().allow(""),// bakal harus diganti save local pake multer, save db, ato aws(cloud)
+        SoalType: Joi.number().required().min(0).max(1),
         Pilihan: Joi.array().items(Joi.string().required()).length(4).optional(),
         kunciJawaban: Joi.number().optional().min(0).max(3),
+    }).when(Joi.object({ SoalType: 0 }).unknown(), {
+        then: Joi.object({
+            Pilihan: Joi.array().items(Joi.string().required()).length(4).required(),
+            kunciJawaban: Joi.number().required().min(0).max(3),
+        }),
+        
+    }).when(Joi.object({ SoalType: 1 }).unknown(), {
+        then: Joi.object({
+            Gambar: Joi.string().required().uri(), // assuming Gambar is a URL for the image
+        }),
     });
 
     // Validate request body
@@ -90,16 +100,16 @@ router.post("/Soal", async (req, res) => {
         return res.status(400).json({ message: error.details[0].message });
     }
     try {
-        // Validate daftarKelas if provided
-        // Create new course
+
+        // console.log({...req.body})
+        
         const newSoal = new SoalModul({
             namaSoal: name,
             Deskripsi: desc,
-            Gambar,
-            soalType,
-            Pilihan,
-            kunciJawaban,
-
+            Gambar:Gambar,
+            SoalType: SoalType,
+            Pilihan:Pilihan,
+            kunciJawaban:kunciJawaban,
         });
         const savedSoal= await newSoal.save();
         // Send success response
