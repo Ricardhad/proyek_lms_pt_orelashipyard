@@ -37,7 +37,7 @@ router.post("/Modul", async (req, res) => {
         desc: Joi.string().optional().allow(""),
         courseID: Joi.string().custom(checkIdValid, "ObjectId validation").required(),
         soalID: Joi.array().items(Joi.string()).optional(),
-        deadline: Joi.date().iso().required(), // ISO date format validation
+        deadline: Joi.date().iso().min(new Date(Date.now() + 60 * 60 * 1000)).required()
     });
 
     // Validate request body
@@ -185,7 +185,7 @@ router.put("/:modulId/Modul", async (req, res) => {
         desc: Joi.string().optional().allow(""),
         courseID: Joi.string().custom(checkIdValid, "ObjectId validation").optional(),
         soalID: Joi.array().items(Joi.string()).optional(),
-        deadline: Joi.date().iso().optional(), // ISO date format validation
+        deadline: Joi.date().iso().min(new Date(Date.now() + 60 * 60 * 1000)).required(), // ISO date format validation
     });
 
     // Validate request body
