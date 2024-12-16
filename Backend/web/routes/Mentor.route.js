@@ -129,7 +129,7 @@ router.put("/:id/Soal", async (req, res) => {
         SoalType: Joi.number().required().min(0).max(1),
         Pilihan: Joi.array().items(Joi.string().required()).length(4).optional(),
         kunciJawaban: Joi.number().optional().min(0).max(3),
-        
+
     }).when(Joi.object({ SoalType: 0 }).unknown(), {
         then: Joi.object({
             Pilihan: Joi.array().items(Joi.string().required()).length(4).required(),
@@ -231,6 +231,14 @@ router.put("/:modulId/Modul", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+router.get("/jawaban",async(req,res)=>{
+    const {SoalModulID}=req.query
+    const getJawaban = await JawabanModul.findById(SoalModulID)
+    if(!getJawaban){
+        return res.status(404).json({message:"jawaban not found"})
+    }
+})
 
 
 module.exports = router;
