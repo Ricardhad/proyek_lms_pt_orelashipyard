@@ -9,7 +9,7 @@ const {
 } = require("./functions");
 
 const Joi = require('joi');
-const mongoose= require('mongoose');
+const mongoose = require('mongoose');
 
 
 
@@ -45,28 +45,65 @@ router.post("/Modul", async (req, res) => {
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
     }
-
-
     try {
         // Validate daftarKelas if provided
         let soalIDs
-        if(soalID&& soalID != []){
-             soalIDs = validateArrayOfIDs(Modul, soalID, "Modul");
+        if (soalID && soalID != []) {
+            soalIDs = validateArrayOfIDs(Modul, soalID, "Modul");
         }
         const findCourse = await Course.findById(courseID)
-        if(!findCourse) {  return res.status(404).json({ message: "course not found" })}
+        if (!findCourse) { return res.status(404).json({ message: "course not found" }) }
         // Create new course
         const newModul = new Modul({
             namaModul: name,
             Deskripsi: desc,
             courseID: findCourse,
-            soalID: soalIDs||[],
+            soalID: soalIDs || [],
             Deadline: deadline,
             Dinilai: false,
         });
-        const savedCourse = await newModul.save();
+        const savedModul = await newModul.save();
         // Send success response
-        res.status(201).json(savedCourse);
+        res.status(201).json(savedModul);
+    } catch (err) {
+        console.error("Error creating course:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+router.post("/Soal", async (req, res) => {
+    const { name, desc, Gambar, soalType, Pilihan, kunciJawaban } = req.body;
+
+    // Joi validation schema
+    const schema = Joi.object({
+        name: Joi.string().required(),
+        desc: Joi.string().optional().allow(""),
+        gambar: Joi.string().optional().allow(""),
+        soalType: Joi.number().required().min(0).max(1),
+        Pilihan: Joi.array().items(Joi.string().required()).length(4).optional(),
+        kunciJawaban: Joi.number().optional().min(0).max(3),
+    });
+
+    // Validate request body
+    const { error } = schema.validate({ ...req.body });
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
+    try {
+        // Validate daftarKelas if provided
+        // Create new course
+        const newSoal = new SoalModul({
+            namaSoal: name,
+            Deskripsi: desc,
+            Gambar,
+            soalType,
+            Pilihan,
+            kunciJawaban,
+
+        });
+        const savedSoal= await newSoal.save();
+        // Send success response
+        res.status(201).json(savedSoal);
     } catch (err) {
         console.error("Error creating course:", err);
         res.status(500).json({ message: "Internal server error" });
@@ -75,7 +112,7 @@ router.post("/Modul", async (req, res) => {
 
 router.put("/:modulId/Modul", async (req, res) => {
     const { name, desc, courseID, soalID, deadline } = req.body;
-    const {modulId} = req.params; // Get modul ID from the URL parameter
+    const { modulId } = req.params; // Get modul ID from the URL parameter
 
     // Joi validation schema
     const schema = Joi.object({
