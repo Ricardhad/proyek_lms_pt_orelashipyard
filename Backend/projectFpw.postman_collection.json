@@ -113,6 +113,67 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "addCourse",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"khursus bahasa inggris ke 4\",\r\n    \"desc\":\"latih ing\",\r\n    \"MentorID\":[\"675155ef05cc9384d8a4cfeC\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/admin/Course",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"admin",
+						"Course"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateCourse",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"desc\":\"latih inggris kejam\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/admin/675fc11d23be0db47ff9e2d7/Course",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"admin",
+						"675fc11d23be0db47ff9e2d7",
+						"Course"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
