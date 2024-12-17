@@ -7,295 +7,367 @@
 	},
 	"item": [
 		{
-			"name": "getuser",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:3000/api/anakMagang",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"anakMagang"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "getadmin",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:3000/api/admin",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"admin"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "update AnakMagang",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "courseID",
-							"value": "605c72ef1532073d1b2c3c1d",
-							"type": "text"
+			"name": "admin",
+			"item": [
+				{
+					"name": "getadmin",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/admin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update AnakMagang",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "courseID",
+									"value": "605c72ef1532073d1b2c3c1d",
+									"type": "text"
+								},
+								{
+									"key": "asalSekolah",
+									"value": "smk graphic",
+									"type": "text"
+								}
+							]
 						},
-						{
-							"key": "asalSekolah",
-							"value": "smk graphic",
-							"type": "text"
+						"url": {
+							"raw": "http://localhost:3000/api/admin/675d2e2c3c0125faada1512f/anakMagang",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"675d2e2c3c0125faada1512f",
+								"anakMagang"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:3000/api/admin/675d2e2c3c0125faada1512f/anakMagang",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"admin",
-						"675d2e2c3c0125faada1512f",
-						"anakMagang"
-					]
+				{
+					"name": "update Mentor",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courseID\": [\r\n    \"605c72ef1532073d1b2c3c1a\",\r\n    \"605c72ef1532073d1b2c3c1b\",\r\n    \"605c72ef1532073d1b2c3c1c\"\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/admin/675155ef05cc9384d8a4cfec/Mentor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"675155ef05cc9384d8a4cfec",
+								"Mentor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addCourse",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"khursus bahasa inggris ke 4\",\r\n    \"desc\":\"latih ing\",\r\n    \"MentorID\":[\"675155ef05cc9384d8a4cfeC\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/admin/Course",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"Course"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateCourse",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"desc\":\"latih inggris kejam\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/admin/675fc11d23be0db47ff9e2d7/Course",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"675fc11d23be0db47ff9e2d7",
+								"Course"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "update Mentor",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"courseID\": [\r\n    \"605c72ef1532073d1b2c3c1a\",\r\n    \"605c72ef1532073d1b2c3c1b\",\r\n    \"605c72ef1532073d1b2c3c1c\"\r\n  ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "mentor",
+			"item": [
+				{
+					"name": "addModul",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\":\"modul siji\",\r\n  \"desc\":\"siji\",\r\n  \"deadline\":\"2025-05-12\",\r\n  \"courseID\":\"675fbf59b48a0ea9ba4d11c2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/Mentor/Modul",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Mentor",
+								"Modul"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:3000/api/admin/675155ef05cc9384d8a4cfec/Mentor",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"admin",
-						"675155ef05cc9384d8a4cfec",
-						"Mentor"
-					]
+				{
+					"name": "updateModul",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n       \"soalID\": [\"\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/Mentor/676022790bb79864c488b8c8/Modul",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Mentor",
+								"676022790bb79864c488b8c8",
+								"Modul"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addSoal",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\":\"soal 2\",\r\n  \"desc\":\"sijADSA\",\r\n  \"Gambar\":\"\",\r\n  \"SoalType\":0,\r\n  \"Pilihan\":[\"123\",\"123\",\"123\",\"123\"],\r\n  \"kunciJawaban\":3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/Mentor/Soal",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Mentor",
+								"Soal"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateSoal",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Updated Soal\",\r\n  \"desc\": \"Updated description\",\r\n  \"SoalType\": 0,\r\n   \"Pilihan\":[\"123\",\"123\",\"123\",\"123\"],\r\n  \"kunciJawaban\":2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/Mentor/676040871370885801b4208a/Soal",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Mentor",
+								"676040871370885801b4208a",
+								"Soal"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "addCourse",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"name\":\"khursus bahasa inggris ke 4\",\r\n    \"desc\":\"latih ing\",\r\n    \"MentorID\":[\"675155ef05cc9384d8a4cfeC\"]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "anakMagang",
+			"item": [
+				{
+					"name": "getuser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/anakMagang",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"anakMagang"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:3000/api/admin/Course",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"admin",
-						"Course"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "updateCourse",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"desc\":\"latih inggris kejam\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "postJawaban",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "anakMagangID",
+									"value": "675d2e2c3c0125faada1512f",
+									"type": "text"
+								},
+								{
+									"key": "soalModulID",
+									"value": "676040871370885801b4208a",
+									"type": "text"
+								},
+								{
+									"key": "jawabanType",
+									"value": "file",
+									"type": "text"
+								},
+								{
+									"key": "jawaban",
+									"value": "tidak tahu",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "courseID",
+									"value": "605c72ef1532073d1b2c3c1c",
+									"type": "text"
+								},
+								{
+									"key": "uploadJawaban",
+									"type": "file",
+									"src": "/C:/Users/richard/OneDrive/Pictures/faust.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/anakMagang/Jawaban",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"anakMagang",
+								"Jawaban"
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3000/api/admin/675fc11d23be0db47ff9e2d7/Course",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"admin",
-						"675fc11d23be0db47ff9e2d7",
-						"Course"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "addModul",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"name\":\"modul siji\",\r\n  \"desc\":\"siji\",\r\n  \"deadline\":\"2025-05-12\",\r\n  \"courseID\":\"675fbf59b48a0ea9ba4d11c2\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3000/api/Mentor/Modul",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"Mentor",
-						"Modul"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "updateModul",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n       \"soalID\": [\"675155f605cc9384d8a4cfee\"]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3000/api/Mentor/676022790bb79864c488b8c8/Modul",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"Mentor",
-						"676022790bb79864c488b8c8",
-						"Modul"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "addSoal",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"name\":\"soal 2\",\r\n  \"desc\":\"sijADSA\",\r\n  \"Gambar\":\"\",\r\n  \"SoalType\":0,\r\n  \"Pilihan\":[\"123\",\"123\",\"123\",\"123\"],\r\n  \"kunciJawaban\":3\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3000/api/Mentor/Soal",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"Mentor",
-						"Soal"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "updateSoal",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"name\": \"Updated Soal\",\r\n  \"desc\": \"Updated description\",\r\n  \"SoalType\": 0,\r\n   \"Pilihan\":[\"123\",\"123\",\"123\",\"123\"],\r\n  \"kunciJawaban\":2\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3000/api/Mentor/676040871370885801b4208a/Soal",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"api",
-						"Mentor",
-						"676040871370885801b4208a",
-						"Soal"
-					]
-				}
-			},
-			"response": []
+			]
 		}
 	]
 }
