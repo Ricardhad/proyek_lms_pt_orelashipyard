@@ -79,7 +79,7 @@ router.post("/Soal", async (req, res) => {
         name: Joi.string().required(),
         desc: Joi.string().optional().allow(""),
         Gambar: Joi.string().optional().allow(""),// bakal harus diganti save local pake multer, save db, ato aws(cloud)
-        SoalType: Joi.number().required().min(0).max(1),
+        SoalType: Joi.number().required().min(0).max(2),
         Pilihan: Joi.array().items(Joi.string().required()).length(4).optional(),
         kunciJawaban: Joi.number().optional().min(0).max(3),
     }).when(Joi.object({ SoalType: 0 }).unknown(), {
@@ -88,7 +88,7 @@ router.post("/Soal", async (req, res) => {
             kunciJawaban: Joi.number().required().min(0).max(3),
         }),
 
-    }).when(Joi.object({ SoalType: 1 }).unknown(), {
+    }).when(Joi.object({ SoalType: Joi.valid(1, 2) }).unknown(), {
         then: Joi.object({
             Gambar: Joi.string().required().uri(), // assuming Gambar is a URL for the image
         }),
@@ -238,6 +238,7 @@ router.get("/jawaban",async(req,res)=>{
     if(!getJawaban){
         return res.status(404).json({message:"jawaban not found"})
     }
+    return res.status(200).json(getJawaban);
 })
 
 

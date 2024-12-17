@@ -6,7 +6,7 @@ const soalModulSchema = new mongoose.Schema({
     Gambar: { type: String },
     SoalType: { type: Number, required: true, 
         min: 0, 
-        max: 1 },
+        max: 2},//soaltype 0 untuk pilgan 1 untuk essay 2 untuk file
     Pilihan: [{ type: String }],
     kunciJawaban: { type: Number },
 }, {

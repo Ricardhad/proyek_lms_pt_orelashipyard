@@ -4,8 +4,15 @@ const jawabanModulSchema = new mongoose.Schema({
     courseID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Modul' },
     anakMagangID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'AnakMagang' },
     soalModulID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'SoalModul' },
-    jawaban: { type: String, default: null },
-    jawabanType: { type: Number, default: 0 },
+    jawaban: { type: String, default: null ,
+        validate: {
+            validator: function (value) {
+                return this.jawabanType === 'essay' ? value !== null : true;
+            },
+            message: 'Essay answers must include a jawaban.',
+        },
+    },
+    jawabanType: { type: String, required: true ,enum: ['essay', 'file']  },
     uploadJawaban: {
         fileName: { type: String, required: true }, // Uploaded file name
         filePath: { type: String, required: true }, // Path to the uploaded file
