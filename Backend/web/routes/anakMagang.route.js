@@ -7,6 +7,7 @@ const {
     validateArrayOfIDs,
     checkIdValid
 } = require("./functions");
+const { upload } = require('./Middleware');
 const Joi = require('joi');
 
 router.get('/', async (req, res) => {
@@ -23,8 +24,14 @@ router.get('/', async (req, res) => {
 });
 
 
-router.post("/Jawaban", async (req, res) => {
-    const { anakMagangID, soalModulID, jawaban, jawabanType, uploadJawaban } = req.body;
+router.post("/Jawaban", upload.single("uploadJawaban"), async (req, res) => {
+    const { anakMagangID, soalModulID, jawaban, jawabanType } = req.body;
+    const uploadJawaban = req.file ? {
+        fileName: req.file.filename,
+        filePath: req.file.path,
+        fileType: req.file.mimetype,
+        uploadDate: new Date(),
+    } : null;
 
     // Joi validation schema
     const schema = Joi.object({
@@ -73,5 +80,6 @@ router.post("/Jawaban", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
 
 module.exports= router;
