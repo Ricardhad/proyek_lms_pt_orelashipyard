@@ -5,7 +5,8 @@ const {
     Course, Mentor, Admin, UserData, AnakMagang,
     Modul, JawabanModul, SoalModul, NilaiModul,
     validateArrayOfIDs,
-    checkIdValid
+    checkIdValid,
+    checkIdExist
 } = require("./functions");
 const { upload } = require('./Middleware');
 const Joi = require('joi');
@@ -25,7 +26,7 @@ router.get('/', async (req, res) => {
 
 
 router.post("/Jawaban", upload.single("uploadJawaban"), async (req, res) => {
-    const { anakMagangID, soalModulID, jawaban, jawabanType } = req.body;
+    const { anakMagangID,courseID, soalModulID, jawaban, jawabanType } = req.body;
     const uploadJawaban = req.file ? {
         fileName: req.file.filename,
         filePath: req.file.path,
@@ -35,8 +36,9 @@ router.post("/Jawaban", upload.single("uploadJawaban"), async (req, res) => {
 
     // Joi validation schema
     const schema = Joi.object({
-        anakMagangID: Joi.string().required(),
-        soalModulID: Joi.string().required(),
+        courseID: Joi.string().custom(checkIdValid).required(),
+        anakMagangID: Joi.string().custom(checkIdValid).required(),
+        soalModulID: Joi.string().custom(checkIdValid).required(),
         jawabanType: Joi.string().required().valid("essay", "file"),
     })
         .when(Joi.object({ jawabanType: "essay" }).unknown(), {
@@ -63,7 +65,16 @@ router.post("/Jawaban", upload.single("uploadJawaban"), async (req, res) => {
 
     try {
         // Create a new JawabanModul
+        const findCourse = await checkIdExist(Course,courseID);
+        const findAnakMagang = await checkIdExist(AnakMagang,anakMagangID);
+        const findSoal = await checkIdExist(SoalModul,soalModulID);
+
+        if(!findCourse&&!findAnakMagang&&!findSoal){
+            return res.status(404).json({message:'id from soal anakMagang or course not found'})
+        }
+
         const newJawaban = new JawabanModul({
+            courseID,
             anakMagangID,
             soalModulID,
             jawabanType,

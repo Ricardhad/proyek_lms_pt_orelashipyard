@@ -2,16 +2,29 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
-// Ensure the upload directory exists
-const uploadDir = path.join(__dirname, "../uploads/answers");
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true }); // Create directory if it doesn't exist
+// Ensure the upload directories for answers and questions exist
+const answerDir = path.join(__dirname, "../uploads/answers");
+const questionDir = path.join(__dirname, "../uploads/questions");
+
+if (!fs.existsSync(answerDir)) {
+    fs.mkdirSync(answerDir, { recursive: true });
+}
+
+if (!fs.existsSync(questionDir)) {
+    fs.mkdirSync(questionDir, { recursive: true });
 }
 
 // Multer storage configuration
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, uploadDir); // Save files to the uploads/answers directory
+        // Dynamically set the destination folder based on the field name
+        if (file.fieldname === "uploadJawaban") {
+            cb(null, answerDir); // Save answers in the 'uploads/answers' directory
+        } else if (file.fieldname === "uploadSoal") {
+            cb(null, questionDir); // Save questions in the 'uploads/questions' directory
+        } else {
+            cb(new Error("Unknown fieldname, cannot determine directory."), false); // Handle unknown fieldnames
+        }
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);

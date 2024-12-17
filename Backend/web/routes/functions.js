@@ -40,10 +40,15 @@ const checkIdValid = (value, helpers) => {
     }
     return value;
 }
+const checkIdExist = async(Model, id) => {
+    const findExist = await Model.findById(id);
+    return findExist;
+}
 
 module.exports = {
     validateArrayOfIDs,
     checkIdValid,
+    checkIdExist,
     Course,
     Mentor,
     Admin,
