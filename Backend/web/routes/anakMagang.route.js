@@ -58,7 +58,7 @@ router.post("/Jawaban", upload.single("uploadJawaban"), async (req, res) => {
         });
 
     // Validate request body
-    const { error } = schema.validate(req.body);
+    const { error } = schema.validate({...req.body,uploadJawaban });
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
     }
