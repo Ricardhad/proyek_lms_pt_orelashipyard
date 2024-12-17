@@ -7,6 +7,7 @@ const {
     validateArrayOfIDs,
     checkIdValid
 } = require("./functions");
+const Joi = require('joi');
 
 router.get('/', async (req, res) => {
     try {
@@ -23,47 +24,52 @@ router.get('/', async (req, res) => {
 
 
 router.post("/Jawaban", async (req, res) => {
-    const { anakMagangID, soalModulID,jawaban,jawabanType } = req.body;
+    const { anakMagangID, soalModulID, jawaban, jawabanType, uploadJawaban } = req.body;
 
     // Joi validation schema
     const schema = Joi.object({
-        name: Joi.string().required(),
-        desc: Joi.string().optional().allow(""),
-        Gambar: Joi.string().optional().allow(""),// bakal harus diganti save local pake multer, save db, ato aws(cloud)
-        SoalType: Joi.number().required().min(0).max(1),
-        Pilihan: Joi.array().items(Joi.string().required()).length(4).optional(),
-        kunciJawaban: Joi.number().optional().min(0).max(3),
-    }).when(Joi.object({ SoalType: 0 }).unknown(), {
-        then: Joi.object({
-            Pilihan: Joi.array().items(Joi.string().required()).length(4).required(),
-            kunciJawaban: Joi.number().required().min(0).max(3),
-        }),
-
-    }).when(Joi.object({ SoalType: 1 }).unknown(), {
-        then: Joi.object({
-            Gambar: Joi.string().required().uri(), // assuming Gambar is a URL for the image
-        }),
-    });
+        anakMagangID: Joi.string().required(),
+        soalModulID: Joi.string().required(),
+        jawabanType: Joi.string().required().valid("essay", "file"),
+    })
+        .when(Joi.object({ jawabanType: "essay" }).unknown(), {
+            then: Joi.object({
+                jawaban: Joi.string().required(),
+            }),
+        })
+        .when(Joi.object({ jawabanType: "file" }).unknown(), {
+            then: Joi.object({
+                uploadJawaban: Joi.object({
+                    fileName: Joi.string().required(),
+                    filePath: Joi.string().required(),
+                    fileType: Joi.string().required(),
+                    uploadDate: Joi.date().iso().required(),
+                }).required(),
+            }),
+        });
 
     // Validate request body
-    const { error } = schema.validate({ ...req.body });
+    const { error } = schema.validate(req.body);
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
     }
+
     try {
-        const newSoal = new SoalModul({
-            namaSoal: name,
-            Deskripsi: desc,
-            Gambar:Gambar,
-            SoalType: SoalType,
-            Pilihan:Pilihan,
-            kunciJawaban:kunciJawaban,
+        // Create a new JawabanModul
+        const newJawaban = new JawabanModul({
+            anakMagangID,
+            soalModulID,
+            jawabanType,
+            jawaban: jawabanType === "essay" ? jawaban : null,
+            uploadJawaban: jawabanType === "file" ? uploadJawaban : null,
         });
-        const savedSoal= await newSoal.save();
+
+        const savedJawaban = await newJawaban.save();
+
         // Send success response
-        res.status(201).json(savedSoal);
+        res.status(201).json(savedJawaban);
     } catch (err) {
-        console.error("Error creating course:", err);
+        console.error("Error creating jawaban:", err);
         res.status(500).json({ message: "Internal server error" });
     }
 });
