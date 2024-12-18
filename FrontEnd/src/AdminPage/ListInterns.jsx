@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import client from "../client"; // Koneksi backend (axios instance)
+
 
 const ListInterns = () => {
   const [interns, setInterns] = useState([]); // State untuk data interns
   const [filteredInterns, setFilteredInterns] = useState([]); // State untuk data setelah search
   const [searchQuery, setSearchQuery] = useState(""); // State untuk input search
   const [error, setError] = useState("");
+
+  const navigate = useNavigate(); // Untuk navigasi ke halaman Edit
 
   // Fetch data dari backend saat komponen dimount
   useEffect(() => {
@@ -33,6 +37,11 @@ const ListInterns = () => {
     );
 
     setFilteredInterns(filtered);
+  };
+
+  // Fungsi untuk handle tombol Edit
+  const handleEdit = (userId) => {
+    navigate(`/edit/${userId}`); // Navigasi ke halaman Edit dengan userId
   };
 
   return (
@@ -75,7 +84,9 @@ const ListInterns = () => {
                   <td style={styles.td}>
                     <div style={styles.nameEmailContainer}>
                       <img
-                        src={intern.Profile_Picture || "https://via.placeholder.com/30"}
+                        src={
+                          intern.Profile_Picture || "https://via.placeholder.com/30"
+                        }
                         alt="Profile"
                         style={styles.profileImage}
                       />
@@ -89,10 +100,16 @@ const ListInterns = () => {
                   <td style={styles.td}>{intern.noTelpon}</td>
                   <td style={styles.td}>Learning and Development</td>
                   <td style={styles.td}>
-                    <button style={{ ...styles.button, ...styles.editButton }}>
+                    <button
+                      style={{ ...styles.button, ...styles.editButton }}
+                      onClick={() => handleEdit(intern._id)} // Panggil handleEdit
+                    >
                       Edit
                     </button>
-                    <button style={{ ...styles.button, ...styles.detailButton }}>
+
+                    <button
+                      style={{ ...styles.button, ...styles.detailButton }}
+                    >
                       Detail
                     </button>
                   </td>
