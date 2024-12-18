@@ -33,6 +33,7 @@ const courseValidationSchema = Joi.object({
   mentorID: Joi.array().items(Joi.string()).optional(),
 });
 
+//rey tambahkan course
 // Endpoint untuk menambahkan course baru
 router.post("/add-course", async (req, res) => {
   // Validasi input menggunakan Joi
@@ -68,7 +69,7 @@ router.post("/add-course", async (req, res) => {
   }
 });
 
-
+//rey tambahkan course
 // Endpoint untuk mengambil semua course
 router.get("/courses", async (req, res) => {
   try {
@@ -106,7 +107,7 @@ router.put('/:userId/verify', async (req, res) => {
   }
 });
 
-//rey tambahkan
+//rey tambahkan edit user
 // Endpoint untuk edit user berdasarkan ID
 router.put('/:userId/editUser', async (req, res) => {
   const { userId } = req.params;
