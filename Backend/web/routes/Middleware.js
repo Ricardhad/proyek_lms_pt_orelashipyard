@@ -15,9 +15,11 @@ if (!fs.existsSync(answerDir)) {
 if (!fs.existsSync(questionPicsDir)) {
     fs.mkdirSync(questionPicsDir, { recursive: true });
 }
+
 if (!fs.existsSync(questionDocsDir)) {
     fs.mkdirSync(questionDocsDir, { recursive: true });
 }
+
 if (!fs.existsSync(profilePictureDir)) {
     fs.mkdirSync(profilePictureDir, { recursive: true });
 }
@@ -25,15 +27,19 @@ if (!fs.existsSync(profilePictureDir)) {
 // Multer storage configuration
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
+        console.log('Field name:', file.fieldname);
+        console.log('Mime type:', file.mimetype);
+
         // Dynamically set the destination folder based on the field name and mime type
         if (file.fieldname === "uploadJawaban") {
             cb(null, answerDir); // Save answers in the 'uploads/answers' directory
-        } else if (file.fieldname === "uploadSoal" && 
-            (file.mimetype === "image/jpeg" 
-                || file.mimetype === "image/png")) {
+        } else if (file.fieldname === "uploadSoal" &&
+            (file.mimetype === "image/jpeg"
+                || file.mimetype === "image/png"
+                || file.mimetype === "image/jpg")) {
             cb(null, questionPicsDir); // Save images in 'uploads/questions/pictures' directory
-        } else if (file.fieldname === "uploadSoal" && 
-            (file.mimetype === "application/pdf" 
+        } else if (file.fieldname === "uploadSoal" &&
+            (file.mimetype === "application/pdf"
                 || file.mimetype === "application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
             cb(null, questionDocsDir); // Save documents in 'uploads/questions/documents' directory
         } else if (file.fieldname === "uploadProfile") {
@@ -49,7 +55,6 @@ const storage = multer.diskStorage({
     },
 });
 
-
 // File filter to allow only specific file types
 const fileFilter = (req, file, cb) => {
     const allowedTypes = ["application/pdf", "image/png", "image/jpeg"];
@@ -64,7 +69,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
+    limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
 });
 
 module.exports = { upload };
