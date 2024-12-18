@@ -57,7 +57,7 @@ const storage = multer.diskStorage({
 
 // File filter to allow only specific file types
 const fileFilter = (req, file, cb) => {
-    const allowedTypes = ["application/pdf", "image/png", "image/jpeg"];
+    const allowedTypes = ["application/pdf", "image/png", "image/jpeg","application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true); // Accept the file
     } else {

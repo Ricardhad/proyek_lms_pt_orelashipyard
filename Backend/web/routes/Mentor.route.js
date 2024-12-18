@@ -79,13 +79,14 @@ router.post("/Soal", upload.single("uploadSoal"), async (req, res) => {
 
     // Process file upload if present
     const uploadSoal = req.file
-    ? {
-        fileName: req.file.filename,
-        filePath: req.file.path,
-        fileType: req.file.mimetype,
-        uploadDate: new Date(),
-    }
-    : null;
+        ? {
+            fileName: req.file.filename,
+            filePath: req.file.path,
+            fileType: req.file.mimetype,
+            uploadDate: new Date(),
+        }
+        : null;
+        // console.log(req.file)
 
     // Joi validation schema
     const schema = Joi.object({
@@ -119,7 +120,7 @@ router.post("/Soal", upload.single("uploadSoal"), async (req, res) => {
         });
 
     // Validate request body and file
-    const { error } = schema.validate({ ...req.body,  uploadSoal });
+    const { error } = schema.validate({ ...req.body, uploadSoal });
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
     }
@@ -129,7 +130,7 @@ router.post("/Soal", upload.single("uploadSoal"), async (req, res) => {
         const newSoal = new SoalModul({
             namaSoal: name,
             Deskripsi: desc,
-            Gambar:  uploadSoal,
+            Gambar: uploadSoal, // File data should be passed here as an object
             SoalType: SoalType,
             Pilihan: Pilihan,
             kunciJawaban: kunciJawaban,
@@ -145,6 +146,7 @@ router.post("/Soal", upload.single("uploadSoal"), async (req, res) => {
     }
 });
 
+
 router.put("/:id/Soal", upload.single("uploadSoal"), async (req, res) => {
     const { id } = req.params;  // Get the ID from the request params
     const { name, desc, SoalType, Pilihan, kunciJawaban } = req.body;
@@ -157,10 +159,11 @@ router.put("/:id/Soal", upload.single("uploadSoal"), async (req, res) => {
         uploadDate: new Date(),
     }
     : null;
+    // console.log(req.file.filename)
 
     // Joi validation schema
     const schema = Joi.object({
-        name: Joi.string().required(),
+        name: Joi.string().optional(),
         desc: Joi.string().optional().allow(""),
         SoalType: Joi.number().required().valid(0, 1, 2),
         Pilihan: Joi.array().items(Joi.string().required()).length(4).optional(),
@@ -170,7 +173,7 @@ router.put("/:id/Soal", upload.single("uploadSoal"), async (req, res) => {
             filePath: Joi.string().required(),
             fileType: Joi.string().required(),
             uploadDate: Joi.date().iso().required(),
-        }).optional(),
+        }).optional()
     })
         .when(Joi.object({ SoalType: 0 }).unknown(), {
             then: Joi.object({
@@ -202,7 +205,7 @@ router.put("/:id/Soal", upload.single("uploadSoal"), async (req, res) => {
             {
                 namaSoal: name,
                 Deskripsi: desc,
-                Gambar: Gambar,
+                Gambar: uploadSoal,
                 SoalType: SoalType,
                 Pilihan: Pilihan,
                 kunciJawaban: kunciJawaban,

@@ -6,7 +6,7 @@ const mentorRouter = require('./Mentor.route')
 const modulRouter = require('./Modul.route')
 
 const express = require('express')
-// const { upload } = require('./Middleware')
+const { upload } = require('./Middleware')
 const router = express()
 const path = require("path");
 const fs = require("fs");
@@ -19,20 +19,18 @@ router.use('/anakMagang', anakMagangRouter)
 router.use('/mentor', mentorRouter)
 router.use('/modul', modulRouter)
 
-// router.post('/upload', upload.single('uploadSoal'), (req, res) => {
-//    console.log(req.file)
-//     const {ggg}= req.body;
-//     const Gambar = req.file //sesuain key nya sama fieldname diatas(uploadSoal bukan Gambar);
-//     ? {
-//         fileName: req.file.filename,
-//         filePath: req.file.path,
-//         fileType: req.file.mimetype,
-//         uploadDate: new Date(),
-//     }
-//     : null;
-//  console.log(ggg)
-//     console.log('File uploaded:', Gambar);
-//     res.send('File uploaded successfully');
-// });
+router.post('/upload', upload.single('uploadSoal'), (req, res) => {
+   console.log(req.file)
+    const Gambar = req.file //sesuain key nya sama fieldname diatas(uploadSoal bukan Gambar);
+    ? {
+        fileName: req.file.filename,
+        filePath: req.file.path,
+        fileType: req.file.mimetype,
+        uploadDate: new Date(),
+    }
+    : null;
+    console.log('File uploaded:', Gambar);
+    res.send('File uploaded successfully');
+});
 
 module.exports= router;
