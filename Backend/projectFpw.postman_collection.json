@@ -230,13 +230,24 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\":\"soal 2\",\r\n  \"desc\":\"sijADSA\",\r\n  \"Gambar\":\"\",\r\n  \"SoalType\":0,\r\n  \"Pilihan\":[\"123\",\"123\",\"123\",\"123\"],\r\n  \"kunciJawaban\":3\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "uploadSoal",
+									"type": "file",
+									"src": "postman-cloud:///1ef0eaa8-ff9b-42b0-b06b-c6ea7cee927d"
+								},
+								{
+									"key": "name",
+									"value": "soal bergambar",
+									"type": "text"
+								},
+								{
+									"key": "SoalType",
+									"value": "1",
+									"type": "text"
 								}
-							}
+							]
 						},
 						"url": {
 							"raw": "http://localhost:3000/api/Mentor/Soal",
@@ -260,8 +271,24 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Updated Soal\",\r\n  \"desc\": \"Updated description\",\r\n  \"SoalType\": 0,\r\n   \"Pilihan\":[\"123\",\"123\",\"123\",\"123\"],\r\n  \"kunciJawaban\":2\r\n}",
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "uploadSoal",
+									"type": "file",
+									"src": "/C:/Users/richard/Downloads/Tracking.docx"
+								},
+								{
+									"key": "name",
+									"value": "ganti soal",
+									"type": "text"
+								},
+								{
+									"key": "SoalType",
+									"value": "1",
+									"type": "text"
+								}
+							],
 							"options": {
 								"raw": {
 									"language": "json"
@@ -362,6 +389,32 @@
 								"api",
 								"anakMagang",
 								"Jawaban"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "modul",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/Modul/soal",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Modul",
+								"soal"
 							]
 						}
 					},
