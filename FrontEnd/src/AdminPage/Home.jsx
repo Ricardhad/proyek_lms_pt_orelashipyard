@@ -75,7 +75,7 @@ const styles = {
     left: 0,             // Posisi dari kiri layar
   },
   
-  menuTitle: { fontSize: "18px", marginBottom: "10px" },
+  menuTitle: { fontSize: "18px", marginBottom: "10px",color: "black" },
   menuList: { listStyle: "none", padding: 0 },
   menuItem: { padding: "8px", cursor: "pointer", transition: "0.3s" },
   link: {
