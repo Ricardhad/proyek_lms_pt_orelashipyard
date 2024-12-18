@@ -51,6 +51,51 @@ router.put('/:userId/verify', async (req, res) => {
   }
 });
 
+//rey tambahkan
+// Endpoint untuk edit user berdasarkan ID
+router.put('/:userId/editUser', async (req, res) => {
+  const { userId } = req.params;
+  const { namaUser, roletype, password, noTelpon } = req.body;
+
+  // Validasi input menggunakan Joi
+  const schema = Joi.object({
+    namaUser: Joi.string().optional(),
+    roletype: Joi.number().integer().valid(0, 1, 2).optional(), // roletype sebagai integer
+    password: Joi.string().min(6).optional(),
+    noTelpon: Joi.string().pattern(/^[0-9]+$/).optional(),
+  });
+
+  // Validasi request body
+  const { error } = schema.validate({ namaUser, roletype, password, noTelpon });
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+  try {
+    // Cari user berdasarkan ID
+    const user = await UserData.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update field yang diberikan
+    if (namaUser) user.namaUser = namaUser;
+    if (roletype !== undefined) user.roletype = roletype; // roletype sebagai integer
+    if (password) user.password = password; // Harap tambahkan hashing jika diperlukan
+    if (noTelpon) user.noTelpon = noTelpon;
+
+    // Simpan perubahan
+    const updatedUser = await user.save();
+
+    // Respon sukses
+    res.status(200).json({ message: "User updated successfully", updatedUser });
+  } catch (err) {
+    console.error("Error updating user:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
 router.put("/:anakMagangId/anakMagang", async (req, res) => {
   const { anakMagangId } = req.params;
   const { courseID, asalSekolah } = req.body;
