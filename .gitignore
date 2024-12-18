@@ -2,3 +2,4 @@ node_modules
 /Backend/node_modules
 /Backend/web/node_modules
 /Frontend/node_modules
+/Backend/web/uploads
