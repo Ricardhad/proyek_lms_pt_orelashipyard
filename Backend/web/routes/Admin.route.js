@@ -73,10 +73,38 @@ router.post("/add-course", async (req, res) => {
 // Endpoint untuk mengambil semua course
 router.get("/courses", async (req, res) => {
   try {
-    const courses = await Course.find();
-    res.status(200).json({ courses });
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching courses", error: err.message });
+    const courses = await Course.aggregate([
+      {
+        $lookup: {
+          from: "mentors", // Koleksi Mentor
+          localField: "mentorID",
+          foreignField: "_id",
+          as: "mentors",
+        },
+      },
+      { $unwind: { path: "$mentors", preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: "userdatas", // Koleksi UserData
+          localField: "mentors.userID",
+          foreignField: "_id",
+          as: "mentorDetails",
+        },
+      },
+      { $unwind: { path: "$mentorDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          _id: 1,
+          namaCourse: 1,
+          Deskripsi: 1,
+          mentorName: "$mentorDetails.namaUser",
+        },
+      },
+    ]);
+
+    res.json({ courses });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch courses" });
   }
 });
 

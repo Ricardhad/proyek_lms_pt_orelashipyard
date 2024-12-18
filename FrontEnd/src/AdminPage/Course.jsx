@@ -32,7 +32,12 @@ const Course = () => {
             <div style={styles.cardImage}></div>
             <div style={styles.cardContent}>
               <h3 style={styles.courseTitle}>{course.namaCourse}</h3>
-              <p style={styles.courseDescription}>{course.Deskripsi}</p>
+              <p style={styles.courseDescription}>
+                {course.Deskripsi || "Deskripsi tidak tersedia"}
+              </p>
+              <p style={styles.mentorName}>
+                Mentor: {course.mentorName || "Belum ada mentor"}
+              </p>
             </div>
           </div>
         ))}
@@ -99,6 +104,12 @@ const styles = {
   courseDescription: {
     fontSize: "14px",
     color: "#555",
+    marginBottom: "5px",
+  },
+  mentorName: {
+    fontSize: "14px",
+    fontStyle: "italic",
+    color: "#777",
   },
   addButtonContainer: {
     display: "flex",
