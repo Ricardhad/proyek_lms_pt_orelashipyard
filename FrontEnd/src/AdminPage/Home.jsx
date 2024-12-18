@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import AddInterns from "./AddInterns";
-import ListInterns from "./ListInterns"; // Tambahkan komponen Interns
+import ListInterns from "./ListInterns"; 
+import Course from "./Course"; // Tambahkan komponen Course
 
 const Home = () => {
-  const [currentPage, setCurrentPage] = useState("add-interns"); // State untuk mengatur halaman aktif
+  const [currentPage, setCurrentPage] = useState("add-interns");
 
   // Fungsi untuk merender halaman berdasarkan state
   const renderPage = () => {
@@ -12,6 +13,8 @@ const Home = () => {
         return <AddInterns />;
       case "interns":
         return <ListInterns />;
+      case "courses": // Tambahkan ini
+        return <Course />;
       default:
         return <AddInterns />;
     }
@@ -70,12 +73,11 @@ const styles = {
     minHeight: "100vh",
     padding: "20px 10px",
     boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
-    position: "fixed",   // Tambahkan ini
-    top: 0,              // Posisi dari atas
-    left: 0,             // Posisi dari kiri layar
+    position: "fixed",
+    top: 0,
+    left: 0,
   },
-  
-  menuTitle: { fontSize: "18px", marginBottom: "10px",color: "black" },
+  menuTitle: { fontSize: "18px", marginBottom: "10px", color: "black" },
   menuList: { listStyle: "none", padding: 0 },
   menuItem: { padding: "8px", cursor: "pointer", transition: "0.3s" },
   link: {
@@ -88,9 +90,8 @@ const styles = {
     flexGrow: 1,
     padding: "20px",
     backgroundColor: "#ffffff",
-    marginLeft: "250px",  // Sesuaikan dengan lebar sidebar
+    marginLeft: "250px",
   },
-  
 };
 
 export default Home;

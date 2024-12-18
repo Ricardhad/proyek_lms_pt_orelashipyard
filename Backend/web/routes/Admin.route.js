@@ -26,6 +26,61 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Schema validasi untuk menambahkan course
+const courseValidationSchema = Joi.object({
+  namaCourse: Joi.string().required(),
+  Deskripsi: Joi.string().optional().allow(""),
+  mentorID: Joi.array().items(Joi.string()).optional(),
+});
+
+// Endpoint untuk menambahkan course baru
+router.post("/add-course", async (req, res) => {
+  // Validasi input menggunakan Joi
+  const { error } = courseValidationSchema.validate(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
+
+  const { namaCourse, Deskripsi, mentorID } = req.body;
+
+  try {
+    // Cek apakah nama course sudah ada
+    const existingCourse = await Course.findOne({ namaCourse });
+    if (existingCourse) {
+      return res.status(400).json({ message: "Course already exists." });
+    }
+
+    // Buat course baru
+    const newCourse = new Course({
+      namaCourse,
+      Deskripsi,
+      mentorID: mentorID || [],
+      daftarKelas: [],
+    });
+
+    // Simpan ke database
+    await newCourse.save();
+
+    res.status(201).json({
+      message: "Course successfully added.",
+      course: newCourse,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error.", error: err.message });
+  }
+});
+
+
+// Endpoint untuk mengambil semua course
+router.get("/courses", async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.status(200).json({ courses });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching courses", error: err.message });
+  }
+});
+
+
+
 router.put('/:userId/verify', async (req, res) => {
   const { userId } = req.params;
   const { isVerified } = req.body; // Pastikan ini boolean

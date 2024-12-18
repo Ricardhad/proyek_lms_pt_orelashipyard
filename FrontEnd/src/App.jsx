@@ -5,8 +5,8 @@ import Test from "./pages/Test";
 import Home from "./AdminPage/Home";
 import ListInterns from "./AdminPage/ListInterns"; 
 import EditUser from "./AdminPage/EditUser"; 
-// import HomeMagang from "./pages/HomeMagang";
-// import HomeMentor from "./pages/HomeMentor";
+import AddMentor from "./AdminPage/AddMentor";
+
 
 function App() {
   return (
@@ -21,8 +21,8 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/listinterns" element={<ListInterns />} />
         <Route path="/edit/:userId" element={<EditUser />} />
-        {/* <Route path="/homeMagang" element={<HomeMagang />} />
-        <Route path="/homeMentor" element={<HomeMentor />} /> */}
+        <Route path="/addmentor" element={<AddMentor />} />
+  
       </Routes>
     </Router>
   );
