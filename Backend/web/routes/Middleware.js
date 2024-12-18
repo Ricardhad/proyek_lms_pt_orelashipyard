@@ -5,6 +5,7 @@ const fs = require("fs");
 // Ensure the upload directories for answers and questions exist
 const answerDir = path.join(__dirname, "../uploads/answers");
 const questionDir = path.join(__dirname, "../uploads/questions");
+const profilePictureDir = path.join(__dirname, "../uploads/profile");
 
 if (!fs.existsSync(answerDir)) {
     fs.mkdirSync(answerDir, { recursive: true });
@@ -12,6 +13,9 @@ if (!fs.existsSync(answerDir)) {
 
 if (!fs.existsSync(questionDir)) {
     fs.mkdirSync(questionDir, { recursive: true });
+}
+if (!fs.existsSync(profilePictureDir)) {
+    fs.mkdirSync(profilePictureDir, { recursive: true });
 }
 
 // Multer storage configuration
@@ -22,6 +26,8 @@ const storage = multer.diskStorage({
             cb(null, answerDir); // Save answers in the 'uploads/answers' directory
         } else if (file.fieldname === "uploadSoal") {
             cb(null, questionDir); // Save questions in the 'uploads/questions' directory
+        } else if (file.fieldname === "uploadProfile") {
+            cb(null, profilePictureDir); // Save questions in the 'uploads/questions' directory
         } else {
             cb(new Error("Unknown fieldname, cannot determine directory."), false); // Handle unknown fieldnames
         }
@@ -47,7 +53,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+    limits: { fileSize: 10 * 1024 * 1024 }, // Limit file size to 10MB
 });
 
 module.exports = { upload };
