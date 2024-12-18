@@ -8,7 +8,7 @@ const Home = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await client.get("/api/user/all"); // Use client instance for API call
+        const response = await client.get("/api/user/all");
         console.log(response.data); // Check data received
         setUserData(response.data);
       } catch (err) {
@@ -20,35 +20,38 @@ const Home = () => {
     fetchUserData();
   }, []);
 
-  // Function to update verification status
   const updateVerificationStatus = async (userId, isVerified) => {
     try {
-      console.log("Updating user verification status:");
-      console.log("User ID:", userId);
-      console.log("Is Verified:", isVerified);
-
+      console.log("Updating user verification status:", userId, isVerified);
+  
       const token = localStorage.getItem("token");
       if (!token) {
         setError("You are not authorized. Please log in.");
         return;
       }
-
-      // Send PUT request with proper headers and JSON body
-      const response = await client.put(
+  
+      await client.put(
         `/api/admin/${userId}/verify`,
-        { isVerified: true },
+        { isVerified },
         {
           headers: {
-            'Authorization': `Bearer ${token}`, // Ensure the token is correct here
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-
-      console.log("Response:", response.data); // Check the response from the backend
+  
+      // Berikan pesan alert jika berhasil
+      alert("Data telah diubah!");
     } catch (err) {
       console.error("Error updating verification status:", err);
       setError(err.response?.data?.message || "Failed to update verification status.");
     }
+  };
+  
+
+  // Tambahkan fungsi untuk alert ketika button "Test" ditekan
+  const handleTestButton = () => {
+    alert("Button Test ditekan!");
   };
 
   return (
@@ -131,98 +134,58 @@ const Home = () => {
             </tbody>
           </table>
         </div>
+        {/* Tambahkan button Test */}
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <button style={styles.testButton} onClick={handleTestButton}>
+            Test
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
 const styles = {
-  container: {
-    display: "flex",
-  },
+  container: { display: "flex" },
   sidebar: {
     width: "250px",
     backgroundColor: "#f8f9fa",
     minHeight: "100vh",
     padding: "20px 10px",
     boxShadow: "2px 0 5px rgba(0, 0, 0, 0.1)",
+    position: "fixed",   // Tambahkan ini
+    top: 0,              // Posisi dari atas
+    left: 0,             // Posisi dari kiri layar
   },
-  profileSection: {
-    textAlign: "center",
-    marginBottom: "20px",
-  },
-  profileImage: {
-    borderRadius: "50%",
-    width: "60px",
-    height: "60px",
-  },
-  menuList: {
-    listStyle: "none",
-    padding: 0,
-  },
-  menuItem: {
-    padding: "10px 15px",
-    margin: "5px 0",
-    cursor: "pointer",
-    fontSize: "16px",
-    borderRadius: "5px",
-    transition: "background-color 0.3s",
-  },
-  mainContent: {
-    flexGrow: 1,
-    padding: "20px",
-    backgroundColor: "#ffffff",
-  },
-  title: {
-    fontSize: "24px",
-    marginBottom: "20px",
-  },
-  tableWrapper: {
-    overflowX: "auto",
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-    textAlign: "left",
-    boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)",
-  },
-  th: {
-    padding: "10px",
-    backgroundColor: "#f1f1f1",
-    border: "1px solid #ddd",
-  },
-  td: {
-    padding: "10px",
-    border: "1px solid #ddd",
-  },
-  nameEmailContainer: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-  },
-  tableImage: {
-    borderRadius: "50%",
-    width: "30px",
-    height: "30px",
-  },
+  profileSection: { textAlign: "center", marginBottom: "20px" },
+  profileImage: { borderRadius: "50%", width: "60px", height: "60px" },
+  menuList: { listStyle: "none", padding: 0 },
+  menuItem: { padding: "10px 15px", margin: "5px 0", cursor: "pointer" },
+  mainContent: { flexGrow: 1, padding: "20px" },
+  title: { fontSize: "24px", marginBottom: "20px" },
+  tableWrapper: { overflowX: "auto" },
+  table: { width: "100%", borderCollapse: "collapse" },
+  th: { padding: "10px", backgroundColor: "#f1f1f1", border: "1px solid #ddd" },
+  td: { padding: "10px", border: "1px solid #ddd" },
+  nameEmailContainer: { display: "flex", alignItems: "center", gap: "10px" },
+  tableImage: { borderRadius: "50%", width: "30px", height: "30px" },
   button: {
     padding: "5px 10px",
     border: "none",
     borderRadius: "3px",
     cursor: "pointer",
     margin: "0 5px",
-    zIndex: "1", // Make sure button is above other elements
   },
-  addButton: {
-    backgroundColor: "#28a745",
+  addButton: { backgroundColor: "#28a745", color: "#ffffff" },
+  declineButton: { backgroundColor: "#dc3545", color: "#ffffff" },
+  testButton: {
+    padding: "10px 20px",
+    backgroundColor: "#007bff",
     color: "#ffffff",
-  },
-  declineButton: {
-    backgroundColor: "#dc3545",
-    color: "#ffffff",
-  },
-  buttonHover: {
-    opacity: 0.8,
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    fontSize: "16px",
   },
 };
 
