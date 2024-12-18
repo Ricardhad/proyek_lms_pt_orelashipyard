@@ -4,6 +4,7 @@ import { Grid, Card, CardMedia, CardContent, Typography, Button, Box, Avatar } f
 import Layout from '@/components/layout'
 import { Add as AddIcon } from '@mui/icons-material'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 const materials = [
   {
@@ -15,17 +16,38 @@ const materials = [
     type: 'Tugas',
     thumbnail: '/placeholder.svg'
   },
-  // Add more materials as needed
+  {
+    id: 3,
+    title: 'Materi 3',
+    mentorName: 'Mentor Name',
+    mentorAvatar: '/placeholder.svg',
+    deadline: '12:30 pm',
+    type: 'Latihan',
+    thumbnail: '/placeholder.svg'
+  },
 ]
 
 export default function MaterialsPage() {
+  const router = useRouter()
+
+  const handleMaterialClick = (material) => {
+    if (material.type === 'Tugas') {
+      router.push(`/materials/check-tugas/${material.id}`)
+    } else if (material.type === 'Latihan') {
+      router.push(`/materials/check-latihan/${material.id}`)
+    }
+  }
+
   return (
     <Layout>
       <Typography variant="h4" sx={{ p: 3 }}>MATERIAL</Typography>
       <Grid container spacing={3} sx={{ p: 3 }}>
         {materials.map((material) => (
           <Grid item key={material.id}>
-            <Card sx={{ display: 'flex', height: '100%' }}>
+            <Card 
+              sx={{ display: 'flex', height: '100%', cursor: 'pointer' }}
+              onClick={() => handleMaterialClick(material)}
+            >
               <CardMedia
                 component="img"
                 sx={{ width: 151 }}

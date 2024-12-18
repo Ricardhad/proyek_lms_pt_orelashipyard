@@ -3,8 +3,11 @@
 import { Box, Button, TextField, Typography, Paper, Grid } from '@mui/material'
 import Layout from '@/components/layout'
 import { Image, Description, Add, Person } from '@mui/icons-material'
+import { useRouter } from 'next/navigation'
 
 export default function AddMaterialPage() {
+  const router = useRouter()
+
   return (
     <Layout>
       <Box sx={{ p: 3 }}>
@@ -60,6 +63,7 @@ export default function AddMaterialPage() {
                       cursor: 'pointer',
                       '&:hover': { backgroundColor: '#f5f5f5' },
                     }}
+                    onClick={() => router.push('/materials/add/form')}
                   >
                     <Description sx={{ fontSize: 32, mb: 1 }} />
                     <Typography>Tugas Form</Typography>
@@ -73,6 +77,7 @@ export default function AddMaterialPage() {
                       cursor: 'pointer',
                       '&:hover': { backgroundColor: '#f5f5f5' },
                     }}
+                    onClick={() => router.push('/materials/add/zip')}
                   >
                     <Add sx={{ fontSize: 32, mb: 1 }} />
                     <Typography>Pengumpulan Folder .ZIP</Typography>
@@ -86,6 +91,7 @@ export default function AddMaterialPage() {
                       cursor: 'pointer',
                       '&:hover': { backgroundColor: '#f5f5f5' },
                     }}
+                    onClick={() => router.push('/materials/add/attendance')}
                   >
                     <Person sx={{ fontSize: 32, mb: 1 }} />
                     <Typography>Absensi</Typography>
