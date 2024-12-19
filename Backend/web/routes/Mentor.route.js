@@ -422,9 +422,7 @@ router.post("/:ModulID/nilai", async (req, res) => {
         return res.status(404).json({ message: "Course ID not found" });
     }
     
-
     try {
-        // Create a new NilaiModul
         const nilaiModul = new NilaiModul({
             anakMagangID,
             courseID,
@@ -433,12 +431,77 @@ router.post("/:ModulID/nilai", async (req, res) => {
             catatan,
             nilai,
         });
-
-        // Save the NilaiModul
         const hasil = await nilaiModul.save();
-
-        // Return the saved NilaiModul as a response
         return res.status(200).json(hasil);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Server error." });
+    }
+});
+router.put("/:nilaiModulID/nilai", async (req, res) => {
+    const { nilaiModulID } = req.params;
+    const { modulID, mentorID, anakMagangID, catatan, nilai, courseID } = req.body;
+
+    // Define the Joi schema for validation
+    const schema = Joi.object({
+        nilaiModulID: Joi.string().custom(checkIdValid, "ObjectId validation").required(),
+        modulID: Joi.string().custom(checkIdValid, "ObjectId validation").optional(),
+        mentorID: Joi.string().custom(checkIdValid, "ObjectId validation").optional(),
+        anakMagangID: Joi.string().custom(checkIdValid, "ObjectId validation").optional(),
+        courseID: Joi.string().custom(checkIdValid, "ObjectId validation").optional(),
+        catatan: Joi.string().optional().allow(''),
+        nilai: Joi.number().min(0).max(100).required()
+    });
+
+    // Validate the request body
+    const { error } = schema.validate({ ...req.body, nilaiModulID });
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
+
+    // Check if the provided IDs exist in the database
+    const existNilaiModul = await NilaiModul.findById(nilaiModulID);
+    const existModul = modulID ? await Modul.findById(modulID) : null;
+    const existMentor = mentorID ? await Mentor.findById(mentorID) : null;
+    const existAnakMagang = anakMagangID ? await AnakMagang.findById(anakMagangID) : null;
+    const existCourse = courseID ? await Course.findById(courseID) : null;
+
+    if (!existNilaiModul) {
+        return res.status(404).json({ message: "NilaiModul ID not found" });
+    }
+    if (modulID && !existModul) {
+        return res.status(404).json({ message: "Modul ID not found" });
+    }
+    if (mentorID && !existMentor) {
+        return res.status(404).json({ message: "Mentor ID not found" });
+    }
+    if (anakMagangID && !existAnakMagang) {
+        return res.status(404).json({ message: "Anak Magang ID not found" });
+    }
+    if (courseID && !existCourse) {
+        return res.status(404).json({ message: "Course ID not found" });
+    }
+
+    try {
+        // Use findByIdAndUpdate with the nilaiModulID to find the record and update it
+        const updatedNilaiModul = await NilaiModul.findByIdAndUpdate(
+            nilaiModulID, 
+            {
+                modulID: modulID || existNilaiModul.modulID, // Only update if provided
+                mentorID: mentorID || existNilaiModul.mentorID, // Only update if provided
+                anakMagangID: anakMagangID || existNilaiModul.anakMagangID, // Only update if provided
+                courseID: courseID || existNilaiModul.courseID, // Only update if provided
+                catatan: catatan || existNilaiModul.catatan, // Only update if provided
+                nilai: nilai || existNilaiModul.nilai, // Only update if provided
+            },
+            { new: true } // Ensure the updated document is returned
+        );
+
+        if (!updatedNilaiModul) {
+            return res.status(404).json({ message: "NilaiModul not found or failed to update" });
+        }
+
+        return res.status(200).json(updatedNilaiModul);
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Server error." });
