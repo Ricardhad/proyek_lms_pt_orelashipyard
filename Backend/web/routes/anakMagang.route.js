@@ -24,9 +24,54 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Helper function to perform the search
+const searchJawabanModul = async (query) => {
+    let searchQuery = JawabanModul.find()
+        .populate('courseID', 'namaCourse')
+        .populate('soalModulID', 'namaSoal')
+        .populate({
+            path: 'anakMagangID',
+            populate: { path: 'userID', select: 'namaUser' }
+        });
+
+    // Filter based on query parameters
+    if (query.namaCourse || query.namaSoal || query.namaUser) {
+        searchQuery = searchQuery.find({
+            $or: [
+                { 'courseID.namaCourse': { $regex: query.namaCourse, $options: 'i' } },
+                { 'soalModulID.namaSoal': { $regex: query.namaSoal, $options: 'i' } },
+                { 'anakMagangID.userID.namaUser': { $regex: query.namaUser, $options: 'i' } }
+            ]
+        });
+    }
+    if (query.jawabanType) {
+        searchQuery = searchQuery.find({ jawabanType: parseInt(query.jawabanType) });
+    }
+
+    return await searchQuery;
+};
+
+router.get("/Jawaban", async (req, res) => {
+    const { namaCourse, namaSoal, namaUser, jawabanType } = req.query;
+
+    try {
+        // Call the helper function to fetch data
+        let search = await searchJawabanModul(req.query);
+
+        if (!search || search.length === 0) {
+            return res.status(404).json({ message: "No results found" });
+        }
+
+        return res.status(200).json(search);
+    } catch (error) {
+        console.error("Error fetching JawabanModul data:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+});
+
 
 router.post("/Jawaban", upload.single("uploadJawaban"), async (req, res) => {
-    const { anakMagangID,courseID, soalModulID, jawaban, jawabanType } = req.body;
+    const { anakMagangID, courseID, soalModulID, jawaban, jawabanType } = req.body;
     const uploadJawaban = req.file ? {
         fileName: req.file.filename,
         filePath: req.file.path,
@@ -58,19 +103,19 @@ router.post("/Jawaban", upload.single("uploadJawaban"), async (req, res) => {
         });
 
     // Validate request body
-    const { error } = schema.validate({...req.body,uploadJawaban });
+    const { error } = schema.validate({ ...req.body, uploadJawaban });
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
     }
 
     try {
         // Create a new JawabanModul
-        const findCourse = await checkIdExist(Course,courseID);
-        const findAnakMagang = await checkIdExist(AnakMagang,anakMagangID);
-        const findSoal = await checkIdExist(SoalModul,soalModulID);
+        const findCourse = await checkIdExist(Course, courseID);
+        const findAnakMagang = await checkIdExist(AnakMagang, anakMagangID);
+        const findSoal = await checkIdExist(SoalModul, soalModulID);
 
-        if(!findCourse&&!findAnakMagang&&!findSoal){
-            return res.status(404).json({message:'id from soal anakMagang or course not found'})
+        if (!findCourse && !findAnakMagang && !findSoal) {
+            return res.status(404).json({ message: 'id from soal anakMagang or course not found' })
         }
 
         const newJawaban = new JawabanModul({
@@ -93,4 +138,4 @@ router.post("/Jawaban", upload.single("uploadJawaban"), async (req, res) => {
 });
 
 
-module.exports= router;
+module.exports = router;

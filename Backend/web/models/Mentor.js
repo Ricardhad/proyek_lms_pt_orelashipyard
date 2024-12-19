@@ -5,7 +5,7 @@ const mentorSchema = new mongoose.Schema({
   courseID: [
     { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Course' }
   ],
-  userID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'userData' },
+  userID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'UserData' },
 }, {
   collection: 'Mentor',
   timestamps: true

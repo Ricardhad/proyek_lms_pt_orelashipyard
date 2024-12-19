@@ -6,7 +6,7 @@ const courseSchema = new mongoose.Schema({
     mentorID: [
         { type: mongoose.Schema.Types.ObjectId, ref: 'Mentor' }
     ],
-    daftarKelas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'anakMagang' }],
+    daftarKelas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'AnakMagang' }],
 }, {
     collection: 'Course',
     timestamps: true

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const jawabanModulSchema = new mongoose.Schema({
-    courseID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Modul' },
+    courseID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Course' },
     anakMagangID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'AnakMagang' },
     soalModulID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'SoalModul' },
     jawaban: { 
