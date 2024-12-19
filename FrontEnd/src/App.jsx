@@ -8,6 +8,7 @@ import EditUser from "./AdminPage/EditUser";
 import AddMentor from "./AdminPage/AddMentor";
 import Course from "./AdminPage/Course";
 import AddCourse from "./AdminPage/AddCourse";
+import AddAnnouncement from "./AdminPage/AddAnouncement";
 
 
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/addmentor" element={<AddMentor />} />
         <Route path="/course" element={<Course />} />
         <Route path="/addcourse" element={<AddCourse />} />
+        <Route path="/addannouncement" element={<AddAnnouncement />} />
   
       </Routes>
     </Router>

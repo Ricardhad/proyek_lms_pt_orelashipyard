@@ -33,41 +33,6 @@ const courseValidationSchema = Joi.object({
   mentorID: Joi.array().items(Joi.string()).optional(),
 });
 
-//rey tambahkan course
-// Endpoint untuk menambahkan course baru
-router.post("/add-course", async (req, res) => {
-  // Validasi input menggunakan Joi
-  const { error } = courseValidationSchema.validate(req.body);
-  if (error) return res.status(400).json({ message: error.details[0].message });
-
-  const { namaCourse, Deskripsi, mentorID } = req.body;
-
-  try {
-    // Cek apakah nama course sudah ada
-    const existingCourse = await Course.findOne({ namaCourse });
-    if (existingCourse) {
-      return res.status(400).json({ message: "Course already exists." });
-    }
-
-    // Buat course baru
-    const newCourse = new Course({
-      namaCourse,
-      Deskripsi,
-      mentorID: mentorID || [],
-      daftarKelas: [],
-    });
-
-    // Simpan ke database
-    await newCourse.save();
-
-    res.status(201).json({
-      message: "Course successfully added.",
-      course: newCourse,
-    });
-  } catch (err) {
-    res.status(500).json({ message: "Server error.", error: err.message });
-  }
-});
 
 //rey tambahkan course
 // Endpoint untuk mengambil semua course
@@ -107,8 +72,6 @@ router.get("/courses", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch courses" });
   }
 });
-
-
 
 router.put('/:userId/verify', async (req, res) => {
   const { userId } = req.params;
@@ -423,6 +386,119 @@ router.get("/Mentor", async (req, res) => {
         return res.status(500).json({ message: "Server error" });
     }
 });
+
+//======================= Anouncement =======================
+
+
+// Schema Validasi untuk Announcement
+const announcementValidationSchema = Joi.object({
+  title: Joi.string().required(),
+  description: Joi.string().required(),
+});
+
+// GET: Mengambil semua pengumuman
+router.get("/announcements", async (req, res) => {
+  try {
+    const adminData = await Admin.findOne();
+    if (!adminData || !adminData.announcements) {
+      return res.status(404).json({ message: "No announcements found" });
+    }
+    res.status(200).json(adminData.announcements);
+  } catch (error) {
+    console.error("Error fetching announcements:", error.message); // Log pesan error
+    console.error(error.stack); // Log stack trace
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+// POST: Menambahkan pengumuman baru
+router.post('/announcements', async (req, res) => {
+  const { title, description, createdBy } = req.body;
+
+  // Validasi input
+  const { error } = announcementValidationSchema.validate({ title, description });
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+  try {
+    const admin = await Admin.findOne({ userID: createdBy }); // Pastikan admin valid
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    // Tambahkan pengumuman baru
+    const newAnnouncement = { title, description, createdBy };
+    admin.announcements.push(newAnnouncement);
+    await admin.save();
+
+    res.status(201).json({ message: "Announcement added successfully", announcement: newAnnouncement });
+  } catch (error) {
+    console.error("Error adding announcement:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// PUT: Mengedit pengumuman
+router.put('/announcements/:announcementId', async (req, res) => {
+  const { announcementId } = req.params;
+  const { title, description } = req.body;
+
+  // Validasi input
+  const { error } = announcementValidationSchema.validate({ title, description });
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+  try {
+    const admin = await Admin.findOneAndUpdate(
+      { "announcements._id": announcementId },
+      {
+        $set: {
+          "announcements.$.title": title,
+          "announcements.$.description": description,
+        },
+      },
+      { new: true }
+    );
+
+    if (!admin) {
+      return res.status(404).json({ message: "Announcement not found" });
+    }
+
+    res.status(200).json({ message: "Announcement updated successfully" });
+  } catch (error) {
+    console.error("Error updating announcement:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// DELETE: Menghapus pengumuman
+router.delete('/announcements/:announcementId', async (req, res) => {
+  const { announcementId } = req.params;
+
+  try {
+    const admin = await Admin.findOneAndUpdate(
+      { "announcements._id": announcementId },
+      {
+        $pull: { announcements: { _id: announcementId } },
+      },
+      { new: true }
+    );
+
+    if (!admin) {
+      return res.status(404).json({ message: "Announcement not found" });
+    }
+
+    res.status(200).json({ message: "Announcement deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting announcement:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
 
 
 module.exports = router;

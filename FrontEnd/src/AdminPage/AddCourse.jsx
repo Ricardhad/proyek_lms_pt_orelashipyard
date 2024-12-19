@@ -58,13 +58,7 @@ const AddCourse = () => {
           value={formData.MentorID}
           onChange={handleChange}
         />
-        <input
-          type="text"
-          name="daftarKelas"
-          placeholder="Participant IDs (comma-separated)"
-          value={formData.daftarKelas}
-          onChange={handleChange}
-        />
+        
         <button type="submit">Submit</button>
       </form>
       {message && <p>{message}</p>}
