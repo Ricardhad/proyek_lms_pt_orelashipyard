@@ -1,0 +1,29 @@
+{
+    "_id": "64b8e6f4f0e67d00224fb2b5",
+    "userID": "64b8e6f4f0e67d00224fb2b1",
+    "calenderPicture": {
+      "fileName": "calendar-image-2024.jpg",
+      "filePath": "/uploads/calendar/calendar-image-2024.jpg",
+      "fileType": "image/jpeg",
+      "uploadDate": "2024-12-19T12:00:00.000Z"
+    },
+    "announcements": [
+      {
+        "_id": "64b8e6f4f0e67d00224fb2c1",
+        "title": "Perubahan jadwal masuk magang",
+        "content": "Jadwal masuk magang untuk batch 2024 telah diperbarui ke tanggal 5 Januari 2025.",
+        "author": "Admin Magang",
+        "date": "2024-12-19T10:00:00.000Z"
+      },
+      {
+        "_id": "64b8e6f4f0e67d00224fb2c2",
+        "title": "Reminder: Deadline tugas modul 3",
+        "content": "Harap menyelesaikan tugas modul 3 sebelum tanggal 31 Desember 2024.",
+        "author": "Admin Magang",
+        "date": "2024-12-18T15:00:00.000Z"
+      }
+    ],
+    "createdAt": "2024-12-19T10:00:00.000Z",
+    "updatedAt": "2024-12-19T12:00:00.000Z"
+  }
+  

@@ -1,10 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddInterns from "./AddInterns";
 import ListInterns from "./ListInterns"; 
 import Course from "./Course"; // Tambahkan komponen Course
+import Announcement from "./Anounncement";
+import client from "../client"; // Axios instance for API calls
+import { useNavigate } from "react-router-dom"; // Untuk navigasi logout
 
 const Home = () => {
   const [currentPage, setCurrentPage] = useState("add-interns");
+  const [userName, setUserName] = useState(""); // State untuk menyimpan namaUser
+  const navigate = useNavigate();
+
+  // Fungsi untuk mengambil data user
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await client.get("/api/user/all"); // Endpoint untuk mendapatkan semua pengguna
+        const users = response.data;
+
+        // Contoh: Ambil pengguna pertama (atau sesuaikan dengan logika)
+        if (users && users.length > 0) {
+          setUserName(users[0].namaUser); // Mengambil namaUser pengguna pertama
+        } else {
+          console.warn("No users found");
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        setUserName("Guest"); // Default value jika gagal
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  // Fungsi logout
+  const handleLogout = () => {
+    // Hapus token atau sesi
+    localStorage.removeItem("token"); // Sesuaikan dengan penyimpanan token
+    navigate("/"); // Arahkan kembali ke halaman login
+  };
 
   // Fungsi untuk merender halaman berdasarkan state
   const renderPage = () => {
@@ -13,8 +47,10 @@ const Home = () => {
         return <AddInterns />;
       case "interns":
         return <ListInterns />;
-      case "courses": // Tambahkan ini
+      case "courses":
         return <Course />;
+      case "announcement":
+        return <Announcement />;  
       default:
         return <AddInterns />;
     }
@@ -52,11 +88,19 @@ const Home = () => {
             </span>
           </li>
           <li style={styles.menuItem}>
-            <span style={styles.link} onClick={() => setCurrentPage("add-announcement")}>
+            <span style={styles.link} onClick={() => setCurrentPage("announcement")}>
               Add Announcement
             </span>
           </li>
         </ul>
+
+        {/* User Data di bawah menu */}
+        <div style={styles.userData}>
+          <h3 style={styles.userName}>Hello, {userName}!</h3>
+          <button onClick={handleLogout} style={styles.logoutButton}>
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -84,6 +128,27 @@ const styles = {
     textDecoration: "none",
     color: "black",
     fontSize: "16px",
+    cursor: "pointer",
+  },
+  userData: {
+    marginTop: "20px",
+    borderTop: "1px solid #ccc",
+    paddingTop: "15px",
+    textAlign: "center",
+  },
+  userName: {
+    fontSize: "16px",
+    fontWeight: "bold",
+    marginBottom: "10px",
+    color: "#333",
+  },
+  logoutButton: {
+    padding: "10px",
+    fontSize: "14px",
+    backgroundColor: "#dc3545",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
     cursor: "pointer",
   },
   mainContent: {
