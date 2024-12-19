@@ -17,22 +17,33 @@ const AddAnnouncement = () => {
       return;
     }
 
+    // Ambil token dari localStorage
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setErrorMessage("User is not logged in.");
+      return;
+    }
+
     try {
       // Data yang akan dikirim ke backend
       const payload = {
         title,
-        content,
-        author: "Admin Magang", // Ganti sesuai data user
-        date: new Date().toISOString(), // Pastikan format tanggal sesuai
+        description: content,  // Menggunakan "content" untuk deskripsi
+        createdBy: "67624e55e0e2c189da418030",  // Ganti sesuai dengan ID pengguna yang login
       };
 
       console.log("Payload being sent:", payload);
 
-      // Kirim data ke backend
-      await axios.post("/api/admin/announcements", payload);
+      // Kirim data ke backend dengan menambahkan token di header Authorization
+      await axios.post("/api/admin/announcements", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,  // Mengirim token di header
+        },
+      });
 
-      // Redirect ke halaman pengumuman
-      navigate("/announcement");
+      // Redirect ke halaman pengumuman setelah berhasil
+      navigate("/home");
     } catch (error) {
       console.error("Error adding announcement:", error);
 

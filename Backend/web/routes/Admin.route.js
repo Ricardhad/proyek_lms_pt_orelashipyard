@@ -390,11 +390,6 @@ router.get("/Mentor", async (req, res) => {
 //======================= Anouncement =======================
 
 
-// Schema Validasi untuk Announcement
-const announcementValidationSchema = Joi.object({
-  title: Joi.string().required(),
-  description: Joi.string().required(),
-});
 
 // GET: Mengambil semua pengumuman
 router.get("/announcements", async (req, res) => {
@@ -417,28 +412,56 @@ router.post('/announcements', async (req, res) => {
   const { title, description, createdBy } = req.body;
 
   // Validasi input
-  const { error } = announcementValidationSchema.validate({ title, description });
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
+  if (!title || !description || !createdBy) {
+    return res.status(400).json({ message: 'Title, description, and createdBy are required.' });
   }
 
   try {
-    const admin = await Admin.findOne({ userID: createdBy }); // Pastikan admin valid
+    // Verifikasi apakah user dengan ID `createdBy` ada
+    const user = await UserData.findById(createdBy);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+    
+    console.log("User found:", user); // Untuk debugging
+
+    // Temukan admin yang terkait dengan user dan tambahkan pengumuman ke array announcements
+    let admin = await Admin.findOne({ 'userID': createdBy });
+
     if (!admin) {
-      return res.status(404).json({ message: "Admin not found" });
+      // Jika admin tidak ditemukan, kita buat entri admin baru
+      console.log("Admin not found, creating new admin entry...");
+
+      admin = new Admin({
+        userID: createdBy,
+        announcements: [],  // Array pengumuman kosong di awal
+        calenderPicture: {} // Ganti dengan info gambar jika diperlukan
+      });
+
+      await admin.save(); // Simpan entri admin baru
+      console.log("New admin created:", admin);
     }
 
-    // Tambahkan pengumuman baru
-    const newAnnouncement = { title, description, createdBy };
-    admin.announcements.push(newAnnouncement);
-    await admin.save();
+    // Membuat pengumuman baru
+    const newAnnouncement = {
+      title,
+      description,
+      createdBy,
+      date: new Date(),
+    };
 
-    res.status(201).json({ message: "Announcement added successfully", announcement: newAnnouncement });
+    // Tambahkan pengumuman ke array announcements di admin
+    admin.announcements.push(newAnnouncement);
+    await admin.save(); // Simpan perubahan di database
+
+    res.status(201).json({ message: 'Announcement created successfully!', announcement: newAnnouncement });
   } catch (error) {
-    console.error("Error adding announcement:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error('Error adding announcement:', error);
+    res.status(500).json({ message: 'An error occurred while adding the announcement.' });
   }
 });
+
+
 
 // PUT: Mengedit pengumuman
 router.put('/announcements/:announcementId', async (req, res) => {
