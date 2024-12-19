@@ -5,7 +5,8 @@ const {
     Course, Mentor, Admin, UserData, AnakMagang,
     Modul, JawabanModul, SoalModul, NilaiModul,
     validateArrayOfIDs,
-    checkIdValid
+    checkIdValid,
+    checkIdExist
 } = require("./functions");
 
 const Joi = require('joi');
@@ -332,7 +333,7 @@ router.get("/Jawaban", async (req, res) => {
                     as: 'course'
                 }
             },
-            {$unwind: '$course'},
+            { $unwind: '$course' },
             {
                 $lookup: {
                     from: 'SoalModul', // assuming the collection name for soalModul is 'soalModuls'
@@ -341,7 +342,7 @@ router.get("/Jawaban", async (req, res) => {
                     as: 'soalModul'
                 }
             },
-            {$unwind: '$soalModul'},
+            { $unwind: '$soalModul' },
             {
                 $lookup: {
                     from: 'AnakMagang', // assuming the collection name for anakMagang is 'anakMagangs'
@@ -350,7 +351,7 @@ router.get("/Jawaban", async (req, res) => {
                     as: 'anakMagang'
                 }
             },
-            {$unwind: '$anakMagang'},
+            { $unwind: '$anakMagang' },
             {
                 $lookup: {
                     from: 'UserData', // assuming the collection name for user is 'users'
@@ -359,7 +360,7 @@ router.get("/Jawaban", async (req, res) => {
                     as: 'user'
                 }
             },
-            {$unwind: '$user'},
+            { $unwind: '$user' },
             {
                 $match: {
                     $or: [
@@ -385,30 +386,63 @@ router.get("/Jawaban", async (req, res) => {
     }
 });
 
-
-router.post("/:ModulID/nilai" ,async (req, res) => {
+router.post("/:ModulID/nilai", async (req, res) => {
     const { ModulID } = req.params;
-    const {mentorID,anakMagangID, catatan, nilai,courseID}= req.body;
-    const modul = await Modul.findById(ModulID)
-    const mentor = await Mentor.findById(mentorID)
-    const anakmagang = await AnakMagang.findById(anakMagangID)
-    const course = await Course.findById(courseID)
-    
-    const nilaiModul = await new NilaiModul({
-        anakMagangID: anakmagang,
-        courseID: course,
-        mentorID: mentor, // File data should be passed here as an object
-        modulID: modul,
-        catatan,
-        nilai,
+    const { mentorID, anakMagangID, catatan, nilai, courseID } = req.body;
+
+    // Define the Joi schema for validation
+    const schema = Joi.object({
+        ModulID: Joi.string().custom(checkIdValid, "ObjectId validation").required(),
+        mentorID: Joi.string().custom(checkIdValid, "ObjectId validation").required(),
+        anakMagangID: Joi.string().custom(checkIdValid, "ObjectId validation").required(),
+        courseID: Joi.string().custom(checkIdValid, "ObjectId validation").required(),
+        catatan: Joi.string().optional().allow(''),
+        nilai: Joi.number().min(0).max(100).required()
     });
-    if (!nilaiModul) {
-        return res.status(404).json({ message: "jawaban not found" })
+    // Validate the request body
+    const { error } = schema.validate({ ...req.body, ModulID });
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
     }
+    const existModul = await Modul.findById(ModulID)
+    const existMentor = await Mentor.findById(mentorID)
+    const existAnakMagang = await AnakMagang.findById(anakMagangID)
+    const existCourse = await Course.findById(courseID)
 
+    if (!existModul) {
+        return res.status(404).json({ message: "Modul ID not found" });
+    }
+    if (!existMentor) {
+        return res.status(404).json({ message: "Mentor ID not found" });
+    }
+    if (!existAnakMagang) {
+        return res.status(404).json({ message: "Anak Magang ID not found" });
+    }
+    if (!existCourse) {
+        return res.status(404).json({ message: "Course ID not found" });
+    }
     
-    return res.status(200).json(nilaiModul);
-})
 
+    try {
+        // Create a new NilaiModul
+        const nilaiModul = new NilaiModul({
+            anakMagangID,
+            courseID,
+            mentorID,
+            modulID: ModulID,
+            catatan,
+            nilai,
+        });
+
+        // Save the NilaiModul
+        const hasil = await nilaiModul.save();
+
+        // Return the saved NilaiModul as a response
+        return res.status(200).json(hasil);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Server error." });
+    }
+});
 
 module.exports = router;
