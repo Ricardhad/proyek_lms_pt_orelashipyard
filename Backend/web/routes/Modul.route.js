@@ -58,6 +58,44 @@ router.get('/:id/Soal', async (req, res) => {
         return res.status(500).send("Server error");
     }
 });
+router.get('/:id/Jawaban', async (req, res) => {
+    const id = req.params.id;
+    try {
+        // Fetch the data for the given ID
+        const result = await JawabanModul.findById(id);
+        
+        // Check if the result exists
+        if (!result) {
+            return res.status(404).send("jawaban not found");
+        }
+
+        // Check if the Gambar field exists in the result
+        if (!result.uploadJawaban || !result.uploadJawaban.filePath) {
+            return res.status(404).send("File not found in the record");
+        }
+
+        const { filePath, fileName } = result.uploadJawaban;
+        
+        console.log(fileName);
+
+        // Check if the file exists on the server
+        if (fs.existsSync(filePath)) {
+            // Send the file for download
+            return res.download(filePath, fileName, (err) => {
+                if (err) {
+                    console.error("Error downloading the file:", err);
+                    return res.status(500).send("Error downloading the file");
+                }
+            });
+        } else {
+            return res.status(404).send("File not found on the server");
+        }
+
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return res.status(500).send("Server error");
+    }
+});
 
 router.get('/Jawaban', async (req, res) => {
     try {
