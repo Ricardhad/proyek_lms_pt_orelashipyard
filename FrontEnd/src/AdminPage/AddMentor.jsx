@@ -1,142 +1,133 @@
-import React from "react";
+import React, { useState } from "react";
+import client from "../client"; // Axios instance
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
-const AddMentor = () => {
-  const mentors = [
-    {
-      id: 1,
-      name: "Esthera Jackson",
-      email: "esthera@simmple.com",
-      phone: "08123456789",
-      role: "Learning and Development",
-      image: "https://via.placeholder.com/100", // Ganti dengan URL gambar
-    },
-    {
-      id: 2,
-      name: "Esthera Jackson",
-      email: "esthera@simmple.com",
-      phone: "08123456789",
-      role: "Learning and Development",
-      image: "https://via.placeholder.com/100",
-    },
-    {
-      id: 3,
-      name: "Esthera Jackson",
-      email: "esthera@simmple.com",
-      phone: "08123456789",
-      role: "Learning and Development",
-      image: "https://via.placeholder.com/100",
-    },
-    {
-      id: 4,
-      name: "Esthera Jackson",
-      email: "esthera@simmple.com",
-      phone: "08123456789",
-      role: "Learning and Development",
-      image: "https://via.placeholder.com/100",
-    },
-  ];
+const AddCourse = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    desc: "",
+    MentorID: "",
+  });
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate(); // Initialize navigate
 
-  const containerStyle = {
-    padding: "20px",
-    textAlign: "center",
-    fontFamily: "Arial, sans-serif",
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const gridStyle = {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "20px",
-    justifyItems: "center",
-  };
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Prepare request data
+      const requestData = {
+        name: formData.name,
+        desc: formData.desc,
+        MentorID: formData.MentorID ? formData.MentorID.split(",") : [], // Convert comma-separated MentorID to array
+      };
 
-  const cardStyle = {
-    backgroundColor: "#f8f8f8",
-    border: "1px solid #ddd",
-    borderRadius: "10px",
-    padding: "15px",
-    textAlign: "center",
-    width: "150px",
-    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-  };
+      // Make API call
+      const response = await client.post("/api/admin/Course", requestData);
+      setMessage(`Course created successfully: ${response.data.namaCourse}`);
 
-  const imageStyle = {
-    borderRadius: "10px",
-    width: "100%",
-    height: "auto",
-    marginBottom: "10px",
-  };
+      // Reset form
+      setFormData({ name: "", desc: "", MentorID: "" });
 
-  const textStyle = {
-    fontSize: "12px",
-    color: "#777",
-    margin: "5px 0",
-  };
-
-  const buttonContainerStyle = {
-    display: "flex",
-    justifyContent: "center",
-    gap: "10px",
-    marginTop: "10px",
-  };
-
-  const buttonStyle = {
-    padding: "5px 10px",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    fontSize: "12px",
-  };
-
-  const editButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: "#007bff",
-    color: "white",
-  };
-
-  const detailButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: "#6c757d",
-    color: "white",
-  };
-
-  const addCardStyle = {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    border: "2px dashed #ccc",
-    borderRadius: "10px",
-    width: "150px",
-    height: "230px",
-    fontSize: "50px",
-    color: "#777",
-    cursor: "pointer",
+      // Navigate back to courses page after success
+      setTimeout(() => {
+        navigate("/course");
+      }, 2000);
+    } catch (error) {
+      console.error("Error creating course:", error);
+      setMessage("Failed to create course. Please try again.");
+    }
   };
 
   return (
-    <div style={containerStyle}>
-      <h1>Mentors</h1>
-      <div style={gridStyle}>
-        {mentors.map((mentor) => (
-          <div key={mentor.id} style={cardStyle}>
-            <img src={mentor.image} alt={mentor.name} style={imageStyle} />
-            <h3>{mentor.name}</h3>
-            <p style={textStyle}>{mentor.email}</p>
-            <p style={textStyle}>{mentor.phone}</p>
-            <p style={textStyle}>{mentor.role}</p>
-            <div style={buttonContainerStyle}>
-              <button style={editButtonStyle}>Edit</button>
-              <button style={detailButtonStyle}>Detail</button>
-            </div>
-          </div>
-        ))}
-        {/* Kartu Tambah Mentor */}
-        <div style={addCardStyle}>
-          <span>+</span>
-        </div>
-      </div>
+    <div style={styles.container}>
+      <h1 style={styles.title}>Add New Course</h1>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Course Name"
+          value={formData.name}
+          onChange={handleChange}
+          style={styles.input}
+          required
+        />
+        <textarea
+          name="desc"
+          placeholder="Course Description"
+          value={formData.desc}
+          onChange={handleChange}
+          style={styles.textarea}
+        />
+        <input
+          type="text"
+          name="MentorID"
+          placeholder="Mentor ID (comma-separated)"
+          value={formData.MentorID}
+          onChange={handleChange}
+          style={styles.input}
+          required
+        />
+        <button type="submit" style={styles.button}>
+          Submit
+        </button>
+      </form>
+      {message && <p style={styles.message}>{message}</p>}
     </div>
   );
 };
 
-export default AddMentor;
+// Styling
+const styles = {
+  container: {
+    padding: "20px",
+    maxWidth: "500px",
+    margin: "0 auto",
+    textAlign: "center",
+  },
+  title: {
+    fontSize: "24px",
+    fontWeight: "bold",
+    marginBottom: "20px",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+  },
+  input: {
+    padding: "10px",
+    fontSize: "16px",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
+  },
+  textarea: {
+    padding: "10px",
+    fontSize: "16px",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
+    resize: "none",
+  },
+  button: {
+    padding: "10px",
+    fontSize: "16px",
+    backgroundColor: "#333",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+  },
+  message: {
+    marginTop: "20px",
+    fontSize: "14px",
+    color: "green",
+  },
+};
+
+export default AddCourse;

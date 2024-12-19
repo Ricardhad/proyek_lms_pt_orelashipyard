@@ -6,6 +6,9 @@ import Home from "./AdminPage/Home";
 import ListInterns from "./AdminPage/ListInterns"; 
 import EditUser from "./AdminPage/EditUser"; 
 import AddMentor from "./AdminPage/AddMentor";
+import Course from "./AdminPage/Course";
+import AddCourse from "./AdminPage/AddCourse";
+
 
 
 function App() {
@@ -22,6 +25,8 @@ function App() {
         <Route path="/listinterns" element={<ListInterns />} />
         <Route path="/edit/:userId" element={<EditUser />} />
         <Route path="/addmentor" element={<AddMentor />} />
+        <Route path="/course" element={<Course />} />
+        <Route path="/addcourse" element={<AddCourse />} />
   
       </Routes>
     </Router>
