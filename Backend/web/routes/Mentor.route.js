@@ -29,6 +29,23 @@ router.get('/', async (req, res) => {
 });
 
 
+router.get("/Modul", async (req, res) => {
+    const { filter } = req.query;
+    let search;
+    if (filter) {
+        search = await Modul.find({ namaModul: { $regex: filter, $options: 'i' } });
+        if(search.length === 0){
+            search = await Modul.find({ Deskripsi: { $regex: filter, $options: 'i' } });
+        }
+    } else {
+        search = await Modul.find();
+    }
+    if (search.length === 0) {
+        return res.status(404).json({ message: "No results found" });
+    }
+    return res.status(200).json(search);
+})
+
 router.post("/Modul", async (req, res) => {
     const { name, desc, courseID, soalID, deadline } = req.body;
 
@@ -86,7 +103,7 @@ router.post("/Soal", upload.single("uploadSoal"), async (req, res) => {
             uploadDate: new Date(),
         }
         : null;
-        // console.log(req.file)
+    // console.log(req.file)
 
     // Joi validation schema
     const schema = Joi.object({
@@ -152,13 +169,13 @@ router.put("/:id/Soal", upload.single("uploadSoal"), async (req, res) => {
     const { name, desc, SoalType, Pilihan, kunciJawaban } = req.body;
 
     const uploadSoal = req.file
-    ? {
-        fileName: req.file.filename,
-        filePath: req.file.path,
-        fileType: req.file.mimetype,
-        uploadDate: new Date(),
-    }
-    : null;
+        ? {
+            fileName: req.file.filename,
+            filePath: req.file.path,
+            fileType: req.file.mimetype,
+            uploadDate: new Date(),
+        }
+        : null;
     // console.log(req.file.filename)
 
     // Joi validation schema
@@ -193,7 +210,7 @@ router.put("/:id/Soal", upload.single("uploadSoal"), async (req, res) => {
         });
 
     // Validate request body and file
-    const { error } = schema.validate({ ...req.body,  uploadSoal });
+    const { error } = schema.validate({ ...req.body, uploadSoal });
     if (error) {
         return res.status(400).json({ message: error.details[0].message });
     }
