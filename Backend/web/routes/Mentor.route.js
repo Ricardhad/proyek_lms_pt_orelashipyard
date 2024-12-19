@@ -11,6 +11,7 @@ const {
 const Joi = require('joi');
 const mongoose = require('mongoose');
 const { upload } = require('./Middleware');
+const anakMagang = require('../models/AnakMagang');
 
 
 
@@ -318,13 +319,95 @@ router.put("/:modulId/Modul", async (req, res) => {
     }
 });
 
-router.get("/jawaban", async (req, res) => {
-    const { SoalModulID } = req.query
-    const getJawaban = await JawabanModul.findById(SoalModulID)
-    if (!getJawaban) {
+router.get("/Jawaban", async (req, res) => {
+    const { namaCourse, namaSoal, namaUser, jawabanType } = req.query;
+
+    try {
+        let pipeline = [
+            {
+                $lookup: {
+                    from: 'Course', // assuming the collection name for the course model is 'courses'
+                    localField: 'courseID',
+                    foreignField: '_id',
+                    as: 'course'
+                }
+            },
+            {$unwind: '$course'},
+            {
+                $lookup: {
+                    from: 'SoalModul', // assuming the collection name for soalModul is 'soalModuls'
+                    localField: 'soalModulID',
+                    foreignField: '_id',
+                    as: 'soalModul'
+                }
+            },
+            {$unwind: '$soalModul'},
+            {
+                $lookup: {
+                    from: 'AnakMagang', // assuming the collection name for anakMagang is 'anakMagangs'
+                    localField: 'anakMagangID',
+                    foreignField: '_id',
+                    as: 'anakMagang'
+                }
+            },
+            {$unwind: '$anakMagang'},
+            {
+                $lookup: {
+                    from: 'UserData', // assuming the collection name for user is 'users'
+                    localField: 'anakMagang.userID',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {$unwind: '$user'},
+            {
+                $match: {
+                    $or: [
+                        { 'course.namaCourse': { $regex: new RegExp(namaCourse, 'i') } },
+                        { 'soalModul.namaSoal': { $regex: new RegExp(namaSoal, 'i') } },
+                        { 'user.namaUser': { $regex: new RegExp(namaUser, 'i') } },
+                        { 'jawabanType': { $regex: new RegExp(jawabanType, 'i') } }
+                    ]
+                }
+            }
+        ];
+
+        const results = await JawabanModul.aggregate(pipeline);
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No results found" });
+        }
+
+        return res.status(200).json(results);
+    } catch (error) {
+        console.error("Error fetching JawabanModul data:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+});
+
+
+router.post("/:ModulID/nilai" ,async (req, res) => {
+    const { ModulID } = req.params;
+    const {mentorID,anakMagangID, catatan, nilai,courseID}= req.body;
+    const modul = await Modul.findById(ModulID)
+    const mentor = await Mentor.findById(mentorID)
+    const anakmagang = await AnakMagang.findById(anakMagangID)
+    const course = await Course.findById(courseID)
+    
+    const nilaiModul = await new NilaiModul({
+        anakMagangID: anakmagang,
+        courseID: course,
+        mentorID: mentor, // File data should be passed here as an object
+        modulID: modul,
+        catatan,
+        nilai,
+    });
+    if (!nilaiModul) {
         return res.status(404).json({ message: "jawaban not found" })
     }
-    return res.status(200).json(getJawaban);
+
+    
+    return res.status(200).json(nilaiModul);
 })
 
 
