@@ -352,5 +352,77 @@ router.post("/Course", async (req, res) => {
   }
 });
 
+router.get("/anakMagang", async (req, res) => {
+    const { namaUser } = req.query;
+
+    try {
+        let pipeline = [
+            {
+                $lookup: {
+                    from: 'UserData', // assuming the collection name for user is 'users'
+                    localField: 'userID',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {$unwind: '$user'},
+            {
+                $match: {
+                    $or: [
+                        { 'user.namaUser': { $regex: new RegExp(namaUser, 'i') } },
+                    ]
+                }
+            }
+        ];
+
+        const results = await AnakMagang.aggregate(pipeline);
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No results found" });
+        }
+
+        return res.status(200).json(results);
+    } catch (error) {
+        console.error("Error fetching JawabanModul data:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+});
+
+router.get("/Mentor", async (req, res) => {
+    const { namaUser } = req.query;
+
+    try {
+        let pipeline = [
+            {
+                $lookup: {
+                    from: 'UserData', // assuming the collection name for user is 'users'
+                    localField: 'userID',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {$unwind: '$user'},
+            {
+                $match: {
+                    $or: [
+                        { 'user.namaUser': { $regex: new RegExp(namaUser, 'i') } },
+                    ]
+                }
+            }
+        ];
+
+        const results = await Mentor.aggregate(pipeline);
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No results found" });
+        }
+
+        return res.status(200).json(results);
+    } catch (error) {
+        console.error("Error fetching JawabanModul data:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+});
+
 
 module.exports = router;
