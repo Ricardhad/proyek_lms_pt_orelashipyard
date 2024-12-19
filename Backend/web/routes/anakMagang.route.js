@@ -158,5 +158,25 @@ router.post("/Jawaban", upload.single("uploadJawaban"), async (req, res) => {
     }
 });
 
+router.get('/:anakMagang_id/absensi', async (req, res) => {
+    const { anakMagang_id } = req.params;
+  
+    try {
+      // Mencari data anak magang berdasarkan id
+      const anakMagang = await AnakMagang.findById(anakMagang_id);
+  
+      // Jika data anak magang tidak ditemukan
+      if (!anakMagang) {
+        return res.status(404).json({ message: 'Anak magang tidak ditemukan.' });
+      }
+  
+      // Mengembalikan data absensi
+      res.status(200).json({ absensiKelas: anakMagang.absensiKelas });
+    } catch (error) {
+      console.error('Error fetching absensi:', error);
+      res.status(500).json({ message: 'Terjadi kesalahan di server.' });
+    }
+  });
+
 
 module.exports = router;
