@@ -157,12 +157,88 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "getAnakMagang",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/admin/anakMagang",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"anakMagang"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMentor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/admin/Mentor",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"Mentor"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
 			"name": "mentor",
 			"item": [
+				{
+					"name": "getModul",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/Mentor/Modul?filter=sij",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Mentor",
+								"Modul"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "sij"
+								}
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "addModul",
 					"request": {
@@ -219,6 +295,44 @@
 								"Mentor",
 								"676022790bb79864c488b8c8",
 								"Modul"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSoal",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/Mentor/Soal?filter=&SoalType=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Mentor",
+								"Soal"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": ""
+								},
+								{
+									"key": "SoalType",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -288,12 +402,7 @@
 									"value": "1",
 									"type": "text"
 								}
-							],
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							]
 						},
 						"url": {
 							"raw": "http://localhost:3000/api/Mentor/676040871370885801b4208a/Soal",
@@ -307,6 +416,61 @@
 								"Mentor",
 								"676040871370885801b4208a",
 								"Soal"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/Mentor/675155ef05cc9384d8a4cfec/nilai",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Mentor",
+								"675155ef05cc9384d8a4cfec",
+								"nilai"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getJawaban",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/Mentor/Jawaban",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Mentor",
+								"Jawaban"
+							],
+							"query": [
+								{
+									"key": "namaCourse",
+									"value": "d",
+									"disabled": true
+								},
+								{
+									"key": "namaUser",
+									"value": "m",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -332,6 +496,39 @@
 							"path": [
 								"api",
 								"anakMagang"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getJawaban",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/anakMagang/Jawaban",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"anakMagang",
+								"Jawaban"
+							],
+							"query": [
+								{
+									"key": "namaCourse",
+									"value": "d",
+									"disabled": true
+								},
+								{
+									"key": "namaUser",
+									"value": "m",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -400,12 +597,12 @@
 			"name": "modul",
 			"item": [
 				{
-					"name": "New Request",
+					"name": "downloadSoal",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/Modul/soal",
+							"raw": "http://localhost:3000/api/Modul/67629b02080b2ab107c5077b/soal",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -414,7 +611,30 @@
 							"path": [
 								"api",
 								"Modul",
+								"67629b02080b2ab107c5077b",
 								"soal"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "downloadJawaban",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/Modul/676129a8499d7931377d13fa/Jawaban",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Modul",
+								"676129a8499d7931377d13fa",
+								"Jawaban"
 							]
 						}
 					},
