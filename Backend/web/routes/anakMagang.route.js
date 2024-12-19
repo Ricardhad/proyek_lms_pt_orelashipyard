@@ -24,45 +24,66 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Helper function to perform the search
-const searchJawabanModul = async (query) => {
-    let searchQuery = JawabanModul.find()
-        .populate('courseID', 'namaCourse')
-        .populate('soalModulID', 'namaSoal')
-        .populate({
-            path: 'anakMagangID',
-            populate: { path: 'userID', select: 'namaUser' }
-        });
-
-    // Filter based on query parameters
-    if (query.namaCourse || query.namaSoal || query.namaUser) {
-        searchQuery = searchQuery.find({
-            $or: [
-                { 'courseID.namaCourse': { $regex: query.namaCourse, $options: 'i' } },
-                { 'soalModulID.namaSoal': { $regex: query.namaSoal, $options: 'i' } },
-                { 'anakMagangID.userID.namaUser': { $regex: query.namaUser, $options: 'i' } }
-            ]
-        });
-    }
-    if (query.jawabanType) {
-        searchQuery = searchQuery.find({ jawabanType: parseInt(query.jawabanType) });
-    }
-
-    return await searchQuery;
-};
-
 router.get("/Jawaban", async (req, res) => {
     const { namaCourse, namaSoal, namaUser, jawabanType } = req.query;
 
     try {
-        // Call the helper function to fetch data
-        let search = await searchJawabanModul(req.query);
+        let pipeline = [
+            {
+                $lookup: {
+                    from: 'Course', // assuming the collection name for the course model is 'courses'
+                    localField: 'courseID',
+                    foreignField: '_id',
+                    as: 'course'
+                }
+            },
+            {$unwind: '$course'},
+            {
+                $lookup: {
+                    from: 'SoalModul', // assuming the collection name for soalModul is 'soalModuls'
+                    localField: 'soalModulID',
+                    foreignField: '_id',
+                    as: 'soalModul'
+                }
+            },
+            {$unwind: '$soalModul'},
+            {
+                $lookup: {
+                    from: 'AnakMagang', // assuming the collection name for anakMagang is 'anakMagangs'
+                    localField: 'anakMagangID',
+                    foreignField: '_id',
+                    as: 'anakMagang'
+                }
+            },
+            {$unwind: '$anakMagang'},
+            {
+                $lookup: {
+                    from: 'UserData', // assuming the collection name for user is 'users'
+                    localField: 'anakMagang.userID',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {$unwind: '$user'},
+            {
+                $match: {
+                    $or: [
+                        { 'course.namaCourse': { $regex: new RegExp(namaCourse, 'i') } },
+                        { 'soalModul.namaSoal': { $regex: new RegExp(namaSoal, 'i') } },
+                        { 'user.namaUser': { $regex: new RegExp(namaUser, 'i') } },
+                        { 'jawabanType': { $regex: new RegExp(jawabanType, 'i') } }
+                    ]
+                }
+            }
+        ];
 
-        if (!search || search.length === 0) {
+        const results = await JawabanModul.aggregate(pipeline);
+
+        if (results.length === 0) {
             return res.status(404).json({ message: "No results found" });
         }
 
-        return res.status(200).json(search);
+        return res.status(200).json(results);
     } catch (error) {
         console.error("Error fetching JawabanModul data:", error);
         return res.status(500).json({ message: "Server error" });
