@@ -34,11 +34,29 @@ router.get("/Modul", async (req, res) => {
     let search;
     if (filter) {
         search = await Modul.find({ namaModul: { $regex: filter, $options: 'i' } });
-        if(search.length === 0){
+        if (search.length === 0) {
             search = await Modul.find({ Deskripsi: { $regex: filter, $options: 'i' } });
         }
     } else {
         search = await Modul.find();
+    }
+    if (search.length === 0) {
+        return res.status(404).json({ message: "No results found" });
+    }
+    return res.status(200).json(search);
+})
+router.get("/Soal", async (req, res) => {
+    const { filter, SoalType } = req.query;
+    let search;
+    if (filter) {
+        search = await SoalModul.find({ namaSoal: { $regex: filter, $options: 'i' } });
+        if (search.length === 0) {
+            search = await SoalModul.find({ Deskripsi: { $regex: filter, $options: 'i' } });
+        }
+    } else if (SoalType) {
+        search = await SoalModul.find({ SoalType: parseInt(SoalType) });
+    } else {
+        search = await SoalModul.find();
     }
     if (search.length === 0) {
         return res.status(404).json({ message: "No results found" });
