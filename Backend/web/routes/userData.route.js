@@ -139,19 +139,20 @@ router.post('/register', async (req, res) => {
 // Login endpoint
 router.post('/login', async (req, res) => {
   try {
+    // Validasi input login
     const { error } = loginSchema.validate(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
     const { email, password } = req.body;
 
-    // Check if user exists
+    // Cek apakah pengguna ada di database
     const user = await UserData.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid email or password.' });
 
-    // Check if user is verified
+    // Cek apakah pengguna sudah diverifikasi
     if (!user.isVerified) return res.status(403).json({ message: 'User not verified.' });
 
-    // Compare password
+    // Cek apakah password yang dimasukkan sesuai dengan password yang ada di database
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid email or password.' });
 
@@ -162,11 +163,34 @@ router.post('/login', async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    res.status(200).json({ message: 'Login successful.', token });
+    // Cek roleType dan arahkan sesuai dengan role
+    let roleBasedRedirect = '';
+    switch (user.roleType) {
+      case 0: // Admin
+        roleBasedRedirect = '/admin/home';
+        break;
+      case 1: // Mentor
+        roleBasedRedirect = '/mentor/home';
+        break;
+      case 2: // Anak Magang
+        roleBasedRedirect = '/intern/home';
+        break;
+      default:
+        return res.status(400).json({ message: 'Invalid user role.' });
+    }
+
+    // Kirim response dengan token dan halaman tujuan berdasarkan role
+    res.status(200).json({ 
+      message: 'Login successful.',
+      token,
+      roleBasedRedirect
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Error logging in.', error });
+    console.error(error);
+    res.status(500).json({ message: 'Error logging in.', error: error.message });
   }
 });
+
 
 router.get('/all', async (req, res) => {
   try {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import * as jwtdecode from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -32,21 +32,21 @@ const Login = () => {
   
       localStorage.setItem("token", response.data.token);
       const token = localStorage.getItem("token");
-      // console.log(jwtdecode.jwtDecode)
-      const decode =jwtdecode.jwtDecode
-      const decodedToken = decode(token);
-      // console.log(jwt_decode(token))
-      // Pastikan roleType ada dalam response dan merupakan angka
+
+      // Dekode token dan pastikan roleType ada dalam token
+      const decodedToken = jwtDecode(token);
+      console.log("Decoded Token:", decodedToken); // Debug log untuk melihat isi token
+
       const roleType = decodedToken.roleType;
-      // console.log("roleType:", roleType); // Debug log untuk roleType
+      console.log("roleType:", roleType); // Debug log untuk memastikan roleType ada dan memiliki nilai yang benar
   
       // Periksa nilai roleType dan arahkan sesuai
       if (roleType === 0) {
-        navigate("/home"); // Halaman untuk roleType 0 (admin)
-      } else if (!roleType == 1) {
-        navigate("/homeMentor"); // Halaman untuk roleType 1 (mentor)
-      } else if (!roleType === 2) {
-        navigate("/homeMagang"); // Halaman untuk roleType 2 (magang)
+        navigate("/home"); // Halaman untuk admin
+      } else if (roleType === 1) {
+        navigate("/homeMentor"); // Halaman untuk mentor
+      } else if (roleType === 2) {
+        navigate("/homeMagang"); // Halaman untuk magang
       } else {
         setError("Invalid role type"); // Pesan error jika roleType tidak valid
       }
@@ -56,12 +56,9 @@ const Login = () => {
       setLoading(false);
     }
   };
-  
-  
 
   // Gaya CSS sebagai objek JavaScript
   const style = {
-    
     body: {
       display: "flex",
       alignItems: "center",
@@ -147,7 +144,6 @@ const Login = () => {
   };
 
   return (
-    
     <div style={style.body}>
       <style>
         {`
@@ -177,7 +173,6 @@ const Login = () => {
               required
               style={style.input}
             />
-            
           </div>
 
           <div style={style.inputField}>
@@ -189,7 +184,6 @@ const Login = () => {
               required
               style={style.input}
             />
-            
           </div>
 
           <button type="submit" style={style.button} disabled={loading}>

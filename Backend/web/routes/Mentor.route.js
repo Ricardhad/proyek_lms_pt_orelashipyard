@@ -508,4 +508,49 @@ router.put("/:nilaiModulID/nilai", async (req, res) => {
     }
 });
 
+//rey absensi
+// Endpoint untuk mengabsensi anak magang
+router.post('/absensi', async (req, res) => {
+    const { userID, anakMagangID } = req.body; // userID dari mentor yang mengabsen, anakMagangID yang diabsen
+    
+    try {
+      // Cek apakah userID adalah seorang mentor
+      const mentor = await Mentor.findOne({ userID: userID });
+      if (!mentor) {
+        return res.status(403).json({ message: 'Anda bukan mentor yang sah untuk melakukan absensi.' });
+      }
+  
+      // Cek apakah user yang diabsen adalah anak magang (roleType 2)
+      const anakMagang = await UserData.findById(anakMagangID);
+      if (!anakMagang || anakMagang.roleType !== 2) {
+        return res.status(400).json({ message: 'User yang diabsen bukan anak magang.' });
+      }
+  
+      // Cek apakah Anak Magang tersebut terdaftar di kursus yang sama dengan mentor
+      const mentorCourses = mentor.courseID;
+      const anakMagangData = await AnakMagang.findOne({ userID: anakMagangID });
+      if (!anakMagangData || !mentorCourses.includes(anakMagangData.courseID)) {
+        return res.status(400).json({ message: 'Anak magang tidak terdaftar di kursus yang sama dengan mentor.' });
+      }
+  
+      // Tambahkan tanggal absensi (hari ini) ke absensiKelas anak magang
+      const today = new Date();
+      anakMagangData.absensiKelas.push(today);
+  
+      // Simpan perubahan pada data anak magang
+      await anakMagangData.save();
+  
+      res.status(200).json({
+        message: 'Absensi berhasil ditambahkan.',
+        absensiKelas: anakMagangData.absensiKelas
+      });
+  
+    } catch (error) {
+      console.error('Error processing attendance:', error);
+      res.status(500).json({ message: 'Terjadi kesalahan di server.' });
+    }
+  });
+
+
+
 module.exports = router;
