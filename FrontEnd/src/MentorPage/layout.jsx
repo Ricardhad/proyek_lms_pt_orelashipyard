@@ -1,10 +1,23 @@
 'use client'
 
-import { Avatar, Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, InputBase, Typography } from '@mui/material'
-import { styled } from '@mui/material/styles'
-import { Person, Book, Group, Chat, Campaign, Search as SearchIcon } from '@mui/icons-material'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import React from 'react';
+import {
+  Avatar,
+  Box,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  AppBar,
+  Toolbar,
+  InputBase,
+  Typography,
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import SearchIcon from '@mui/icons-material/Search';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -16,7 +29,7 @@ const Search = styled('div')(({ theme }) => ({
     marginLeft: theme.spacing(1),
     width: 'auto',
   },
-}))
+}));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -26,7 +39,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-}))
+}));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
@@ -36,19 +49,19 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     width: '100%',
   },
-}))
+}));
 
 const menuItems = [
-  { text: 'My Profile', icon: <Person />, path: '/profile' },
-  { text: 'Materials', icon: <Book />, path: '/materials' },
-  { text: 'My Intern', icon: <Group />, path: '/interns' },
-  { text: 'Group Chat', icon: <Chat />, path: '/chat' },
-  { text: 'Add Announcement', icon: <Campaign />, path: '/announcement' },
-]
+  { text: 'My Profile', icon: '👤', path: '/profile' },
+  { text: 'Materials', icon: '📚', path: '/materials' },
+  { text: 'My Intern', icon: '👥', path: '/interns' },
+  { text: 'Group Chat', icon: '💬', path: '/chat' },
+  { text: 'Add Announcement', icon: '📢', path: '/announcement' },
+];
 
 export default function Layout({ children }) {
-  const pathname = usePathname()
-  
+  const pathname = usePathname();
+
   return (
     <Box sx={{ display: 'flex' }}>
       <Drawer
@@ -116,9 +129,8 @@ export default function Layout({ children }) {
             </Search>
           </Toolbar>
         </AppBar>
-        {children}
+        <Box sx={{ p: 3 }}>{children}</Box>
       </Box>
     </Box>
-  )
+  );
 }
-

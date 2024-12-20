@@ -23,6 +23,7 @@ db.UserData.insertMany([
     noTelpon: "2345678901",
     email: "janesmith@example.com",
     password: "$2b$12$rP83GO14CPqOWI7lMZGhI.KOlEY1cVgNdLBEzg0iwBjpaliTSULNq", // "password123",
+    
   },
   {
     _id: ObjectId("605c72ef1532073d1b2c3b9c"),

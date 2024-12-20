@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Button, TextField, Typography, Paper, Grid } from '@mui/material'
-import Layout from '@/components/layout'
+import Layout from '@/MentorPage/components/layout'
 import { Image, Description, Add, Person } from '@mui/icons-material'
 import { useRouter } from 'next/navigation'
 

@@ -11,6 +11,10 @@ import AddCourse from "./AdminPage/AddCourse";
 import AddAnnouncement from "./AdminPage/AddAnouncement";
 
 
+import MentorPage from "./MentorPage/MentorPage"; // Import MentorPage
+import MaterialsPage from "./MentorPage/MaterialPage"; // Import MaterialsPage
+import InternsPage from "./MentorPage/InternsPage"; // Import InternsPage
+
 
 function App() {
   return (
@@ -29,7 +33,10 @@ function App() {
         <Route path="/course" element={<Course />} />
         <Route path="/addcourse" element={<AddCourse />} />
         <Route path="/addannouncement" element={<AddAnnouncement />} />
-  
+
+        <Route path="/homeMentor" element={<MentorPage />} />
+        <Route path="/homeMentor/materials" element={<MaterialsPage />} /> {/* Materials page */}
+        <Route path="/homeMentor/interns" element={<InternsPage />} /> {/* Interns page */}
       </Routes>
     </Router>
   );
