@@ -387,6 +387,26 @@ router.get("/Mentor", async (req, res) => {
     }
 });
 
+// Endpoint untuk mengambil semua data UserData dengan roleType 1 (mentor)
+router.get('/mentors', async (req, res) => {
+  try {
+    // Cari semua user dengan roleType 1 (mentor)
+    const mentors = await UserData.find({ roleType: 1 });
+
+    // Jika tidak ada mentor ditemukan
+    if (mentors.length === 0) {
+      return res.status(404).json({ message: 'No mentors found.' });
+    }
+
+    // Kirimkan data mentor yang ditemukan
+    res.status(200).json({ mentors });
+  } catch (error) {
+    console.error('Error fetching mentors:', error);
+    res.status(500).json({ message: 'Error fetching mentors.', error });
+  }
+});
+
+
 //======================= Anouncement =======================
 
 

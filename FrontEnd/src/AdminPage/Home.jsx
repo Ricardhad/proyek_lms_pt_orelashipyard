@@ -3,6 +3,7 @@ import AddInterns from "./AddInterns";
 import ListInterns from "./ListInterns"; 
 import Course from "./Course"; // Tambahkan komponen Course
 import Announcement from "./Anounncement";
+import Mentor from "./Mentor";
 import client from "../client"; // Axios instance for API calls
 import { useNavigate } from "react-router-dom"; // Untuk navigasi logout
 
@@ -50,7 +51,9 @@ const Home = () => {
       case "courses":
         return <Course />;
       case "announcement":
-        return <Announcement />;  
+        return <Announcement />; 
+      case "mentors":
+        return <Mentor />; 
       default:
         return <AddInterns />;
     }
