@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import Sidebar from './components/sidebar';
+import Sidebar from './sidebar';
 
-export default function MainLayout({ children }) {
+export default function Layout({ children }) {
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar />
