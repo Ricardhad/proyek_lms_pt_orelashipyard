@@ -6,7 +6,8 @@ const {
     Modul, JawabanModul, SoalModul, NilaiModul,
     validateArrayOfIDs,
     checkIdValid,
-    checkIdExist
+    checkIdExist,
+    validateArrayOfIDsCheckRole
 } = require("./functions");
 
 const Joi = require('joi');
@@ -515,7 +516,7 @@ router.post('/absensi', async (req, res) => {
     const { mentorID, anakMagangID } = req.body; // ngambil id dari userdata untuk ngecek roleType
     //njir lah pengecekan e aneh ngene pek gk consistent
     try {
-        // Cek apakah userID adalah seorang mentor
+        // Cek apakah userID adalah seorang mentor  
         const mentorUser = await Mentor.findById(mentorID);
         // console.log(mentor)
         if (!mentorUser) {
@@ -527,20 +528,12 @@ router.post('/absensi', async (req, res) => {
             return res.status(400).json({ message: 'user not eligible to absent' });
         }
         // Cek apakah user yang diabsen adalah anak magang (roleType 2)
-        const anakMagang = await UserData.findById(userIDAnakMagang);
-        // console.log(anakMagang)
-        if (!anakMagang || anakMagang.roleType !== 2) {
-            return res.status(400).json({ message: 'User yang diabsen bukan anak magang.' });
+        let checkArrayId = anakMagangID;
+        if ( checkArrayId&& checkArrayId != []) {
+            checkArrayId = validateArrayOfIDsCheckRole(AnakMagang, anakMagangID, "anakMagang",2);
         }
-
-        // Cek apakah Anak Magang tersebut terdaftar di kursus yang sama dengan mentor
-        const mentorCourses = mentor.courseID;
-        const anakMagangData = await AnakMagang.findOne({ userID: userIDAnakMagang });
-        if (!anakMagangData || !mentorCourses.includes(anakMagangData.courseID)) {
-            return res.status(400).json({ message: 'Anak magang tidak terdaftar di kursus yang sama dengan mentor.' });
-        }
-
-        // Tambahkan tanggal absensi (hari ini) ke absensiKelas anak magang
+    
+        const anakMagangData = await AnakMagang.findById(anakMagangID);
         const today = new Date();
         anakMagangData.absensiKelas.push(today);
 

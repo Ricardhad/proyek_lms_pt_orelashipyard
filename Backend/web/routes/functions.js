@@ -34,6 +34,30 @@ const validateArrayOfIDs = async (model, mappedId, modelName) => {
 
     return validDocuments.map((doc) => doc._id);
 };
+const validateArrayOfIDsCheckRole = async (model, mappedId, modelName,roleType) => {
+
+    if (!Array.isArray(mappedId)) {
+        throw new Error(`${modelName} IDs must be provided as an array.`);
+    }
+
+    let ids;
+    try {
+        ids = mappedId.map((id) => new mongoose.Types.ObjectId(id));
+    } catch (err) {
+        throw new Error(`Invalid ${modelName} ID format.`);
+    }
+
+    const validDocuments = await model.find({ _id: { $in: ids } });
+
+    if (validDocuments.length !== ids.length) {
+        throw new Error(`One or more IDs do not exist in the ${modelName} collection.`);
+    }
+    if (validDocuments.roleType !== roleType){
+        throw new Error(`roleType doesnt match the required type in the ${modelName} collection.`);
+    }
+
+    return validDocuments.map((doc) => doc._id);
+};
 const checkIdValid = (value, helpers) => {
     if (!mongoose.Types.ObjectId.isValid(value)) {
         return helpers.error("any.invalid", { value });
@@ -47,6 +71,7 @@ const checkIdExist = async(Model, id) => {
 
 module.exports = {
     validateArrayOfIDs,
+    validateArrayOfIDsCheckRole,
     checkIdValid,
     checkIdExist,
     Course,
