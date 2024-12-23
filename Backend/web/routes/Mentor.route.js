@@ -515,6 +515,31 @@ router.put("/:nilaiModulID/nilai", async (req, res) => {
 router.post('/absensi', async (req, res) => {
     const { mentorID, anakMagangID } = req.body;
 
+    const schema = Joi.object({
+        mentorID: Joi.string().required().custom(checkIdValid,"object validation").messages({
+            'string.base': 'Mentor ID must be a string.',
+            'string.empty': 'Mentor ID cannot be empty.',
+            'any.required': 'Mentor ID is required.',
+        }),
+        anakMagangID: Joi.array().items(
+            Joi.string().required().messages({
+                'string.base': 'Each Anak Magang ID must be a string.',
+                'string.empty': 'An Anak Magang ID cannot be empty.',
+                'any.required': 'An Anak Magang ID is required.',
+            })
+        ).required().messages({
+            'array.base': 'Anak Magang IDs must be an array.',
+            'array.includesRequiredUnknowns': 'Anak Magang IDs must contain valid strings.',
+            'any.required': 'Anak Magang IDs are required.',
+        }),
+    });
+
+    // Usage
+    const { error, value } = schema.validate(req.body);
+
+    if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+    }
     try {
         // Check if the mentor exists
         const mentorUser = await Mentor.findById(mentorID);
@@ -558,6 +583,77 @@ router.post('/absensi', async (req, res) => {
         res.status(500).json({ message: 'An error occurred on the server.' });
     }
 });
+router.put('/:id/absensi', async (req, res) => {
+    const id = req.params.id;
+    const { mentorID, anakMagangID } = req.body;
+
+    try {
+        // Validate Mentor existence and role
+        const mentorUser = await Mentor.findById(mentorID);
+        if (!mentorUser) {
+            return res.status(403).json({ message: 'Mentor not found in the database' });
+        }
+
+        const mentorInUser = await UserData.findById(mentorUser.userID);
+        if (!mentorInUser || mentorInUser.roleType !== 1) {
+            return res.status(400).json({ message: 'User is not eligible to update attendance' });
+        }
+
+        // Validate AnakMagang IDs
+        const validatedIds = await validateArrayOfIDsCheckRole(AnakMagang, anakMagangID, 'anakMagang', 2);
+
+        // Find existing attendance record by ID
+        let attendanceRecord = await Absensi.findById(id);
+
+        if (attendanceRecord) {
+            // Update the attendance record
+            attendanceRecord.absensiKelas = [...new Set([...attendanceRecord.absensiKelas, ...validatedIds])]; // Ensure unique IDs
+            await attendanceRecord.save();
+
+            // Update AnakMagang's attendance field
+            const today = attendanceRecord.tanggalAbsensi;
+            for (const anakID of validatedIds) {
+                const anakMagangData = await AnakMagang.findById(anakID);
+                if (!anakMagangData.absensiKelas.includes(today)) {
+                    anakMagangData.absensiKelas.push(today); // Push attendance date
+                    await anakMagangData.save();
+                }
+            }
+
+            return res.status(200).json({
+                message: 'Attendance record updated successfully.',
+                updatedAttendance: attendanceRecord,
+            });
+        } else {
+            // Create a new attendance record if not found
+            const today = new Date().toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+            const newAttendance = new Absensi({
+                _id: id,
+                courseID: mentorUser.courseID,
+                tanggalAbsensi: today,
+                absensiKelas: validatedIds,
+            });
+
+            await newAttendance.save();
+
+            // Update AnakMagang's attendance field
+            for (const anakID of validatedIds) {
+                const anakMagangData = await AnakMagang.findById(anakID);
+                anakMagangData.absensiKelas.push(today); // Push attendance date
+                await anakMagangData.save();
+            }
+
+            return res.status(201).json({
+                message: 'New attendance record created successfully.',
+                newAttendance,
+            });
+        }
+    } catch (error) {
+        console.error('Error processing attendance update:', error);
+        res.status(500).json({ message: 'An error occurred on the server.', error: error.message });
+    }
+});
+
 
 
 module.exports = router;
