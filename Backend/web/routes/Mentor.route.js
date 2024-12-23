@@ -513,9 +513,14 @@ router.put("/:nilaiModulID/nilai", async (req, res) => {
 //rey absensi
 // Endpoint untuk mengabsensi anak magang
 router.post('/absensi', async (req, res) => {
-    const { mentorID, anakMagangID } = req.body;
+    const {courseID, mentorID, anakMagangID } = req.body;
 
     const schema = Joi.object({
+        courseID: Joi.string().required().custom(checkIdValid,"object validation").messages({
+            'string.base': 'course ID must be a string.',
+            'string.empty': 'course ID cannot be empty.',
+            'any.required': 'course ID is required.',
+        }),
         mentorID: Joi.string().required().custom(checkIdValid,"object validation").messages({
             'string.base': 'Mentor ID must be a string.',
             'string.empty': 'Mentor ID cannot be empty.',
@@ -542,20 +547,32 @@ router.post('/absensi', async (req, res) => {
     }
     try {
         // Check if the mentor exists
+        const coursefind = await Course.findById(courseID);
+        if (!coursefind) {
+            return res.status(403).json({ message: 'course not found in the database' });
+        }
+
         const mentorUser = await Mentor.findById(mentorID);
         if (!mentorUser) {
             return res.status(403).json({ message: 'Mentor not found in the database' });
         }
-
-        // Check mentor's role
-        const mentorInUser = await UserData.findById(mentorUser.userID);
-        if (!mentorInUser || mentorInUser.roleType !== 1) {
-            return res.status(400).json({ message: 'User is not eligible to mark attendance' });
+        const checkCourseMentor = mentorUser.courseID
+        // const checking =checkIdValid(coursefind)
+        // console.log(checking)
+        // let find =false
+        for (const id of checkCourseMentor){
+            if(id == coursefind.id){
+                find = true
+            }
+        }
+        if(!find){
+            return res.status(404).json({ message: 'courseId not found in mentor' });
         }
 
-        // Validate anakMagangID array
-        const validatedIds = await validateArrayOfIDsCheckRole(AnakMagang, anakMagangID, "anakMagang", 2);
 
+        // Validate anakMagangID array
+        const validatedIds = await validateArrayOfIDs(AnakMagang, anakMagangID, "anakMagang");
+        console.log(validatedIds);
         const today = new Date();
 
         // Update each AnakMagang's absensiKelas field
@@ -567,7 +584,7 @@ router.post('/absensi', async (req, res) => {
 
         // Create new Absensi document
         const absenToday = new Absensi({
-            courseID: mentorUser.courseID,
+            courseID: coursefind.id,
             tanggalAbsensi: today,
             absensiKelas: validatedIds, // Use validated IDs
         });
