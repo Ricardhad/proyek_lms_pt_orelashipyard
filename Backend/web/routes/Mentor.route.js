@@ -511,26 +511,28 @@ router.put("/:nilaiModulID/nilai", async (req, res) => {
 //rey absensi
 // Endpoint untuk mengabsensi anak magang
 router.post('/absensi', async (req, res) => {
-  const { userID, anakMagangID } = req.body; // userID dari mentor yang mengabsen, anakMagangID yang diabsen
-  
+  const { userIDMentor, userIDAnakMagang } = req.body; // ngambil id dari userdata untuk ngecek roleType
+  //njir lah pengecekan e aneh ngene pek gk consistent
   try {
     // Cek apakah userID adalah seorang mentor
-    const mentor = await Mentor.findOne({ userID: userID });
-    console.log(mentor)
+    const mentor = await UserData.findById(userIDMentor);
+    // console.log(mentor)
     if (!mentor) {
-      return res.status(403).json({ message: 'Anda bukan mentor yang sah untuk melakukan absensi.' });
+      return res.status(403).json({ message: 'mentor not found in db' });
     }
-
+    if(mentor.roleType !== 1 ){
+        return res.status(400).json({ message: 'user not eligible to absent' });
+    }
     // Cek apakah user yang diabsen adalah anak magang (roleType 2)
-    const anakMagang = await UserData.findById(anakMagangID);
-    console.log(anakMagang)
+    const anakMagang = await UserData.findById(userIDAnakMagang);
+    // console.log(anakMagang)
     if (!anakMagang || anakMagang.roleType !== 2) {
       return res.status(400).json({ message: 'User yang diabsen bukan anak magang.' });
     }
 
     // Cek apakah Anak Magang tersebut terdaftar di kursus yang sama dengan mentor
     const mentorCourses = mentor.courseID;
-    const anakMagangData = await AnakMagang.findOne({ userID: anakMagangID });
+    const anakMagangData = await AnakMagang.findOne({ userID: userIDAnakMagang });
     if (!anakMagangData || !mentorCourses.includes(anakMagangData.courseID)) {
       return res.status(400).json({ message: 'Anak magang tidak terdaftar di kursus yang sama dengan mentor.' });
     }
@@ -541,6 +543,8 @@ router.post('/absensi', async (req, res) => {
 
     // Simpan perubahan pada data anak magang
     await anakMagangData.save();
+    //anck lah absensi schema e blm coy
+    
 
     res.status(200).json({
       message: 'Absensi berhasil ditambahkan.',

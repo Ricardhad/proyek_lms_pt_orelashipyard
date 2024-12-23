@@ -5,7 +5,7 @@ const anakMagangSchema = new mongoose.Schema({
   courseID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Course' },
   userID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'UserData' },
   absensiKelas: [
-    { type: Date, required: true }
+    { type: Date, ref:'Absensi' }
   ]
 }, {
   collection: 'AnakMagang',
