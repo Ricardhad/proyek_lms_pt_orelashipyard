@@ -43,9 +43,9 @@ const Login = () => {
       // Periksa nilai roleType dan arahkan sesuai
       if (roleType === 0) {
         navigate("/home"); // Halaman untuk roleType 0 (admin)
-      } else if (!roleType == 1) {
+      } else if (roleType == 1) {
         navigate("/homeMentor"); // Halaman untuk roleType 1 (mentor)
-      } else if (!roleType === 2) {
+      } else if (roleType === 2) {
         navigate("/homeMagang"); // Halaman untuk roleType 2 (magang)
       } else {
         setError("Invalid role type"); // Pesan error jika roleType tidak valid

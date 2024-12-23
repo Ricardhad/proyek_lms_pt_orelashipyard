@@ -1,7 +1,5 @@
-'use client'
-
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate, useParams } from 'react-router-dom';
 import MainLayout from '../../../main-layout';
 import {
   Box,
@@ -15,10 +13,10 @@ import {
   Stack,
   Paper,
 } from '@mui/material';
-import Image from 'next/image';
 
-export default function MaterialForm({ params }) {
-  const router = useRouter();
+export default function MaterialForm() {
+  const navigate = useNavigate();
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     question1: '',
     question2: '',
@@ -39,12 +37,12 @@ export default function MaterialForm({ params }) {
     <MainLayout>
       <Box sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
         <Stack direction="row" justifyContent="space-between" sx={{ mb: 4 }}>
-          <Typography variant="h3">Materi {params.id}</Typography>
+          <Typography variant="h3">Materi {id}</Typography>
           <Stack direction="row" spacing={2}>
             <Button
               variant="contained"
               color="inherit"
-              onClick={() => router.back()}
+              onClick={() => navigate(-1)}
             >
               Back
             </Button>

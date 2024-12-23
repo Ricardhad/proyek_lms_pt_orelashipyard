@@ -1,7 +1,5 @@
-'use client'
-
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '../main-layout';
 import {
   Box,
@@ -10,18 +8,18 @@ import {
   Avatar,
   Stack,
   Chip,
-  Grid,
+  Grid2 as Grid,
 } from '@mui/material';
-import Image from 'next/image';
-
+// import Grid from '@mui/material/Unstable_Grid2';
 export default function Materials() {
-  const router = useRouter();
-  
+  const navigate = useNavigate();
+  // <Route path="/homeMagang/materials/:id/form" element={<MaterialForm />} />
+  // <Route path="/homeMagang/materials/:id/zip" element={<MaterialZip />} />
   const handleMaterialClick = (material) => {
     if (material.type === 'Latihan') {
-      router.push(`/${material.id}/form`);
+      navigate(`/homeMagang/materials/${material.id}/form`);
     } else if (material.type === 'Tugas') {
-      router.push(`/${material.id}/zip`);
+      navigate(`/homeMagang/materials/${material.id}/zip`);
     }
   };
 
@@ -64,69 +62,75 @@ export default function Materials() {
         {/* Header Section */}
         <Card sx={{ mb: 4, bgcolor: '#f0f0f0', position: 'relative', p: 4 }}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={8}>
-              <Typography variant="h3" gutterBottom>
-                HI, I&apos;m
-              </Typography>
-              <Typography variant="h2" gutterBottom>
-                Learning and Developer
-              </Typography>
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="h6" gutterBottom>
-                  Absensi
+            <div className="container flex">
+              <div className="container">
+              <Grid item xs={12} md={8}>
+                <Typography variant="h3" gutterBottom>
+                  HI, I&apos;m
                 </Typography>
-                <Stack direction="row" spacing={1}>
-                  {Array(15)
-                    .fill('✓')
-                    .map((check, index) => (
-                      <Typography
-                        key={index}
-                        sx={{
-                          color: index < 14 ? 'success.main' : 'text.disabled',
-                          fontSize: '24px',
-                        }}
-                      >
-                        {check}
-                      </Typography>
-                    ))}
-                </Stack>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Box sx={{ textAlign: 'center', p: 2 }}>
-                <Avatar
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/User%20Intern%20Page-0oscu56Bk080b1fN7QeSgGNpjLSSmq.png"
-                  sx={{
-                    width: 120,
-                    height: 120,
-                    mx: 'auto',
-                    mb: 2,
-                  }}
-                />
-                <Typography variant="h6">{profileData.name}</Typography>
-                <Typography color="text.secondary">{profileData.email}</Typography>
-                <Typography>{profileData.school}</Typography>
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  justifyContent="center"
-                  sx={{ mt: 1 }}
-                >
-                  <Box>
-                    <Typography variant="caption" color="text.secondary">
-                      No Wa
-                    </Typography>
-                    <Typography variant="body2">{profileData.noWa}</Typography>
+                <Typography variant="h2" gutterBottom>
+                  Learning and Developer
+                </Typography>
+                <Box sx={{ mt: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Absensi
+                  </Typography>
+                  <Stack direction="row" spacing={1}>
+                    {Array(15)
+                      .fill('✓')
+                      .map((check, index) => (
+                        <Typography
+                          key={index}
+                          sx={{
+                            color: index < 14 ? 'success.main' : 'text.disabled',
+                            fontSize: '24px',
+                          }}
+                        >
+                          {check}
+                        </Typography>
+                      ))}
+                  </Stack>
+                </Box>
+              </Grid>
+              </div>
+              <div className="container">
+                <Grid item xs={12} md={4}>
+                  <Box sx={{ textAlign: 'center', p: 2 }}>
+                    <Avatar
+                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/User%20Intern%20Page-0oscu56Bk080b1fN7QeSgGNpjLSSmq.png"
+                      sx={{
+                        width: 120,
+                        height: 120,
+                        mx: 'auto',
+                        mb: 2,
+                      }}
+                    />
+                    <Typography variant="h6">{profileData.name}</Typography>
+                    <Typography color="text.secondary">{profileData.email}</Typography>
+                    <Typography>{profileData.school}</Typography>
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      justifyContent="center"
+                      sx={{ mt: 1 }}
+                    >
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          No Wa
+                        </Typography>
+                        <Typography variant="body2">{profileData.noWa}</Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          NRP
+                        </Typography>
+                        <Typography variant="body2">{profileData.nrp}</Typography>
+                      </Box>
+                    </Stack>
                   </Box>
-                  <Box>
-                    <Typography variant="caption" color="text.secondary">
-                      NRP
-                    </Typography>
-                    <Typography variant="body2">{profileData.nrp}</Typography>
-                  </Box>
-                </Stack>
-              </Box>
-            </Grid>
+                </Grid>
+              </div>
+            </div>
           </Grid>
         </Card>
 
