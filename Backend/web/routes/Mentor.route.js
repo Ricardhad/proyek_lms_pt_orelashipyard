@@ -13,6 +13,7 @@ const Joi = require('joi');
 const mongoose = require('mongoose');
 const { upload } = require('./Middleware');
 const anakMagang = require('../models/AnakMagang');
+const Absensi = require('../models/Absensi');
 
 
 
@@ -421,7 +422,7 @@ router.post("/:ModulID/nilai", async (req, res) => {
     if (!existCourse) {
         return res.status(404).json({ message: "Course ID not found" });
     }
-    
+
     try {
         const nilaiModul = new NilaiModul({
             anakMagangID,
@@ -485,7 +486,7 @@ router.put("/:nilaiModulID/nilai", async (req, res) => {
     try {
         // Use findByIdAndUpdate with the nilaiModulID to find the record and update it
         const updatedNilaiModul = await NilaiModul.findByIdAndUpdate(
-            nilaiModulID, 
+            nilaiModulID,
             {
                 modulID: modulID || existNilaiModul.modulID, // Only update if provided
                 mentorID: mentorID || existNilaiModul.mentorID, // Only update if provided
@@ -511,50 +512,57 @@ router.put("/:nilaiModulID/nilai", async (req, res) => {
 //rey absensi
 // Endpoint untuk mengabsensi anak magang
 router.post('/absensi', async (req, res) => {
-  const { userIDMentor, userIDAnakMagang } = req.body; // ngambil id dari userdata untuk ngecek roleType
-  //njir lah pengecekan e aneh ngene pek gk consistent
-  try {
-    // Cek apakah userID adalah seorang mentor
-    const mentor = await UserData.findById(userIDMentor);
-    // console.log(mentor)
-    if (!mentor) {
-      return res.status(403).json({ message: 'mentor not found in db' });
+    const { mentorID, anakMagangID } = req.body; // ngambil id dari userdata untuk ngecek roleType
+    //njir lah pengecekan e aneh ngene pek gk consistent
+    try {
+        // Cek apakah userID adalah seorang mentor
+        const mentorUser = await Mentor.findById(mentorID);
+        // console.log(mentor)
+        if (!mentorUser) {
+            return res.status(403).json({ message: 'mentor not found in db' });
+        }
+        const idUserMentor = mentorUser.userID
+        const mentorInUser = await UserData.findbyId(idUserMentor)
+        if (mentorInUser.roleType !== 1) {
+            return res.status(400).json({ message: 'user not eligible to absent' });
+        }
+        // Cek apakah user yang diabsen adalah anak magang (roleType 2)
+        const anakMagang = await UserData.findById(userIDAnakMagang);
+        // console.log(anakMagang)
+        if (!anakMagang || anakMagang.roleType !== 2) {
+            return res.status(400).json({ message: 'User yang diabsen bukan anak magang.' });
+        }
+
+        // Cek apakah Anak Magang tersebut terdaftar di kursus yang sama dengan mentor
+        const mentorCourses = mentor.courseID;
+        const anakMagangData = await AnakMagang.findOne({ userID: userIDAnakMagang });
+        if (!anakMagangData || !mentorCourses.includes(anakMagangData.courseID)) {
+            return res.status(400).json({ message: 'Anak magang tidak terdaftar di kursus yang sama dengan mentor.' });
+        }
+
+        // Tambahkan tanggal absensi (hari ini) ke absensiKelas anak magang
+        const today = new Date();
+        anakMagangData.absensiKelas.push(today);
+
+        // Simpan perubahan pada data anak magang
+        await anakMagangData.save();
+        //anck lah absensi schema e blm coy
+        const absenToday = new Absensi({
+            courseID:mentor.courseID,
+            tanggalAbsensi: today,
+            absensiKelas: [anakMagangData.id]
+
+        })
+        const newAbsenRes = await absenToday.save()
+
+        res.status(200).json({
+            newAbsenRes
+        });
+
+    } catch (error) {
+        console.error('Error processing attendance:', error);
+        res.status(500).json({ message: 'Terjadi kesalahan di server.' });
     }
-    if(mentor.roleType !== 1 ){
-        return res.status(400).json({ message: 'user not eligible to absent' });
-    }
-    // Cek apakah user yang diabsen adalah anak magang (roleType 2)
-    const anakMagang = await UserData.findById(userIDAnakMagang);
-    // console.log(anakMagang)
-    if (!anakMagang || anakMagang.roleType !== 2) {
-      return res.status(400).json({ message: 'User yang diabsen bukan anak magang.' });
-    }
-
-    // Cek apakah Anak Magang tersebut terdaftar di kursus yang sama dengan mentor
-    const mentorCourses = mentor.courseID;
-    const anakMagangData = await AnakMagang.findOne({ userID: userIDAnakMagang });
-    if (!anakMagangData || !mentorCourses.includes(anakMagangData.courseID)) {
-      return res.status(400).json({ message: 'Anak magang tidak terdaftar di kursus yang sama dengan mentor.' });
-    }
-
-    // Tambahkan tanggal absensi (hari ini) ke absensiKelas anak magang
-    const today = new Date();
-    anakMagangData.absensiKelas.push(today);
-
-    // Simpan perubahan pada data anak magang
-    await anakMagangData.save();
-    //anck lah absensi schema e blm coy
-    
-
-    res.status(200).json({
-      message: 'Absensi berhasil ditambahkan.',
-      absensiKelas: anakMagangData.absensiKelas
-    });
-
-  } catch (error) {
-    console.error('Error processing attendance:', error);
-    res.status(500).json({ message: 'Terjadi kesalahan di server.' });
-  }
 });
 
 
