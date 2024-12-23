@@ -55,7 +55,7 @@ const validateArrayOfIDsCheckRole = async (model, mappedId, modelName, roleType)
     }
 
     // Check roleType for all documents
-    const invalidRoles = validDocuments.filter((doc) => doc.roleType !== roleType);
+    const invalidRoles = validDocuments.filter((doc) => doc.roleType !==parseInt( roleType));
     if (invalidRoles.length > 0) {
         throw new Error(`One or more ${modelName} IDs have an invalid roleType.`);
     }
