@@ -11,6 +11,7 @@ const Modul = require('../models/Modul');
 const JawabanModul = require('../models/JawabanModul');
 const SoalModul = require('../models/SoalModul');
 const NilaiModul = require('../models/NilaiModul');
+const Absensi = require('../models/Absensi');
 
 
 const validateArrayOfIDs = async (model, mappedId, modelName) => {
@@ -81,6 +82,7 @@ module.exports = {
     checkIdExist,
     Course,
     Mentor,
+    Absensi,
     Admin,
     UserData,
     Course,
