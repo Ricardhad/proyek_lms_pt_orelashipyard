@@ -35,7 +35,7 @@ const authenticate = (req, res, next) => {
 const registerSchema = Joi.object({
   namaUser: Joi.string().required(),
   Profile_Picture: Joi.string().allow(null, ''), // Terima null atau string kosong
-  roleType: Joi.number().required(),
+  roleType: Joi.number().valid(0,1,2).required(),
   noTelpon: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
@@ -88,31 +88,22 @@ router.post('/register', async (req, res) => {
     // Simpan pengguna baru ke database
     const savedUser = await newUser.save();
     console.info(savedUser);
-
-    switch (roleType) {
-      case 0:
-        const NewData = new Admin({
-          userID: savedUser._id
-        });
-        const savedData = await NewData.save();
-        console.info(savedData);
-        break;
-
-      case 1:
-        const NewMentor = new Mentor({
-          userID: savedUser._id
-        });
-        const savedMentor = await NewMentor.save();
-        console.info(savedMentor);
-        break;
-
-      case 2:
-        const NewAnakMagang = new AnakMagang({
-          userID: savedUser._id
-        });
-        const savedAnakMagang = await NewAnakMagang.save();
-        console.info(savedAnakMagang);
-        break;
+    const roleTypeParsed = parseInt(roleType)
+    if (roleTypeParsed === 0) {
+      const newAdmin = new Admin({ userID: savedUser._id });
+      const savedAdmin = await newAdmin.save();
+      console.info('Admin profile created:', savedAdmin);
+    } else if (roleTypeParsed === 1) {
+      const newMentor = new Mentor({ userID: savedUser._id });
+      const savedMentor = await newMentor.save();
+      console.info('Mentor profile created:', savedMentor);
+    } else if (roleTypeParsed === 2) {
+      const newAnakMagang = new AnakMagang({ userID: savedUser._id });
+      const savedAnakMagang = await newAnakMagang.save();
+      console.info('Anak Magang profile created:', savedAnakMagang);
+    } else {
+      console.warn('Invalid roleType:', roleType);
+      return res.status(400).json({ message: 'Invalid roleType provided.' });
     }
 
     // Generate JWT token tanpa payload, hanya ID pengguna
@@ -125,7 +116,7 @@ router.post('/register', async (req, res) => {
     // Kirim respons sukses dengan token
     res.status(201).json({
       message: 'User registered successfully.',
-      userId: savedUser._id,
+      savedUser,
       token,  // Kirim token yang dihasilkan
     });
   } catch (error) {

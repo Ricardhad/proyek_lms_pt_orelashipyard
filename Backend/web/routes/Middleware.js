@@ -72,4 +72,6 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
 });
 
+
+// bakal ditambah validation middleware buat jwt
 module.exports = { upload,answerDir,questionDocsDir,questionPicsDir,profilePictureDir };
