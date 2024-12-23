@@ -34,12 +34,12 @@ const validateArrayOfIDs = async (model, mappedId, modelName) => {
 
     return validDocuments.map((doc) => doc._id);
 };
-const validateArrayOfIDsCheckRole = async (model, mappedId, modelName,roleType) => {
-
+const validateArrayOfIDsCheckRole = async (model, mappedId, modelName, roleType) => {
     if (!Array.isArray(mappedId)) {
         throw new Error(`${modelName} IDs must be provided as an array.`);
     }
 
+    // Convert IDs to ObjectId
     let ids;
     try {
         ids = mappedId.map((id) => new mongoose.Types.ObjectId(id));
@@ -47,13 +47,17 @@ const validateArrayOfIDsCheckRole = async (model, mappedId, modelName,roleType) 
         throw new Error(`Invalid ${modelName} ID format.`);
     }
 
+    // Find matching documents
     const validDocuments = await model.find({ _id: { $in: ids } });
 
     if (validDocuments.length !== ids.length) {
         throw new Error(`One or more IDs do not exist in the ${modelName} collection.`);
     }
-    if (validDocuments.roleType !== roleType){
-        throw new Error(`roleType doesnt match the required type in the ${modelName} collection.`);
+
+    // Check roleType for all documents
+    const invalidRoles = validDocuments.filter((doc) => doc.roleType !== roleType);
+    if (invalidRoles.length > 0) {
+        throw new Error(`One or more ${modelName} IDs have an invalid roleType.`);
     }
 
     return validDocuments.map((doc) => doc._id);

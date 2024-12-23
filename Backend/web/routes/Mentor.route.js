@@ -513,51 +513,51 @@ router.put("/:nilaiModulID/nilai", async (req, res) => {
 //rey absensi
 // Endpoint untuk mengabsensi anak magang
 router.post('/absensi', async (req, res) => {
-    const { mentorID, anakMagangID } = req.body; // ngambil id dari userdata untuk ngecek roleType
-    //njir lah pengecekan e aneh ngene pek gk consistent
+    const { mentorID, anakMagangID } = req.body;
+
     try {
-        // Cek apakah userID adalah seorang mentor  
+        // Check if the mentor exists
         const mentorUser = await Mentor.findById(mentorID);
-        // console.log(mentor)
         if (!mentorUser) {
-            return res.status(403).json({ message: 'mentor not found in db' });
+            return res.status(403).json({ message: 'Mentor not found in the database' });
         }
-        const idUserMentor = mentorUser.userID
-        const mentorInUser = await UserData.findbyId(idUserMentor)
-        if (mentorInUser.roleType !== 1) {
-            return res.status(400).json({ message: 'user not eligible to absent' });
+
+        // Check mentor's role
+        const mentorInUser = await UserData.findById(mentorUser.userID);
+        if (!mentorInUser || mentorInUser.roleType !== 1) {
+            return res.status(400).json({ message: 'User is not eligible to mark attendance' });
         }
-        // Cek apakah user yang diabsen adalah anak magang (roleType 2)
-        let checkArrayId = anakMagangID;
-        if ( checkArrayId&& checkArrayId != []) {
-            checkArrayId = validateArrayOfIDsCheckRole(AnakMagang, anakMagangID, "anakMagang",2);
-        }
-    
-        const anakMagangData = await AnakMagang.findById(anakMagangID);
+
+        // Validate anakMagangID array
+        const validatedIds = await validateArrayOfIDsCheckRole(AnakMagang, anakMagangID, "anakMagang", 2);
+
         const today = new Date();
-        anakMagangData.absensiKelas.push(today);
 
-        // Simpan perubahan pada data anak magang
-        await anakMagangData.save();
-        //anck lah absensi schema e blm coy
+        // Update each AnakMagang's absensiKelas field
+        for (const id of validatedIds) {
+            const anakMagangData = await AnakMagang.findById(id);
+            anakMagangData.absensiKelas.push(today); // Push attendance date
+            await anakMagangData.save(); // Save updated document
+        }
+
+        // Create new Absensi document
         const absenToday = new Absensi({
-            courseID:mentor.courseID,
+            courseID: mentorUser.courseID,
             tanggalAbsensi: today,
-            absensiKelas: [anakMagangData.id]
-
-        })
-        const newAbsenRes = await absenToday.save()
-
-        res.status(200).json({
-            newAbsenRes
+            absensiKelas: validatedIds, // Use validated IDs
         });
 
+        const newAbsenRes = await absenToday.save();
+
+        res.status(200).json({
+            message: 'Attendance successfully recorded',
+            newAbsenRes,
+        });
     } catch (error) {
         console.error('Error processing attendance:', error);
-        res.status(500).json({ message: 'Terjadi kesalahan di server.' });
+        res.status(500).json({ message: 'An error occurred on the server.' });
     }
 });
-
 
 
 module.exports = router;
