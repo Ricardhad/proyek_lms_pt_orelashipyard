@@ -422,10 +422,85 @@
 					"response": []
 				},
 				{
-					"name": "New Request",
+					"name": "addnilai",
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "mentorID",
+									"value": "675155ef05cc9384d8a4cfec",
+									"type": "text"
+								},
+								{
+									"key": "anakMagangID",
+									"value": "675d2e2c3c0125faada1512f",
+									"type": "text"
+								},
+								{
+									"key": "nilai",
+									"value": "10",
+									"type": "text"
+								},
+								{
+									"key": "courseID",
+									"value": "605c72ef1532073d1b2c3c1a",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/Mentor/675155ef05cc9384d8a4cfec/nilai",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Mentor",
+								"675155ef05cc9384d8a4cfec",
+								"nilai"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateNilai",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "mentorID",
+									"value": "675155ef05cc9384d8a4cfec",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "anakMagangID",
+									"value": "675d2e2c3c0125faada1512f",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "nilai",
+									"value": "100",
+									"type": "text"
+								},
+								{
+									"key": "courseID",
+									"value": "605c72ef1532073d1b2c3c1a",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
 						"url": {
 							"raw": "http://localhost:3000/api/Mentor/675155ef05cc9384d8a4cfec/nilai",
 							"protocol": "http",
@@ -641,6 +716,10 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "chat",
+			"item": []
 		}
 	]
 }
