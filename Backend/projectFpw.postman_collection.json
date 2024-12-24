@@ -2,8 +2,10 @@
 	"info": {
 		"_postman_id": "72bd0335-9cd6-468a-81f0-b0402e06ba92",
 		"name": "projectFpw",
+		"description": "# yang udh ku bikin :\n\n## get:\n\n#### \\- admin:\n\nadmin\n\nanakMagang\n\nmentor\n\nannouncement(blm bikin collection)\n\n#### \\- mentor:\n\nModul\n\nsoal\n\njawaban\n\n#### \\-anakMagang:\n\nuser\n\njawaban\n\nannouncement(blm bikin collection)\n\n#### \\-modul\n\ndownloadsoal\n\ndownloadJawaban\n\n#### \\-userdata\n\nall (blm bikin collectionnya)\n\n### \\-chat\n\nchat\n\n## post:\n\n### \\- admin:\n\ncourse\n\nannouncement(blm bikin collection)\n\n#### \\- mentor:\n\nModul\n\nsoal\n\nnilai\n\n#### \\-anakMagang:\n\njawaban\n\n#### \\-modul\n\ndownloadsoal\n\ndownloadJawaban\n\n#### \\-userdata\n\nuser\n\nlogin\n\n### \\-chat\n\nchat(blm selesai)\n\n## put:\n\n#### \\- admin:\n\nanakMagang\n\nmentor\n\ncourse\n\n#### \\- mentor:\n\nmodul\n\nsoal\n\nnilai\n\n#### \\-anakMagang:\n\njawaban (blm selesai)\n\n### \\-chat\n\nchat(blm selesai)\n\n## delete:\n\n#### \\-admin\n\nanakMagang\n\nmentor\n\nunverifiedUser (blm selesai)\n\nannouncement(blm bikin collection)\n\n#### \\-userdata\n\nlogout(blmselesai)\n\n### \\-chat\n\nchat(blm selesai)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "32821974"
+		"_exporter_id": "32821974",
+		"_collection_link": "https://kelompok-2-api-spotify.postman.co/workspace/New-Team-Workspace~3a563d4f-71f5-4b93-a808-a2bd26e8e1a3/collection/32821974-72bd0335-9cd6-468a-81f0-b0402e06ba92?action=share&source=collection_link&creator=32821974"
 	},
 	"item": [
 		{
