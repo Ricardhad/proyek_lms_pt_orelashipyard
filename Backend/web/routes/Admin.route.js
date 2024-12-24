@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 const { 
   Course,Mentor,Admin,UserData,AnakMagang,
   Modul,JawabanModul,SoalModul,NilaiModul,
-  validateArrayOfIDs,checkIdValid
+  validateArrayOfIDs,checkIdValid,
+  checkDupes
 } =require("./functions");
 
 const Joi = require('joi');
@@ -280,9 +281,13 @@ router.post("/Course", async (req, res) => {
     MentorID: Joi.array().items(Joi.string()).optional(),
     daftarKelas: Joi.array().items(Joi.string()).optional(),
   });
+  const exist= checkDupes(Course,'namaCourse',name);
+  if(exist){
+    return res.status(400).json({message:"duplicate name enter new name"});
+  }
 
   // Validate request body
-  const { error } = schema.validate({ name, desc, MentorID, daftarKelas });
+  const { error } = schema.validateAsync({ name, desc, MentorID, daftarKelas });
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
   }

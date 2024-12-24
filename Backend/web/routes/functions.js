@@ -74,11 +74,19 @@ const checkIdExist = async(Model, id) => {
     const findExist = await Model.findById(id);
     return findExist;
 }
+const checkDupes = async (Model, input, value) => {
+    const existing = await Model.findOne({ [input]: value });
+    if (existing) {
+      throw new Error(`${input} already exists.`);
+    }
+    return value;
+  };
 
 module.exports = {
     validateArrayOfIDs,
     validateArrayOfIDsCheckRole,
     checkIdValid,
+    checkDupes,
     checkIdExist,
     Course,
     Mentor,
