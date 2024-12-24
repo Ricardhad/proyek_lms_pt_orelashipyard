@@ -81,7 +81,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/admin/675155ef05cc9384d8a4cfec/Mentor",
+							"raw": "http://localhost:3000/api/admin/6769092beb279873fc482fc5/Mentor",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -90,7 +90,7 @@
 							"path": [
 								"api",
 								"admin",
-								"675155ef05cc9384d8a4cfec",
+								"6769092beb279873fc482fc5",
 								"Mentor"
 							]
 						}
@@ -181,9 +181,16 @@
 				},
 				{
 					"name": "getMentor",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
 						"url": {
 							"raw": "http://localhost:3000/api/admin/Mentor",
 							"protocol": "http",
@@ -195,6 +202,13 @@
 								"api",
 								"admin",
 								"Mentor"
+							],
+							"query": [
+								{
+									"key": "namaUser",
+									"value": "john",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -550,6 +564,36 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "absensi",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"mentorID\":\"6769092beb279873fc482fc5\",\r\n    \"anakMagangID\":[\"675d2e2c3c0125faada1512f\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/Mentor/absensi",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Mentor",
+								"absensi"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -720,6 +764,57 @@
 		{
 			"name": "chat",
 			"item": []
+		},
+		{
+			"name": "userdata",
+			"item": [
+				{
+					"name": "addNewUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "namaUser",
+									"value": "babig",
+									"type": "text"
+								},
+								{
+									"key": "roleType",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "noTelpon",
+									"value": "123123",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/user/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
