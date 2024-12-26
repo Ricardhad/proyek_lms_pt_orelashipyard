@@ -13,7 +13,7 @@ const Joi = require('joi');
 const { verifyToken } = require('./Middleware');
 
 
-router.get('/', async (req, res) => {
+router.get('/',verifyToken([0]), async (req, res) => {
   // const token = localStorage.getItem('token');
   // console.log(token)
   try {
@@ -31,12 +31,12 @@ router.get('/', async (req, res) => {
 
 //rey tambahkan course
 // Endpoint untuk mengambil semua course
-router.get("/courses", async (req, res) => {
+router.get("/Course",verifyToken([0]), async (req, res) => {
   try {
     const courses = await Course.aggregate([
       {
         $lookup: {
-          from: "mentors", // Koleksi Mentor
+          from: "Mentor", // Koleksi Mentor
           localField: "mentorID",
           foreignField: "_id",
           as: "mentors",
@@ -45,8 +45,8 @@ router.get("/courses", async (req, res) => {
       { $unwind: { path: "$mentors", preserveNullAndEmptyArrays: true } },
       {
         $lookup: {
-          from: "userdatas", // Koleksi UserData
-          localField: "mentors.userID",
+          from: "UserData", // Koleksi UserData
+          localField: "Mentor.userID",
           foreignField: "_id",
           as: "mentorDetails",
         },
@@ -68,7 +68,7 @@ router.get("/courses", async (req, res) => {
   }
 });
 
-router.put('/:userId/verify', async (req, res) => {
+router.put('/:userId/verify',verifyToken([0]), async (req, res) => {
   const { userId } = req.params;
   const { isVerified } = req.body; // Pastikan ini boolean
 
@@ -95,7 +95,7 @@ router.put('/:userId/verify', async (req, res) => {
 
 //rey tambahkan edit user
 // Endpoint untuk edit user berdasarkan ID
-router.put('/:userId/editUser', async (req, res) => {
+router.put('/:userId/editUser',verifyToken([0]), async (req, res) => {
   const { userId } = req.params;
   const { namaUser, roletype, password, noTelpon } = req.body;
 
@@ -138,7 +138,7 @@ router.put('/:userId/editUser', async (req, res) => {
 });
 
 
-router.put("/:anakMagangId/anakMagang", async (req, res) => {
+router.put("/:anakMagangId/anakMagang",verifyToken([0]), async (req, res) => {
   const { anakMagangId } = req.params;
   const { courseID, asalSekolah } = req.body;
 
@@ -186,7 +186,7 @@ router.put("/:anakMagangId/anakMagang", async (req, res) => {
 });
 
 
-router.put("/:MentorId/Mentor", async (req, res) => {
+router.put("/:MentorId/Mentor",verifyToken([0]), async (req, res) => {
   const { MentorId } = req.params;
   const { courseID } = req.body; // courseID should be an array of ObjectIds
 
@@ -213,7 +213,7 @@ router.put("/:MentorId/Mentor", async (req, res) => {
   }
 });
 
-router.put("/:courseId/Course", async (req, res) => {
+router.put("/:courseId/Course",verifyToken([0]), async (req, res) => {
   const {courseId}= req.params;
   const { name, desc, MentorID, daftarKelas } = req.body;
 
@@ -265,7 +265,7 @@ router.put("/:courseId/Course", async (req, res) => {
   }
 });
 
-router.post("/Course", async (req, res) => {
+router.post("/Course",verifyToken([0]), async (req, res) => {
   const { name, desc, MentorID, daftarKelas } = req.body;
 
   // Joi validation schema
@@ -315,16 +315,16 @@ router.post("/Course", async (req, res) => {
 });
 
 
-router.get("/Course",verifyToken([0]), async (req, res) => {
-  const {name} = req.query;
-  const result = await Course.find({namaCourse: {$regex: new RegExp(name, 'i')}});
-  if(!result){
-    return res.status(404).json({ message: "course not found" });
-  }
-  return res.status(200).json(result);
-})
+// router.get("/Course",verifyToken([0]), async (req, res) => {
+//   const {name} = req.query;
+//   const result = await Course.find({namaCourse: {$regex: new RegExp(name, 'i')}});
+//   if(!result){
+//     return res.status(404).json({ message: "course not found" });
+//   }
+//   return res.status(200).json(result);
+// })
 
-router.get("/anakMagang", async (req, res) => {
+router.get("/anakMagang",verifyToken([0]), async (req, res) => {
     const { namaUser } = req.query;
 
     try {
@@ -360,7 +360,7 @@ router.get("/anakMagang", async (req, res) => {
     }
 });
 
-router.get("/Mentor", async (req, res) => {
+router.get("/Mentor",verifyToken([0]), async (req, res) => {
     const { namaUser } = req.query;
 
     try {
@@ -402,7 +402,7 @@ router.get("/Mentor", async (req, res) => {
 
 
 // GET: Mengambil semua pengumuman
-router.get("/announcements", async (req, res) => {
+router.get("/announcements",verifyToken([0]), async (req, res) => {
   try {
     const adminData = await Admin.findOne();
     if (!adminData || !adminData.announcements) {
@@ -418,7 +418,7 @@ router.get("/announcements", async (req, res) => {
 
 
 // POST: Menambahkan pengumuman baru
-router.post('/announcements', async (req, res) => {
+router.post('/announcements',verifyToken([0]), async (req, res) => {
   const { title, description, createdBy } = req.body;
 
   // Validasi input
@@ -474,7 +474,7 @@ router.post('/announcements', async (req, res) => {
 
 
 // PUT: Mengedit pengumuman
-router.put('/announcements/:announcementId', async (req, res) => {
+router.put('/announcements/:announcementId',verifyToken([0]), async (req, res) => {
   const { announcementId } = req.params;
   const { title, description } = req.body;
 
@@ -508,7 +508,7 @@ router.put('/announcements/:announcementId', async (req, res) => {
 });
 
 // DELETE: Menghapus pengumuman
-router.delete('/announcements/:announcementId', async (req, res) => {
+router.delete('/announcements/:announcementId',verifyToken([0]), async (req, res) => {
   const { announcementId } = req.params;
 
   try {

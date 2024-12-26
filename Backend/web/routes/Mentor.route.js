@@ -12,7 +12,7 @@ const {
 
 const Joi = require('joi');
 const mongoose = require('mongoose');
-const { upload } = require('./Middleware');
+const { upload, verifyToken } = require('./Middleware');
 const anakMagang = require('../models/AnakMagang');
 const Absensi = require('../models/Absensi');
 
@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
 });
 
 
-router.get("/Modul", async (req, res) => {
+router.get("/Modul",verifyToken([1]), async (req, res) => {
     const { filter } = req.query;
     let search;
     if (filter) {
@@ -49,7 +49,7 @@ router.get("/Modul", async (req, res) => {
     }
     return res.status(200).json(search);
 })
-router.get("/Soal", async (req, res) => {
+router.get("/Soal",verifyToken([1]), async (req, res) => {
     const { filter, SoalType } = req.query;
     let search;
     if (filter) {
@@ -68,7 +68,7 @@ router.get("/Soal", async (req, res) => {
     return res.status(200).json(search);
 })
 
-router.post("/Modul", async (req, res) => {
+router.post("/Modul",verifyToken([1]), async (req, res) => {
     const { name, desc, courseID, soalID, deadline } = req.body;
 
     // Joi validation schema
@@ -113,7 +113,7 @@ router.post("/Modul", async (req, res) => {
 
 
 // POST route
-router.post("/Soal", upload.single("uploadSoal"), async (req, res) => {
+router.post("/Soal",verifyToken([1]), upload.single("uploadSoal"), async (req, res) => {
     const { name, desc, SoalType, Pilihan, kunciJawaban } = req.body;
 
     // Process file upload if present
@@ -186,7 +186,7 @@ router.post("/Soal", upload.single("uploadSoal"), async (req, res) => {
 });
 
 
-router.put("/:id/Soal", upload.single("uploadSoal"), async (req, res) => {
+router.put("/:id/Soal",verifyToken([1]), upload.single("uploadSoal"), async (req, res) => {
     const { id } = req.params;  // Get the ID from the request params
     const { name, desc, SoalType, Pilihan, kunciJawaban } = req.body;
 
@@ -265,7 +265,7 @@ router.put("/:id/Soal", upload.single("uploadSoal"), async (req, res) => {
 });
 
 
-router.put("/:modulId/Modul", async (req, res) => {
+router.put("/:modulId/Modul",verifyToken([1]), async (req, res) => {
     const { name, desc, courseID, soalID, deadline } = req.body;
     const { modulId } = req.params; // Get modul ID from the URL parameter
 
@@ -322,7 +322,7 @@ router.put("/:modulId/Modul", async (req, res) => {
     }
 });
 
-router.get("/Jawaban", async (req, res) => {
+router.get("/Jawaban",verifyToken([1]), async (req, res) => {
     const { namaCourse, namaSoal, namaUser, jawabanType } = req.query;
 
     try {
@@ -388,7 +388,7 @@ router.get("/Jawaban", async (req, res) => {
     }
 });
 
-router.post("/:ModulID/nilai", async (req, res) => {
+router.post("/:ModulID/nilai",verifyToken([1]), async (req, res) => {
     const { ModulID } = req.params;
     const { mentorID, anakMagangID, catatan, nilai, courseID } = req.body;
 
@@ -440,7 +440,7 @@ router.post("/:ModulID/nilai", async (req, res) => {
         return res.status(500).json({ message: "Server error." });
     }
 });
-router.put("/:nilaiModulID/nilai", async (req, res) => {
+router.put("/:nilaiModulID/nilai",verifyToken([1]), async (req, res) => {
     const { nilaiModulID } = req.params;
     const { modulID, mentorID, anakMagangID, catatan, nilai, courseID } = req.body;
 
@@ -512,7 +512,7 @@ router.put("/:nilaiModulID/nilai", async (req, res) => {
 
 //rey absensi
 // Endpoint untuk mengabsensi anak magang
-router.post('/absensi', async (req, res) => {
+router.post('/absensi',verifyToken([1]), async (req, res) => {
     const {courseID, mentorID, anakMagangID } = req.body;
 
     const schema = Joi.object({
@@ -600,7 +600,7 @@ router.post('/absensi', async (req, res) => {
         res.status(500).json({ message: 'An error occurred on the server.' });
     }
 });
-router.put('/:id/absensi', async (req, res) => {
+router.put('/:id/absensi',verifyToken([1]), async (req, res) => {
     const id = req.params.id;
     const { mentorID, anakMagangID } = req.body;
 

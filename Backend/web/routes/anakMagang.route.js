@@ -12,7 +12,7 @@ const { upload } = require('./Middleware');
 const Joi = require('joi');
 const Absensi = require('../models/Absensi');
 
-router.get('/', async (req, res) => {
+router.get('/',verifyToken([2]), async (req, res) => {
     try {
         const result = await AnakMagang.find();
         if (result.length === 0) {
@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get("/Jawaban", async (req, res) => {
+router.get("/Jawaban",verifyToken([2]), async (req, res) => {
     const { namaCourse, namaSoal, namaUser, jawabanType } = req.query;
 
     try {
@@ -92,7 +92,7 @@ router.get("/Jawaban", async (req, res) => {
 });
 
 
-router.post("/Jawaban", upload.single("uploadJawaban"), async (req, res) => {
+router.post("/Jawaban",verifyToken([2]), upload.single("uploadJawaban"), async (req, res) => {
     const { anakMagangID, courseID, soalModulID, jawaban, jawabanType } = req.body;
     const uploadJawaban = req.file ? {
         fileName: req.file.filename,

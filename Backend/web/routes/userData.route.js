@@ -141,7 +141,9 @@ router.post('/login', async (req, res) => {
     if (!user) return res.status(400).json({ message: 'Invalid email or password.' });
 
     // Cek apakah pengguna sudah diverifikasi
-    if (!user.isVerified) return res.status(403).json({ message: 'User not verified.' });
+    if(user.roleType!=0){
+      if (!user.isVerified) return res.status(403).json({ message: 'User not verified.' });
+    }
 
     // Cek apakah password yang dimasukkan sesuai dengan password yang ada di database
     const isMatch = await bcrypt.compare(password, user.password);
