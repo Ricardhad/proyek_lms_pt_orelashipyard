@@ -8,7 +8,7 @@ const {
     checkIdValid,
     checkIdExist
 } = require("./functions");
-const { upload } = require('./Middleware');
+const { upload ,verifyToken } = require('./Middleware');
 const Joi = require('joi');
 const Absensi = require('../models/Absensi');
 
