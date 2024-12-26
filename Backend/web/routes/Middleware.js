@@ -4,23 +4,33 @@ const fs = require("fs");
 
 const jwt = require('jsonwebtoken');
 
-const verifyToken = (req, res, next) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
-
-  console.log("Received Token:", token); // Log the received token
-
-  if (!token) {
-    return res.status(401).json({ message: 'Access denied. No token provided.' });
-  }
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
-    req.user = decoded;
-    next();
-  } catch (err) {
-    console.error("Invalid token:", err);
-    res.status(400).json({ message: 'Invalid token.' });
-  }
-};
+const verifyToken = (allowedRoles = []) => {
+    return (req, res, next) => {
+      const token = req.header('Authorization')?.replace('Bearer ', '');
+  
+      console.log("Received Token:", token); // Log the received token
+  
+      if (!token) {
+        return res.status(401).json({ message: 'Access denied. No token provided.' });
+      }
+  
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+        req.user = decoded;
+  
+        // Check if the user's role is allowed
+        if (allowedRoles.length && !allowedRoles.includes(decoded.roleType)) {
+          return res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
+        }
+  
+        next();
+      } catch (err) {
+        console.error("Invalid token:", err);
+        res.status(400).json({ message: 'Invalid token.' });
+      }
+    };
+  };
+  
 
 // module.exports = verifyToken;
 

@@ -10,6 +10,7 @@ const {
 } =require("./functions");
 
 const Joi = require('joi');
+const { verifyToken } = require('./Middleware');
 
 
 router.get('/', async (req, res) => {
@@ -25,13 +26,6 @@ router.get('/', async (req, res) => {
     console.error("Error fetching data:", error);
     return res.status(500).send("Server error");
   }
-});
-
-// Schema validasi untuk menambahkan course
-const courseValidationSchema = Joi.object({
-  namaCourse: Joi.string().required(),
-  Deskripsi: Joi.string().optional().allow(""),
-  mentorID: Joi.array().items(Joi.string()).optional(),
 });
 
 
@@ -321,7 +315,7 @@ router.post("/Course", async (req, res) => {
 });
 
 
-router.get("/Course", async (req, res) => {
+router.get("/Course",verifyToken([0]), async (req, res) => {
   const {name} = req.query;
   const result = await Course.find({namaCourse: {$regex: new RegExp(name, 'i')}});
   if(!result){
