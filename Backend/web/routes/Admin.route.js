@@ -320,6 +320,16 @@ router.post("/Course", async (req, res) => {
   }
 });
 
+
+router.get("/Course", async (req, res) => {
+  const {name} = req.query;
+  const result = await Course.find({namaCourse: {$regex: new RegExp(name, 'i')}});
+  if(!result){
+    return res.status(404).json({ message: "course not found" });
+  }
+  return res.status(200).json(result);
+})
+
 router.get("/anakMagang", async (req, res) => {
     const { namaUser } = req.query;
 

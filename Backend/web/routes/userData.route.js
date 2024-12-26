@@ -10,6 +10,7 @@ const UserData = require('../models/UserData')
 const Mentor = require('../models/Mentor')
 const Admin = require('../models/Admin')
 const AnakMagang = require('../models/AnakMagang');
+const { Course } = require('./functions');
 
 // Middleware untuk autentikasi (contoh sederhana)
 
@@ -23,6 +24,7 @@ const registerSchema = Joi.object({
   noTelpon: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
+  course: Joi.string().optional()
 });
 
 const schema = Joi.object({
@@ -41,13 +43,13 @@ const loginSchema = Joi.object({
 router.post('/register', async (req, res) => {
   try {
     // Validasi request body menggunakan Joi
+    const { namaUser, Profile_Picture, roleType, noTelpon,email, password,course } = req.body;
+    console.log(req.body)
     const { error } = registerSchema.validate(req.body);
     if (error) {
       console.error('Validation error:', error.details[0].message);
       return res.status(400).json({ message: error.details[0].message });
     }
-
-    const { namaUser, Profile_Picture, roleType, noTelpon, email, password } = req.body;
 
     // Periksa apakah email sudah terdaftar
     const existingUser = await UserData.findOne({ email });
@@ -55,6 +57,14 @@ router.post('/register', async (req, res) => {
       console.warn('Email already registered:', email);
       return res.status(400).json({ message: 'Email already registered.' });
     }
+    let courseExist 
+    if(course !="" && course){
+      courseExist = await Course.findOne({namaCourse: course})
+      if (!courseExist) {
+        return res.status(400).json({ message: 'course not found' });
+      }
+    }
+
 
     // Hash password untuk keamanan
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -78,11 +88,17 @@ router.post('/register', async (req, res) => {
       const savedAdmin = await newAdmin.save();
       console.info('Admin profile created:', savedAdmin);
     } else if (roleTypeParsed === 1) {
-      const newMentor = new Mentor({ userID: savedUser._id });
+      const newMentor = new Mentor({ 
+        userID: savedUser._id,
+        courseID: [courseExist.id] || null
+       });
       const savedMentor = await newMentor.save();
       console.info('Mentor profile created:', savedMentor);
     } else if (roleTypeParsed === 2) {
-      const newAnakMagang = new AnakMagang({ userID: savedUser._id });
+      const newAnakMagang = new AnakMagang({ 
+        userID: savedUser._id,
+        courseID: courseExist.id || null
+       });
       const savedAnakMagang = await newAnakMagang.save();
       console.info('Anak Magang profile created:', savedAnakMagang);
     } else {
