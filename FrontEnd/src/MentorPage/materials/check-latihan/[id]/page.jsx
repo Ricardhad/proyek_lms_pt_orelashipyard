@@ -1,10 +1,7 @@
-'use client'
-
+import { useParams, useNavigate } from 'react-router-dom'
 import { Box, Typography, Paper, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar } from '@mui/material'
-import Layout from '@/components/layout'
+import Layout from '../../../components/layout'
 import { Image } from '@mui/icons-material'
-import { useRouter } from 'next/navigation'
-import { useParams } from 'next/navigation'
 
 const interns = [
   {
@@ -16,15 +13,59 @@ const interns = [
     avatar: '/placeholder.svg',
     score: '80/100'
   },
-  // Repeat intern data 6 more times for the example
+  {
+    id: '987654321',
+    name: 'John Doe',
+    email: 'john@example.com',
+    phone: '08987654321',
+    course: 'Web Development',
+    avatar: '/placeholder.svg',
+    score: '75/100'
+  },
+  {
+    id: '456789123',
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    phone: '08456789123',
+    course: 'Data Science',
+    avatar: '/placeholder.svg',
+    score: '90/100'
+  },
+  {
+    id: '789123456',
+    name: 'Alice Johnson',
+    email: 'alice@example.com',
+    phone: '08789123456',
+    course: 'Mobile App Development',
+    avatar: '/placeholder.svg',
+    score: '85/100'
+  },
+  {
+    id: '321654987',
+    name: 'Bob Williams',
+    email: 'bob@example.com',
+    phone: '08321654987',
+    course: 'UI/UX Design',
+    avatar: '/placeholder.svg',
+    score: '70/100'
+  },
+  {
+    id: '654987321',
+    name: 'Emma Brown',
+    email: 'emma@example.com',
+    phone: '08654987321',
+    course: 'Artificial Intelligence',
+    avatar: '/placeholder.svg',
+    score: '95/100'
+  }
 ]
 
 export default function CheckLatihanPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const params = useParams()
 
   const handleCheck = (internId) => {
-    router.push(`/materials/check-latihan/${params.id}/${internId}`)
+    navigate(`/homeMentor/materials/check-latihan/${params.id}/${internId}`)
   }
 
   return (
@@ -36,9 +77,9 @@ export default function CheckLatihanPage() {
           alignItems: 'center', 
           mb: 4 
         }}>
-          <Typography variant="h4">MATERIAL 3</Typography>
+          <Typography variant="h4">MATERIAL {params.id}</Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button variant="contained" sx={{ backgroundColor: '#e0e0e0', color: 'black' }}>
+            <Button variant="contained" sx={{ backgroundColor: '#e0e0e0', color: 'black' }} onClick={() => navigate(-1)}>
               Back
             </Button>
             <Button variant="contained" color="primary">
@@ -61,7 +102,7 @@ export default function CheckLatihanPage() {
           </Paper>
           
           <Box sx={{ flex: 1 }}>
-            <Typography variant="h5" sx={{ mb: 2 }}>Materi 3</Typography>
+            <Typography variant="h5" sx={{ mb: 2 }}>Materi {params.id}</Typography>
             <Typography sx={{ mb: 2 }}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut

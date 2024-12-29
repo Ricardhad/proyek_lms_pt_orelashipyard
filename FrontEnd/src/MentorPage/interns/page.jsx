@@ -1,8 +1,9 @@
-'use client'
-
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Avatar, Typography } from '@mui/material'
-import Layout from '@/components/layout'
-import Link from 'next/link'
+import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import Layout from '../components/layout'
+
+const MotionTableRow = motion.create(TableRow)
 
 const interns = [
   {
@@ -15,6 +16,7 @@ const interns = [
   },
   // Add more intern data as needed
 ]
+
 
 export default function InternsPage() {
   return (
@@ -32,34 +34,48 @@ export default function InternsPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {interns.map((intern) => (
-              <TableRow key={intern.id}>
+            {interns.map((intern, index) => (
+              <MotionTableRow 
+                key={intern.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                whileHover={{ scale: 0.9 }}
+              >
                 <TableCell>{intern.id}</TableCell>
                 <TableCell>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <Avatar src={intern.avatar} />
+                  <motion.div 
+                    style={{ display: 'flex', alignItems: 'center', gap: 12 }}
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
+                      <Avatar src={intern.avatar} alt={intern.name} />
+                    </motion.div>
                     <div>
                       <Typography variant="subtitle2">{intern.name}</Typography>
                       <Typography variant="body2" color="textSecondary">
                         {intern.email}
                       </Typography>
                     </div>
-                  </div>
+                  </motion.div>
                 </TableCell>
                 <TableCell>{intern.phone}</TableCell>
                 <TableCell>{intern.course}</TableCell>
                 <TableCell>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{ backgroundColor: '#e0e0e0', color: 'black' }}
-                    component={Link}
-                    href={`/interns/${intern.id}`}
-                  >
-                    Detail
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      sx={{ backgroundColor: '#e0e0e0', color: 'black' }}
+                      component={Link}
+                      to={`/homeMentor/interns/${intern.id}`}
+                    >
+                      Detail
+                    </Button>
+                  </motion.div>
                 </TableCell>
-              </TableRow>
+              </MotionTableRow>
             ))}
           </TableBody>
         </Table>

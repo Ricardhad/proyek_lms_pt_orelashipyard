@@ -1,34 +1,33 @@
-'use client'
-
 import { useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Box, Typography, Paper, TextField, Button, Radio, RadioGroup } from '@mui/material'
-import Layout from '@/components/layout'
+import Layout from '../../../../components/layout'
 
 const questions = [
   {
     type: 'essay',
     number: 1,
-    questionText: '',
-    answer: '',
+    questionText: 'Explain the concept of React hooks.',
+    answer: 'React hooks are functions that allow you to use state and other React features in functional components. They were introduced in React 16.8 to enable developers to use state and side-effects in functional components, which was previously only possible in class components.',
     score: ''
   },
   {
     type: 'multiple',
-    questionText: '',
-    options: ['', '', '', ''],
-    selectedOption: '',
+    questionText: 'Which of the following is not a built-in React hook?',
+    options: ['useState', 'useEffect', 'useContext', 'useHistory'],
+    selectedOption: '3',
     score: ''
   },
   {
     type: 'essay',
     number: 2,
-    questionText: '',
-    answer: '',
+    questionText: 'Describe the purpose of the useEffect hook in React.',
+    answer: 'The useEffect hook in React is used to perform side effects in functional components. It allows you to execute code after the component has rendered, such as fetching data, subscribing to events, or manually changing the DOM. useEffect can also handle cleanup by returning a function that runs when the component unmounts or when dependencies change.',
     score: ''
   }
 ]
 
-const EssayQuestion = ({ number, score, setScore }) => (
+const EssayQuestion = ({ number, questionText, answer, score, setScore }) => (
   <Paper 
     elevation={0}
     sx={{ 
@@ -59,7 +58,7 @@ const EssayQuestion = ({ number, score, setScore }) => (
     </Box>
     <TextField
       fullWidth
-      placeholder="Value"
+      value={questionText}
       variant="outlined"
       sx={{ 
         mb: 2,
@@ -68,12 +67,15 @@ const EssayQuestion = ({ number, score, setScore }) => (
           borderRadius: '4px'
         }
       }}
+      InputProps={{
+        readOnly: true,
+      }}
     />
     <TextField
       fullWidth
       multiline
       rows={4}
-      placeholder="Value"
+      value={answer}
       variant="outlined"
       sx={{ 
         backgroundColor: 'white',
@@ -81,11 +83,14 @@ const EssayQuestion = ({ number, score, setScore }) => (
           borderRadius: '4px'
         }
       }}
+      InputProps={{
+        readOnly: true,
+      }}
     />
   </Paper>
 )
 
-const MultipleChoiceQuestion = ({ score, setScore }) => (
+const MultipleChoiceQuestion = ({ questionText, options, selectedOption, score, setScore }) => (
   <Paper 
     elevation={0}
     sx={{ 
@@ -116,7 +121,7 @@ const MultipleChoiceQuestion = ({ score, setScore }) => (
     </Box>
     <TextField
       fullWidth
-      placeholder="Value"
+      value={questionText}
       variant="outlined"
       sx={{ 
         mb: 2,
@@ -125,11 +130,14 @@ const MultipleChoiceQuestion = ({ score, setScore }) => (
           borderRadius: '4px'
         }
       }}
+      InputProps={{
+        readOnly: true,
+      }}
     />
-    <RadioGroup sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      {[1, 2, 3, 4].map((num) => (
+    <RadioGroup value={selectedOption} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+      {options.map((option, index) => (
         <Box
-          key={num}
+          key={index}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -142,7 +150,7 @@ const MultipleChoiceQuestion = ({ score, setScore }) => (
           }}
         >
           <Radio 
-            value={num.toString()}
+            value={index.toString()}
             sx={{
               color: '#757575',
               '&.Mui-checked': {
@@ -152,7 +160,7 @@ const MultipleChoiceQuestion = ({ score, setScore }) => (
           />
           <TextField
             fullWidth
-            placeholder="Pilihan Jawaban"
+            value={option}
             variant="outlined"
             sx={{ 
               '& .MuiOutlinedInput-root': {
@@ -161,6 +169,9 @@ const MultipleChoiceQuestion = ({ score, setScore }) => (
                   border: 'none'
                 }
               }
+            }}
+            InputProps={{
+              readOnly: true,
             }}
           />
         </Box>
@@ -171,6 +182,8 @@ const MultipleChoiceQuestion = ({ score, setScore }) => (
 
 export default function InternFormCheckPage() {
   const [formQuestions, setFormQuestions] = useState(questions)
+  const { id, internId } = useParams()
+  const navigate = useNavigate()
 
   const handleScoreChange = (index, value) => {
     const newQuestions = [...formQuestions]
@@ -183,19 +196,23 @@ export default function InternFormCheckPage() {
       <Box sx={{ p: 3 }}>
         <Box sx={{ 
           display: 'flex', 
-          justifyContent: 'flex-end',
+          justifyContent: 'space-between',
           gap: 2,
           mb: 3
         }}>
-          <Button
-            variant="contained"
-            sx={{ backgroundColor: '#e0e0e0', color: 'black' }}
-          >
-            Back
-          </Button>
-          <Button variant="contained" color="primary">
-            Submit
-          </Button>
+          <Typography variant="h4">Check Latihan - Material {id} - Intern {internId}</Typography>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="contained"
+              sx={{ backgroundColor: '#e0e0e0', color: 'black' }}
+              onClick={() => navigate(-1)}
+            >
+              Back
+            </Button>
+            <Button variant="contained" color="primary">
+              Submit
+            </Button>
+          </Box>
         </Box>
 
         {formQuestions.map((question, index) => (
@@ -203,12 +220,17 @@ export default function InternFormCheckPage() {
             <EssayQuestion
               key={index}
               number={question.number}
+              questionText={question.questionText}
+              answer={question.answer}
               score={question.score}
               setScore={(value) => handleScoreChange(index, value)}
             />
           ) : (
             <MultipleChoiceQuestion
               key={index}
+              questionText={question.questionText}
+              options={question.options}
+              selectedOption={question.selectedOption}
               score={question.score}
               setScore={(value) => handleScoreChange(index, value)}
             />

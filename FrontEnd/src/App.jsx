@@ -10,11 +10,9 @@ import Course from "./AdminPage/Course";
 import AddCourse from "./AdminPage/AddCourse";
 import AddAnnouncement from "./AdminPage/AddAnouncement";
 
-
-import MentorPage from "./MentorPage/MentorPage"; // Import MentorPage
-import MaterialsPage from "./MentorPage/MaterialPage"; // Import MaterialsPage
-import InternsPage from "./MentorPage/InternsPage"; // Import InternsPage
-
+import MentorPage from "./MentorPage/MentorPage";
+import MaterialsPage from "./MentorPage/MaterialPage";
+import InternsPage from "./MentorPage/InternsPage";
 
 import InternProfile from "./InternPage/profile/page";
 import InternMaterials from "./InternPage/material/page";
@@ -25,14 +23,30 @@ import InternGroupChat from "./InternPage/group-chat/page";
 import MaterialForm from "./InternPage/materials/[id]/form/page";
 import MaterialZip from "./InternPage/materials/[id]/zip/page";
 
+// Import the pages we created before
+import MentorAnnouncementPage from "./MentorPage/announcement/page";
+import MentorCreateAnnouncementPage from "./MentorPage/announcement/create/page";
+import MentorEditAnnouncementPage from "./MentorPage/announcement/edit/[id]/page";
+import MentorViewAnnouncementPage from "./MentorPage/announcement/[id]/page";
+import MentorChatPage from "./MentorPage/chat/page";
+import MentorInternDetailPage from "./MentorPage/interns/[id]/page";
+import MentorInternsPage from "./MentorPage/interns/page";
+import MentorMaterialsPage from "./MentorPage/materials/page";
+import MentorAddMaterialPage from "./MentorPage/materials/add/page";
+import MentorAddFormPage from "./MentorPage/materials/add/form/page";
+import MentorZipSubmissionPage from "./MentorPage/materials/add/zip/page";
+import MentorAttendancePage from "./MentorPage/materials/add/attendance/page";
+import MentorCheckTugasPage from "./MentorPage/materials/check-tugas/[id]/page";
+import MentorCheckLatihanPage from "./MentorPage/materials/check-latihan/[id]/page";
+import MentorInternFormCheckPage from "./MentorPage/materials/check-latihan/[id]/[internId]/page";
+import MentorProfilePage from "./MentorPage/profile/page";
+
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Route ke halaman Login */}
+        {/* Existing routes */}
         <Route path="/" element={<Login />} />
-
-        {/* Route ke halaman Register */}
         <Route path="/register" element={<Register />} />
         <Route path="/test" element={<Test />} />
         <Route path="/home" element={<Home />} />
@@ -43,12 +57,10 @@ function App() {
         <Route path="/addcourse" element={<AddCourse />} />
         <Route path="/addannouncement" element={<AddAnnouncement />} />
 
-        <Route path="/homeMentor" element={<MentorPage />} />
-        <Route path="/homeMentor/materials" element={<MaterialsPage />} /> {/* Materials page */}
-        <Route path="/homeMentor/interns" element={<InternsPage />} /> {/* Interns page */}
+        {/* <Route path="/homeMentor" element={<MentorPage />} />
+        <Route path="/homeMentor/materials" element={<MaterialsPage />} />
+        <Route path="/homeMentor/interns" element={<InternsPage />} /> */}
 
-
-        {/* New routes for our previously created pages */}
         <Route path="/homeMagang/" element={<InternProfile />} />
         <Route path="/homeMagang/materials" element={<InternMaterials />} />
         <Route path="/homeMagang/homework" element={<InternHomework />} />
@@ -57,9 +69,28 @@ function App() {
         <Route path="/homeMagang/group-chat" element={<InternGroupChat />} />
         <Route path="/homeMagang/materials/:id/form" element={<MaterialForm />} />
         <Route path="/homeMagang/materials/:id/zip" element={<MaterialZip />} />
+
+        {/* New routes for the pages we created before */}
+        <Route path="/homeMentor/announcements" element={<MentorAnnouncementPage />} />
+        <Route path="/homeMentor/announcements/create" element={<MentorCreateAnnouncementPage />} />
+        <Route path="/homeMentor/announcements/edit/:id" element={<MentorEditAnnouncementPage />} />
+        <Route path="/homeMentor/announcements/:id" element={<MentorViewAnnouncementPage />} />
+        <Route path="/homeMentor/chat" element={<MentorChatPage />} />
+        <Route path="/homeMentor/interns/:id" element={<MentorInternDetailPage />} />
+        <Route path="/homeMentor/interns" element={<MentorInternsPage />} />
+        <Route path="/homeMentor/materials" element={<MentorMaterialsPage />} />
+        <Route path="/homeMentor/materials/add" element={<MentorAddMaterialPage />} />
+        <Route path="/homeMentor/materials/add/form" element={<MentorAddFormPage />} />
+        <Route path="/homeMentor/materials/add/zip" element={<MentorZipSubmissionPage />} />
+        <Route path="/homeMentor/materials/add/attendance" element={<MentorAttendancePage />} />
+        <Route path="/homeMentor/materials/check-tugas/:id" element={<MentorCheckTugasPage />} />
+        <Route path="/homeMentor/materials/check-latihan/:id" element={<MentorCheckLatihanPage />} />
+        <Route path="/homeMentor/materials/check-latihan/:id/:internId" element={<MentorInternFormCheckPage />} />
+        <Route path="/homeMentor/" element={<MentorProfilePage />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
+

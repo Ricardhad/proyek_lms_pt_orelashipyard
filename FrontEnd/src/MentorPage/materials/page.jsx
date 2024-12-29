@@ -1,10 +1,11 @@
-'use client'
-
-import { Grid, Card, CardMedia, CardContent, Typography, Button, Box, Avatar } from '@mui/material'
-import Layout from '@/components/layout'
+import { Grid2 as Grid, Card, CardMedia, CardContent, Typography, Button, Box, Avatar } from '@mui/material'
+import { Link, useNavigate } from 'react-router-dom'
 import { Add as AddIcon } from '@mui/icons-material'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion';
+import Layout from '../components/layout'
+
+const MotionGrid = motion(Grid);
+const MotionCard = motion(Card);
 
 const materials = [
   {
@@ -28,13 +29,13 @@ const materials = [
 ]
 
 export default function MaterialsPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
 
   const handleMaterialClick = (material) => {
     if (material.type === 'Tugas') {
-      router.push(`/materials/check-tugas/${material.id}`)
+      navigate(`/homeMentor/materials/check-tugas/${material.id}`)
     } else if (material.type === 'Latihan') {
-      router.push(`/materials/check-latihan/${material.id}`)
+      navigate(`/homeMentor/materials/check-latihan/${material.id}`)
     }
   }
 
@@ -42,11 +43,19 @@ export default function MaterialsPage() {
     <Layout>
       <Typography variant="h4" sx={{ p: 3 }}>MATERIAL</Typography>
       <Grid container spacing={3} sx={{ p: 3 }}>
-        {materials.map((material) => (
-          <Grid item key={material.id}>
-            <Card 
+        {materials.map((material, index) => (
+          <MotionGrid 
+            item 
+            key={material.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.1 }}
+          >
+            <MotionCard 
               sx={{ display: 'flex', height: '100%', cursor: 'pointer' }}
               onClick={() => handleMaterialClick(material)}
+              whileHover={{ scale: 1.03 }}
+              transition={{ duration: 0.2 }}
             >
               <CardMedia
                 component="img"
@@ -57,7 +66,9 @@ export default function MaterialsPage() {
               <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                 <CardContent sx={{ flex: '1 0 auto' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    <Avatar src={material.mentorAvatar} sx={{ mr: 1 }} />
+                    <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
+                      <Avatar src={material.mentorAvatar} sx={{ mr: 1 }} />
+                    </motion.div>
                     <Typography variant="subtitle2">{material.mentorName}</Typography>
                   </Box>
                   <Typography variant="h6">{material.title}</Typography>
@@ -65,20 +76,22 @@ export default function MaterialsPage() {
                     <Typography variant="body2" color="error">
                       Deadline {material.deadline}
                     </Typography>
-                    <Button
-                      size="small"
-                      sx={{ backgroundColor: '#e0e0e0', color: 'black' }}
-                    >
-                      {material.type}
-                    </Button>
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                      <Button
+                        size="small"
+                        sx={{ backgroundColor: '#e0e0e0', color: 'black' }}
+                      >
+                        {material.type}
+                      </Button>
+                    </motion.div>
                   </Box>
                 </CardContent>
               </Box>
-            </Card>
-          </Grid>
+            </MotionCard>
+          </MotionGrid>
         ))}
         <Grid item xs={12} sm={6} md={4}>
-          <Link href="/materials/add" style={{ textDecoration: 'none' }}>
+          <Link to="/homeMentor/materials/add" style={{ textDecoration: 'none' }}>
             <Card
               sx={{
                 height: '100%',

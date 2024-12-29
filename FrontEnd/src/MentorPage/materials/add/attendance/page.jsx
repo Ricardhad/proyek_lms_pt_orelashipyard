@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 import { 
   Box, 
@@ -16,8 +14,9 @@ import {
   Checkbox,
   Button
 } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 import { Image, Add } from '@mui/icons-material'
-import Layout from '@/components/layout'
+import Layout from '../../../components/layout'
 
 // Mock data for interns
 const interns = [
@@ -31,47 +30,47 @@ const interns = [
     isPresent: false
   },
   {
-    id: '123456789',
-    name: 'Esthera Jackson',
-    email: 'esthera@simmmple.com',
-    phone: '08123456789',
-    course: 'Learning and Development',
+    id: '987654321',
+    name: 'John Doe',
+    email: 'john@example.com',
+    phone: '08987654321',
+    course: 'Web Development',
     avatar: '/placeholder.svg',
     isPresent: false
   },
   {
-    id: '123456789',
-    name: 'Esthera Jackson',
-    email: 'esthera@simmmple.com',
-    phone: '08123456789',
-    course: 'Learning and Development',
+    id: '456789123',
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    phone: '08456789123',
+    course: 'Data Science',
     avatar: '/placeholder.svg',
     isPresent: false
   },
   {
-    id: '123456789',
-    name: 'Esthera Jackson',
-    email: 'esthera@simmmple.com',
-    phone: '08123456789',
-    course: 'Learning and Development',
+    id: '789123456',
+    name: 'Alice Johnson',
+    email: 'alice@example.com',
+    phone: '08789123456',
+    course: 'Mobile App Development',
     avatar: '/placeholder.svg',
     isPresent: false
   },
   {
-    id: '123456789',
-    name: 'Esthera Jackson',
-    email: 'esthera@simmmple.com',
-    phone: '08123456789',
-    course: 'Learning and Development',
+    id: '321654987',
+    name: 'Bob Williams',
+    email: 'bob@example.com',
+    phone: '08321654987',
+    course: 'UI/UX Design',
     avatar: '/placeholder.svg',
     isPresent: false
   },
   {
-    id: '123456789',
-    name: 'Esthera Jackson',
-    email: 'esthera@simmmple.com',
-    phone: '08123456789',
-    course: 'Learning and Development',
+    id: '654987321',
+    name: 'Emma Brown',
+    email: 'emma@example.com',
+    phone: '08654987321',
+    course: 'Artificial Intelligence',
     avatar: '/placeholder.svg',
     isPresent: false
   }
@@ -79,6 +78,7 @@ const interns = [
 
 export default function AttendancePage() {
   const [attendance, setAttendance] = useState(interns)
+  const navigate = useNavigate()
 
   const handleToggleAttendance = (id) => {
     setAttendance(attendance.map(intern => 
@@ -89,12 +89,12 @@ export default function AttendancePage() {
   return (
     <Layout>
       <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h4">ABSENSI</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 3 }}>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Button
               variant="contained"
               sx={{ backgroundColor: '#e0e0e0', color: 'black' }}
+              onClick={() => navigate(-1)}
             >
               Back
             </Button>
@@ -103,14 +103,14 @@ export default function AttendancePage() {
             </Button>
           </Box>
         </Box>
-
-        <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" sx={{ textAlign: 'center'}}>ABSENSI</Typography>
+        <Box sx={{ mb: 4 ,display:'flex',justifyContent: 'space-between'}}>
           <Paper
             sx={{
               p: 3,
               mb: 3,
-              width: 200,
-              height: 150,
+              width: 400, // Increased width
+              height: 225, // Adjusted height for 16:9 aspect ratio
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
@@ -121,8 +121,8 @@ export default function AttendancePage() {
             <Image sx={{ fontSize: 40, mb: 1 }} />
             <Add fontSize="small" />
           </Paper>
-
-          <TextField
+          <Box>
+            <TextField
             fullWidth
             label="JUDUL"
             variant="outlined"
@@ -136,6 +136,7 @@ export default function AttendancePage() {
             rows={4}
             sx={{ mb: 2 }}
           />
+          </Box>
         </Box>
 
         <TableContainer component={Paper} sx={{ backgroundColor: '#f5f5f5' }}>

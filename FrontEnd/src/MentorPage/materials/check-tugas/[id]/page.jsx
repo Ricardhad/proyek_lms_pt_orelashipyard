@@ -1,7 +1,6 @@
-'use client'
-
+import { useParams, useNavigate } from 'react-router-dom'
 import { Box, Typography, Paper, TextField, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar } from '@mui/material'
-import Layout from '@/components/layout'
+import Layout from '../../../components/layout'
 import { Image } from '@mui/icons-material'
 
 const interns = [
@@ -17,6 +16,9 @@ const interns = [
 ]
 
 export default function CheckTugasPage() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+
   return (
     <Layout>
       <Box sx={{ p: 3 }}>
@@ -26,9 +28,9 @@ export default function CheckTugasPage() {
           alignItems: 'center', 
           mb: 4 
         }}>
-          <Typography variant="h4" sx={{ mb: 4 }}>MATERIAL 1</Typography>
+          <Typography variant="h4" sx={{ mb: 4 }}>MATERIAL {id}</Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button variant="contained" sx={{ backgroundColor: '#e0e0e0', color: 'black' }}>
+            <Button variant="contained" sx={{ backgroundColor: '#e0e0e0', color: 'black' }} onClick={() => navigate(-1)}>
               Back
             </Button>
             <Button variant="contained" color="primary">
@@ -52,7 +54,7 @@ export default function CheckTugasPage() {
           </Paper>
           
           <Box sx={{ flex: 1 }}>
-            <Typography variant="h5" sx={{ mb: 2 }}>Materi 1</Typography>
+            <Typography variant="h5" sx={{ mb: 2 }}>Materi {id}</Typography>
             <Typography sx={{ mb: 2 }}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut

@@ -1,10 +1,11 @@
 'use client'
 
-import { Avatar, Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, InputBase, Typography } from '@mui/material'
-import { styled } from '@mui/material/styles'
-import { Person, Book, Group, Chat, Campaign, Search as SearchIcon } from '@mui/icons-material'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { Avatar, Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, InputBase, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { Person, Book, Group, Search as SearchIcon } from '@mui/icons-material';
+import { MessageCircle, BellRing } from 'lucide-react';
+import { Link } from 'react-router-dom'; // Changed to react-router-dom
+import { useLocation } from 'react-router-dom'; // To get the current path
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -16,7 +17,7 @@ const Search = styled('div')(({ theme }) => ({
     marginLeft: theme.spacing(1),
     width: 'auto',
   },
-}))
+}));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -26,7 +27,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-}))
+}));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
@@ -36,18 +37,18 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     width: '100%',
   },
-}))
+}));
 
 const menuItems = [
-  { text: 'My Profile', icon: <Person />, path: '/profile' },
-  { text: 'Materials', icon: <Book />, path: '/materials' },
-  { text: 'My Intern', icon: <Group />, path: '/interns' },
-  { text: 'Group Chat', icon: <Chat />, path: '/chat' },
-  { text: 'Add Announcement', icon: <Campaign />, path: '/announcement' },
-]
+  { text: 'My Profile', icon: <Person />, path: '/homeMentor/' },
+  { text: 'Materials', icon: <Book />, path: '/homeMentor/materials' },
+  { text: 'My Intern', icon: <Group />, path: '/homeMentor/interns' },
+  { text: 'Group Chat', icon: <MessageCircle />, path: '/homeMentor/chat' },
+  { text: 'Add Announcement', icon: <BellRing />, path: '/homeMentor/announcements' },
+];
 
 export default function Layout({ children }) {
-  const pathname = usePathname()
+  const location = useLocation(); // Using useLocation to get the current pathname
   
   return (
     <Box sx={{ display: 'flex' }}>
@@ -59,61 +60,76 @@ export default function Layout({ children }) {
           '& .MuiDrawer-paper': {
             width: 240,
             boxSizing: 'border-box',
-            backgroundColor: '#f0f0f0',
+            backgroundColor: '#f5f5f5',
           },
         }}
       >
         <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Box
+            component="img"
+            src="/placeholder.svg"
+            alt="Profile"
             sx={{
               width: 80,
               height: 80,
               borderRadius: '50%',
-              backgroundColor: 'primary.main',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
               mb: 2,
-              position: 'relative',
+              objectFit: 'cover'
+            }}
+          />
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              mb: 2,
+              fontSize: '16px',
+              fontWeight: 'normal'
             }}
           >
-            <Box
-              sx={{
-                position: 'absolute',
-                width: 74,
-                height: 74,
-                borderRadius: '50%',
-                backgroundColor: 'white',
-              }}
-            />
-            <Avatar
-              src="/placeholder.svg"
-              sx={{ width: 70, height: 70 }}
-            />
-          </Box>
-          <Typography variant="h6" sx={{ mb: 2 }}>Menu</Typography>
+            Menu
+          </Typography>
         </Box>
-        <List>
+        <List sx={{ px: 2 }}>
           {menuItems.map((item) => (
             <ListItem
               key={item.text}
               component={Link}
-              href={item.path}
-              selected={pathname === item.path}
+              to={item.path} // Changed href to to
+              selected={location.pathname === item.path}
               sx={{
+                borderRadius: '8px',
+                mb: 1,
                 '&.Mui-selected': {
+                  backgroundColor: '#e0e0e0',
+                },
+                '&:hover': {
                   backgroundColor: '#e0e0e0',
                 },
               }}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemIcon 
+                sx={{ 
+                  minWidth: 40,
+                  '& svg': {
+                    fontSize: 20
+                  }
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText 
+                primary={item.text} 
+                sx={{
+                  '& .MuiListItemText-primary': {
+                    fontSize: '14px',
+                  }
+                }}
+              />
             </ListItem>
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1 }}>
-        <AppBar position="static" color="transparent" elevation={0}>
+      <Box component="main" sx={{ flexGrow: 3 }}>
+        <AppBar position="static" color="reansparent" elevation={3}>
           <Toolbar>
             <Search>
               <SearchIconWrapper>
@@ -129,6 +145,5 @@ export default function Layout({ children }) {
         {children}
       </Box>
     </Box>
-  )
+  );
 }
-
