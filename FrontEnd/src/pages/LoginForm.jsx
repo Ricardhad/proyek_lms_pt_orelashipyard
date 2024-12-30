@@ -32,9 +32,11 @@ const Login = () => {
   
       localStorage.setItem("token", response.data.token);
       const token = localStorage.getItem("token");
-      // console.log(jwtdecode.jwtDecode)
+      //console.log(jwtdecode.jwtDecode)
       const decode =jwtdecode.jwtDecode
+      // console.log(jwtdecode.jwtDecode)
       const decodedToken = decode(token);
+      // console.log(decodedToken)
       // console.log(jwt_decode(token))
       // Pastikan roleType ada dalam response dan merupakan angka
       const roleType = decodedToken.roleType;

@@ -4,6 +4,7 @@ import { Box, Typography, Paper, Avatar, Grid2 as Grid } from '@mui/material'
 import Layout from '../components/layout'
 
 export default function ProfilePage() {
+  const token = localStorage.getItem("token");
   return (
     <Layout>
       <Box sx={{ p: 3 }}>

@@ -19,7 +19,7 @@ const Absensi = require('../models/Absensi');
 
 
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken([1]),async (req, res) => {
     try {
         const result = await Mentor.find();
         if (result.length === 0) {
