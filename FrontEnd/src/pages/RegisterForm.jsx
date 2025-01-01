@@ -70,7 +70,7 @@ const RegisterForm = () => {
         email: formData.email,
         password: formData.password,
         course: formData.course,
-        asalSekolah: formData.asalSekolah,
+        asalSekolah: formData.roleType === '2' ? formData.asalSekolah : undefined, // Only include if roleType is 2
       });
 
       console.log('Response:', response.data);
