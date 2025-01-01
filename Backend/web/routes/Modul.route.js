@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     try {
         const result = await Modul.find();
         if (result.length === 0) {
-            return res.status(404).send("No users found");
+            return res.status(404).send("No Modul found");
         }
         return res.status(200).json(result);
     } catch (error) {

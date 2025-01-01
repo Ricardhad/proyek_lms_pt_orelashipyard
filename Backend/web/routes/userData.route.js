@@ -24,7 +24,12 @@ const registerSchema = Joi.object({
   noTelpon: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
-  course: Joi.string().optional()
+  course: Joi.string().optional(),
+  asalSekolah: Joi.string().when('roleType', {
+    is: 2, // Only required when roleType is 2 (Anak Magang)
+    then: Joi.required(),
+    otherwise: Joi.optional()
+  })
 });
 
 const schema = Joi.object({
@@ -39,11 +44,24 @@ const loginSchema = Joi.object({
 
 
 
+router.get('/courses', async (req, res) => {
+  try {
+      const result = await Course.find();
+      if (result.length === 0) {
+          return res.status(404).send("No Course found");
+      }
+      return res.status(200).json(result);
+  } catch (error) {
+      console.error("Error fetching data:", error);
+      return res.status(500).send("Server error");
+  }
+});
+
 // Register endpoint
 router.post('/register', async (req, res) => {
   try {
     // Validasi request body menggunakan Joi
-    const { namaUser, Profile_Picture, roleType, noTelpon,email, password,course } = req.body;
+    const { namaUser, Profile_Picture, roleType, noTelpon,email, password,course,asalSekolah } = req.body;
     console.log(req.body)
     const { error } = registerSchema.validate(req.body);
     if (error) {
@@ -97,7 +115,8 @@ router.post('/register', async (req, res) => {
     } else if (roleTypeParsed === 2) {
       const newAnakMagang = new AnakMagang({ 
         userID: savedUser._id,
-        courseID: courseExist.id || null
+        courseID: courseExist.id || null,
+        AsalSekolah: asalSekolah
        });
       const savedAnakMagang = await newAnakMagang.save();
       console.info('Anak Magang profile created:', savedAnakMagang);
@@ -198,6 +217,40 @@ router.get('/all', async (req, res) => {
   }
 });
 
+router.get('/allUnverifiedIntern', async (req, res) => {
+  try {
+    // Fetch users who are not verified and have roleType of 2
+    const users = await UserData.find({ isVerified: false, roleType: 2 }); // Adjust the field names as needed
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No unverified interns found" });
+    }
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+router.post('/RegisterIntern', async (req, res) => {
+  try {
+    const { AsalSekolah, courseID, userID, absensiKelas } = req.body;
+
+    // Create a new anakMagang document
+    const newAnakMagang = new AnakMagang({
+      AsalSekolah,
+      courseID,
+      userID,
+      absensiKelas
+    });
+
+    await newAnakMagang.save();
+    res.status(201).json(newAnakMagang);
+  } catch (error) {
+    console.error("Error registering intern:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;
 

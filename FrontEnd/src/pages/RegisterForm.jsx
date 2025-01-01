@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import client from '../client';
 import '../style.css';
@@ -12,12 +12,27 @@ const RegisterForm = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    course: '',
+    asalSekolah: '',
   });
-
+  const [CoursesData, setCoursesData] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await client.get('api/user/courses');
+        setCoursesData(response.data); // Assuming response.data contains the list of courses
+      } catch (err) {
+        console.error('Error fetching courses:', err);
+        setError('Failed to load courses.');
+      }
+    };
+
+    fetchCourses();
+  }, []);
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,6 +69,8 @@ const RegisterForm = () => {
         noTelpon: formData.noTelpon,
         email: formData.email,
         password: formData.password,
+        course: formData.course,
+        asalSekolah: formData.asalSekolah,
       });
 
       console.log('Response:', response.data);
@@ -118,6 +135,22 @@ const RegisterForm = () => {
           <label>Select your role</label>
         </div>
         <div className="input-field">
+          <select
+            name="course" // Update to match the state property
+            value={formData.course} // Ensure this matches the state
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select a course</option>
+            {CoursesData.map((course) => (
+              <option key={course.namaCourse} value={course.namaCourse}>
+                {course.namaCourse} {/* Assuming each course has an 'id' and 'namaCourse' */}
+              </option>
+            ))}
+          </select>
+          <label>Select a course</label>
+        </div>
+        <div className="input-field">
           <input
             type="text"
             name="noTelpon"
@@ -137,6 +170,18 @@ const RegisterForm = () => {
           />
           <label>Enter your email</label>
         </div>
+        {formData.roleType === '2' && ( // Show asalSekolah input only if roleType is '2'
+          <div className="input-field">
+            <input
+              type="text"
+              name="asalSekolah"
+              value={formData.asalSekolah}
+              onChange={handleChange}
+              required // Make it required
+            />
+            <label>Enter your school origin</label>
+          </div>
+        )}
         <div className="input-field">
           <input
             type="password"

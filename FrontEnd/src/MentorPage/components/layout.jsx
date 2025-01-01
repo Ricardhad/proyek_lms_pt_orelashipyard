@@ -1,11 +1,11 @@
 'use client'
 
-import { Avatar, Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, InputBase, Typography } from '@mui/material';
+import { Avatar, Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, IconButton, InputBase, Typography ,Button} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Person, Book, Group, Search as SearchIcon } from '@mui/icons-material';
 import { MessageCircle, BellRing } from 'lucide-react';
-import { Link } from 'react-router-dom'; // Changed to react-router-dom
-import { useLocation } from 'react-router-dom'; // To get the current path
+import { Link,useLocation,useNavigate} from 'react-router-dom'; // Changed to react-router-dom
+// import { useLocation,useNavigate } from 'react-router-dom'; // To get the current path
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -49,7 +49,13 @@ const menuItems = [
 
 export default function Layout({ children }) {
   const location = useLocation(); // Using useLocation to get the current pathname
-  
+  const navigate = useNavigate(); // Initialize useNavigate
+  // Fungsi logout
+  const handleLogout = () => {
+    // Hapus token atau sesi
+    localStorage.removeItem("token"); // Sesuaikan dengan penyimpanan token
+    navigate("/"); // Arahkan kembali ke halaman login
+  };
   return (
     <Box sx={{ display: 'flex' }}>
       <Drawer
@@ -127,6 +133,9 @@ export default function Layout({ children }) {
             </ListItem>
           ))}
         </List>
+        <Button onClick={handleLogout}>
+            Logout
+        </Button>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 3 }}>
         <AppBar position="static" color="reansparent" elevation={3}>

@@ -10,7 +10,7 @@ const anakMagangSchema = new mongoose.Schema({
 }, {
   collection: 'AnakMagang',
   timestamps: true
-});
+});  
 
 const anakMagang = mongoose.model('AnakMagang', anakMagangSchema);
 
