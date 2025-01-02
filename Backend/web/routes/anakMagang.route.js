@@ -25,6 +25,39 @@ router.get('/',verifyToken([2]), async (req, res) => {
     }
 });
 
+// router.get('/:userID/Profile', async (req, res) => {
+//     const { userID } = req.params;
+  
+//     try {
+//       // Find the user by userID
+//       const user = await UserData.findById(userID);
+//       if (!user) {
+//         return res.status(404).json({ error: 'User not found' });
+//       }
+  
+//       // Find the mentor associated with the userID
+//       const anakmagang = await AnakMagang.findOne({ userID: user._id });
+      
+//       // Prepare course data if mentor exists
+//     //   let courses = [];
+//     //   if (anakmagang) {
+//     //     courses = await Course.find({ _id: AnakMagang.courseID });
+//     //   }
+  
+//       // Prepare the response data
+//       const responseData = {
+//         user,
+//         anakmagang: anakmagang || null, // Include mentor data if found, otherwise null
+//         // courses: courses || [], // Include courses if found, otherwise empty array
+//       };
+  
+//       res.status(200).json(responseData);
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: 'An error occurred while retrieving data' });
+//     }
+//   });
+
 router.get("/Jawaban",verifyToken([2]), async (req, res) => {
     const { namaCourse, namaSoal, namaUser, jawabanType } = req.query;
 

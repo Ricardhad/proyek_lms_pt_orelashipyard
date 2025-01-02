@@ -6,6 +6,9 @@ import { Person, Book, Group, Search as SearchIcon } from '@mui/icons-material';
 import { MessageCircle, BellRing } from 'lucide-react';
 import { Link,useLocation,useNavigate} from 'react-router-dom'; // Changed to react-router-dom
 // import { useLocation,useNavigate } from 'react-router-dom'; // To get the current path
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -51,6 +54,30 @@ export default function Layout({ children }) {
   const location = useLocation(); // Using useLocation to get the current pathname
   const navigate = useNavigate(); // Initialize useNavigate
   // Fungsi logout
+  const token = localStorage.getItem("token");
+  const user = useSelector((state) => state.auth.user);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/Mentor/${user.id}/Profile`); // Adjust the base URL if necessary
+        console.log(response.data);
+        setUserData(response.data);
+      } catch (err) {
+        setError(err.response?.data?.error || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user.id]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
   const handleLogout = () => {
     // Hapus token atau sesi
     localStorage.removeItem("token"); // Sesuaikan dengan penyimpanan token
@@ -66,14 +93,15 @@ export default function Layout({ children }) {
           '& .MuiDrawer-paper': {
             width: 240,
             boxSizing: 'border-box',
-            backgroundColor: '#f5f5f5',
+            backgroundColor: '#D9D9D9',
           },
         }}
       >
         <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Box
             component="img"
-            src="/placeholder.svg"
+            src={userData.user.Profile_Picture
+            }
             alt="Profile"
             sx={{
               width: 80,
@@ -138,7 +166,7 @@ export default function Layout({ children }) {
         </Button>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 3 }}>
-        <AppBar position="static" color="reansparent" elevation={3}>
+        {/* <AppBar position="static" color="reansparent" elevation={3}>
           <Toolbar>
             <Search>
               <SearchIconWrapper>
@@ -150,7 +178,7 @@ export default function Layout({ children }) {
               />
             </Search>
           </Toolbar>
-        </AppBar>
+        </AppBar> */}
         {children}
       </Box>
     </Box>

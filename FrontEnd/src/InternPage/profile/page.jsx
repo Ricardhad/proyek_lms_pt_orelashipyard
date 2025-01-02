@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Card,
@@ -7,8 +7,13 @@ import {
   Stack,
 } from '@mui/material';
 import MainLayout from '../main-layout';
-
+// import { useSelector,useDispatch } from 'react-redux';
+// import axios from 'axios';// Import useDispatch
+// import { setUser } from "../redux/authSlice"; // Import the setUser action
+// import * as jwtdecode from 'jwt-decode';// Default import
 export default function Profile() {
+  const token = localStorage.getItem("token");
+  const user = useSelector((state) => state.auth.user);
   const profileData = {
     name: 'Esthera Jackson',
     email: 'esthera@simmple.com',

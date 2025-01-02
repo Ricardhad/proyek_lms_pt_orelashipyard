@@ -58,6 +58,120 @@ router.put("/:MentorId/Profile",verifyToken([0]), async (req, res) => {
     res.status(500).json({ error: "An error occurred while updating the mentor" });
   }
 });
+// Endpoint to get AnakMagang and UserData using courseID
+// router.get('/:courseID/AnakMagang', async (req, res) => {
+//     const { courseID } = req.params;
+  
+//     try {
+//       // Find AnakMagang documents with the specified courseID and populate the userID
+//       const anakMagangList = await AnakMagang.find({ courseID })
+//         .populate('userID') // Populate the UserData associated with each AnakMagang
+//         .exec();
+  
+//       if (!anakMagangList.length) {
+//         return res.status(404).json({ message: 'No AnakMagang found for this course' });
+//       }
+  
+//       res.status(200).json(anakMagangList);
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: 'An error occurred while retrieving data' });
+//     }
+//   });
+
+// router.get('/:courseID/AnakMagang', async (req, res) => {
+//     const { courseID } = req.params;
+
+//     try {
+//         // Fetch the course details
+//         const course = await Course.findById(courseID);
+//         if (!course) {
+//             return res.status(404).json({ message: 'Course not found' });
+//         }
+
+//         // Find AnakMagang documents with the specified courseID and populate the userID
+//         const anakMagangList = await AnakMagang.find({ courseID })
+//             .populate('userID') // Populate the UserData associated with each AnakMagang
+//             .exec();
+        
+//         if (!anakMagangList.length) {
+//             return res.status(404).json({ message: 'No AnakMagang found for this course' });
+//         }
+
+//         // Map the AnakMagang list to include course details
+//         const response = anakMagangList.map(anakMagang => ({
+//             ...anakMagang.toObject(), // Convert to plain object
+//             course: {
+//                 id: course._id,
+//                 namaCourse: course.namaCourse,
+//                 deskripsi: course.Deskripsi,
+//                 mentorID: course.mentorID
+//             }
+//         }));
+
+//         // Send the response including AnakMagang details with course info
+//         res.status(200).json({
+//             anakMagang: response
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'An error occurred while retrieving data' });
+//     }
+// });
+
+router.get('/:courseID/AnakMagang', async (req, res) => {
+    const { courseID } = req.params;
+    const { namaUser } = req.query;
+
+    console.log("Course ID:", courseID);
+    console.log("Nama User:", namaUser);
+
+    try {
+        // Fetch the course details
+        const course = await Course.findById(courseID);
+        if (!course) {
+            return res.status(404).json({ message: 'Course not found' });
+        }
+
+        // Build the query object
+        let query = { courseID }; // Start with courseID condition
+
+        // If namaUser is provided, add it to the query
+        if (namaUser) {
+            query.userID = await UserData.findOne({ namaUser: { $regex: namaUser, $options: 'i' } }).select('_id');
+            if (!query.userID) {
+                return res.status(200).json({ anakMagang: [] }); // No user found
+            }
+        }
+
+        // Find AnakMagang documents with the specified query and populate the userID
+        const anakMagangList = await AnakMagang.find(query)
+            .populate('userID') // Populate the UserData associated with each AnakMagang
+            .exec();
+
+        if (!anakMagangList.length) {
+            return res.status(200).json({ anakMagang: [] }); // Return empty array instead
+        }
+
+        // Map the response to include course details
+        const response = anakMagangList.map(anakMagang => ({
+            ...anakMagang.toObject(), // Convert to plain object
+            course: {
+                id: course._id,
+                namaCourse: course.namaCourse,
+                deskripsi: course.Deskripsi,
+                mentorID: course.mentorID
+            }
+        }));
+
+        // Send the response including AnakMagang details with course info
+        res.status(200).json({ anakMagang: response });
+    } catch (error) {
+        console.error("Error fetching AnakMagang:", error);
+        res.status(500).json({ error: 'An error occurred while retrieving data' });
+    }
+});
+
 router.get('/:userID/Profile', async (req, res) => {
     const { userID } = req.params;
   
@@ -69,12 +183,19 @@ router.get('/:userID/Profile', async (req, res) => {
       }
   
       // Find the mentor associated with the userID
-      const mentor = await Mentor.findOne({ userID });
+      const mentor = await Mentor.findOne({ userID: user._id });
       
+      // Prepare course data if mentor exists
+      let courses = [];
+      if (mentor) {
+        courses = await Course.find({ _id: { $in: mentor.courseID } });
+      }
+  
       // Prepare the response data
       const responseData = {
         user,
         mentor: mentor || null, // Include mentor data if found, otherwise null
+        courses: courses || [], // Include courses if found, otherwise empty array
       };
   
       res.status(200).json(responseData);

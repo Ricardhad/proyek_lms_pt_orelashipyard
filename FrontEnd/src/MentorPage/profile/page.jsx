@@ -16,7 +16,7 @@ export default function ProfilePage() {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/api/Mentor/${user.id}/Profile`); // Adjust the base URL if necessary
-        console.log(response.data);
+        console.log("profile",response.data);
         setUserData(response.data);
       } catch (err) {
         setError(err.response?.data?.error || 'An error occurred');
@@ -30,7 +30,7 @@ export default function ProfilePage() {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
-  // console.log("kontol",user.id)
+  // console.log("kontol",userData.user.namaUser)
   return (
     <Layout>
       <Box sx={{ p: 3 }}>
@@ -40,17 +40,19 @@ export default function ProfilePage() {
             <Grid item xs={12} md={6}>
               <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
                 <Typography variant="h3" sx={{ mb: 2, fontWeight: 'bold' }}>
-                  HI, I'm
+                  HI, I'm , {userData.user.
+    namaUser}
                 </Typography>
                 <Typography variant="h3" sx={{ mb: 2, fontWeight: 'bold' }}>
-                  Learning and Developer
+                  {userData.courses[0].namaCourse}
                 </Typography>
               </Box>
             </Grid>
             <Grid item xs={12} md={6}>
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                 <Avatar
-                  src="/placeholder.svg"
+                  src={userData.user.Profile_Picture
+                  }
                   alt="Mentor Profile"
                   sx={{
                     width: 300,
