@@ -1,10 +1,36 @@
 'use client'
-
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Avatar, Grid2 as Grid } from '@mui/material'
 import Layout from '../components/layout'
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 export default function ProfilePage() {
   const token = localStorage.getItem("token");
+  const user = useSelector((state) => state.auth.user);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/Mentor/${user.id}/Profile`); // Adjust the base URL if necessary
+        console.log(response.data);
+        setUserData(response.data);
+      } catch (err) {
+        setError(err.response?.data?.error || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user.id]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  // console.log("kontol",user.id)
   return (
     <Layout>
       <Box sx={{ p: 3 }}>

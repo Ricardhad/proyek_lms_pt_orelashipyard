@@ -32,6 +32,57 @@ router.get('/', verifyToken([1]),async (req, res) => {
     }
 });
 
+router.put("/:MentorId/Profile",verifyToken([0]), async (req, res) => {
+  const { MentorId } = req.params;
+  const { courseID } = req.body; // courseID should be an array of ObjectIds
+
+  try {
+
+    const courseIDs= await validateArrayOfIDs(Course,courseID,"Course")
+
+    const updatedUser = await Mentor.findByIdAndUpdate(
+      MentorId,
+      {
+        courseID: courseIDs,
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "Mentor not found" });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while updating the mentor" });
+  }
+});
+router.get('/:userID/Profile', async (req, res) => {
+    const { userID } = req.params;
+  
+    try {
+      // Find the user by userID
+      const user = await UserData.findById(userID);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Find the mentor associated with the userID
+      const mentor = await Mentor.findOne({ userID });
+      
+      // Prepare the response data
+      const responseData = {
+        user,
+        mentor: mentor || null, // Include mentor data if found, otherwise null
+      };
+  
+      res.status(200).json(responseData);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while retrieving data' });
+    }
+  });
 
 router.get("/Modul",verifyToken([1]), async (req, res) => {
     const { filter } = req.query;
