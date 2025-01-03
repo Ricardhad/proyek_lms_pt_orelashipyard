@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+
+import { useParams ,Link, useNavigate} from 'react-router-dom'
 import { Box, Typography, Paper, Avatar, Grid2 as Grid, Stack, Chip } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Add this import
+import { IconButton } from '@mui/material';
 import Layout from '../../components/layout'
 import { motion, AnimatePresence } from 'framer-motion'
 import axios from 'axios'
@@ -23,6 +26,7 @@ const materials = [
 
 const MotionPaper = motion.create(Paper)
 const MotionGrid = motion.create(Grid)
+const MotionIconButton = motion.create(IconButton); 
 
 export default function InternDetailPage() {
   const { id } = useParams();
@@ -30,7 +34,13 @@ export default function InternDetailPage() {
   const [anakMagang, setAnakMagang] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true); // Add this line
-  
+  const navigate = useNavigate(); // Add this hook
+    // ... existing state declarations
+    
+    // Add this handler
+    const handleBack = () => {
+      navigate(-1);
+    };
   useEffect(() => {
     const fetchAnakMagang = async () => {
       try {
@@ -55,6 +65,7 @@ export default function InternDetailPage() {
   useEffect(() => {
     console.log('anakMagang state updated:', anakMagang);
   }, [anakMagang]);
+
   
   if (loading) {
     return (
@@ -75,6 +86,23 @@ export default function InternDetailPage() {
   return (
     <Layout>
       <Box sx={{ p: 3 }}>
+      <MotionIconButton
+          onClick={handleBack}
+          sx={{ 
+            mb: 2,
+            backgroundColor: 'white',
+            '&:hover': { backgroundColor: '#f5f5f5' }
+          }}
+          initial={{ x: -100, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          whileHover={{ 
+            scale: 1.1,
+            transition: { duration: 0.2 }
+          }}
+          whileTap={{ scale: 0.9 }}
+        >
+          <ArrowBackIcon />
+        </MotionIconButton>
         <Typography variant="h4" sx={{ mx: 'auto', textAlign: 'center' }}>Interns Detail</Typography>
         <Paper sx={{ p: 4, backgroundColor: '#f5f5f5', borderRadius: '16px', justifyContent: 'center'  }}>
           <Grid container spacing={4} sx={{ justifyContent: 'center'}}>
