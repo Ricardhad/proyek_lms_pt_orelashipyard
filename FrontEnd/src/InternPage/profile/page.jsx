@@ -7,10 +7,10 @@ import {
   Stack,
 } from '@mui/material';
 import MainLayout from '../main-layout';
-// import { useSelector,useDispatch } from 'react-redux';
-// import axios from 'axios';// Import useDispatch
-// import { setUser } from "../redux/authSlice"; // Import the setUser action
-// import * as jwtdecode from 'jwt-decode';// Default import
+import { useSelector,useDispatch } from 'react-redux';
+import axios from 'axios';// Import useDispatch
+import { setUser } from "../../redux/authSlice"; // Import the setUser action
+import * as jwtdecode from 'jwt-decode';// Default import
 export default function Profile() {
   const token = localStorage.getItem("token");
   const user = useSelector((state) => state.auth.user);

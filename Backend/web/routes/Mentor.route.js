@@ -171,7 +171,24 @@ router.get('/:courseID/AnakMagang', async (req, res) => {
         res.status(500).json({ error: 'An error occurred while retrieving data' });
     }
 });
+// Get AnakMagang by ID
+// backend/routes/mentorRoutes.js
+router.get('/:id/anakMagangProfile', async (req, res) => {
+    try {
+      const anakMagang = await AnakMagang.findById(req.params.id)
+        .populate('userID');
+  
+      if (!anakMagang) {
+        return res.status(404).json({ message: 'AnakMagang not found' });
+      }
+      res.status(200).json(anakMagang);
+    } catch (error) {
+      console.error('Server error:', error);
+      res.status(500).json({ message: error.message });
+    }
+  });
 
+  
 router.get('/:userID/Profile', async (req, res) => {
     const { userID } = req.params;
   

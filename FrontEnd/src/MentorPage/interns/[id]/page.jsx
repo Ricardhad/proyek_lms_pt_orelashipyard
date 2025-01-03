@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Box, Typography, Paper, Avatar, Grid2 as Grid, Stack, Chip } from '@mui/material';
 import Layout from '../../components/layout'
 import { motion, AnimatePresence } from 'framer-motion'
+import axios from 'axios'
 
 // Mock data for the intern
 const internData = {
@@ -24,8 +25,52 @@ const MotionPaper = motion.create(Paper)
 const MotionGrid = motion.create(Grid)
 
 export default function InternDetailPage() {
-  const { id } = useParams()
-  const [attendance] = useState(Array(14).fill(true))
+  const { id } = useParams();
+  const [attendance] = useState(Array(14).fill(true));
+  const [anakMagang, setAnakMagang] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); // Add this line
+  
+  useEffect(() => {
+    const fetchAnakMagang = async () => {
+      try {
+        console.log('Fetching data for ID:', id);
+        const response = await axios.get(`http://localhost:3000/api/Mentor/${id}/anakMagangProfile`);
+        console.log('Response received:', response.data);
+        setAnakMagang(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching anak magang:', err);
+        setError(err.response?.data?.message || 'An error occurred while fetching data');
+        setLoading(false);
+      }
+    };
+  
+    if (id) {
+      fetchAnakMagang();
+    }
+  }, [id]);
+  
+  // Debug effect to monitor state updates
+  useEffect(() => {
+    console.log('anakMagang state updated:', anakMagang);
+  }, [anakMagang]);
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-red-600">
+        <p>Error: {String(error)}</p>
+      </div>
+    );
+  }
 
   return (
     <Layout>
@@ -36,7 +81,7 @@ export default function InternDetailPage() {
             <Grid item xs={12} md={4} sx={{ justifyContent: 'center', mx: 'auto' }}>
               <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Avatar
-                  src={internData.avatar}
+                  src={anakMagang.userID.Profile_Picture}
                   alt={internData.name}
                   sx={{
                     width: 200,
@@ -47,14 +92,14 @@ export default function InternDetailPage() {
               </Box>
               <Box sx={{backgroundColor: '#ffffff', borderRadius: '16px', mt:10}}>
                 <Box sx={{ mb: 2, justifyContent: 'center' }}>
-                  <Typography variant="body1" sx={{ textAlign: 'center' }}>{internData.name}</Typography>
-                  <Typography variant="body2" sx={{ textAlign: 'center' }} color="textSecondary">{internData.email}</Typography>
+                  <Typography variant="body1" sx={{ textAlign: 'center' }}>{anakMagang.userID.namaUser}</Typography>
+                  <Typography variant="body2" sx={{ textAlign: 'center' }} color="textSecondary">{anakMagang.userID.email}</Typography>
                 </Box>
                 <Box sx={{ mb: 2, justifyContent: 'center' }}>
-                  <Typography variant="body1" sx={{ textAlign: 'center' }}>{internData.school}</Typography>
+                  <Typography variant="body1" sx={{ textAlign: 'center' }}>{anakMagang.AsalSekolah}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
-                  <Typography variant="body2">No Wa: {internData.phone}</Typography>
+                  <Typography variant="body2">No Wa: {anakMagang.userID.noTelpon}</Typography>
                   <Typography variant="body2">NRP: {internData.nrp}</Typography>
                 </Box>
               </Box>
