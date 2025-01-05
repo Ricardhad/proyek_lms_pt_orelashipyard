@@ -45,7 +45,7 @@ export default function InternDetailPage() {
     const fetchAnakMagang = async () => {
       try {
         console.log('Fetching data for ID:', id);
-        const response = await axios.get(`http://localhost:3000/api/Mentor/${id}/anakMagangProfile`);
+        const response = await axios.get(`http://localhost:3000/api/mentor/${id}/anakMagangProfile`);
         console.log('Response received:', response.data);
         setAnakMagang(response.data);
         setLoading(false);

@@ -3,14 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Layout from '../../components/layout';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 
 const MotionPaper = motion.create(Paper);
 
 export default function CreateAnnouncementPage() {
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
   const user = useSelector((state) => state.auth.user);
+  // console.log("token",user);
   const [attachments, setAttachments] = useState([]);
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]); // Set default date to today
   const [title, setTitle] = useState('');
@@ -25,27 +27,52 @@ export default function CreateAnnouncementPage() {
     setAttachments(prev => [...prev, ...newAttachments]);
   };
 
+  
   const handleSubmit = async () => {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('description', description);
+    formData.append('userID', user.id); // Updated to match your backend
+  
     attachments.forEach(file => {
-      const rawFile = file.url; // You may need to adjust this depending on how you store files
+      const rawFile = file; // Use the file object instead of the URL
       formData.append('attachments', rawFile);
     });
-
+  
     try {
-      const response = await axios.post('/api/announcements', formData, {
+      const response = await axios.post('http://localhost:3000/api/announcement/createannouncement', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
       console.log('Announcement created:', response.data);
-      navigate('/announcements'); // Redirect to the announcements page after success
+      // navigate('/announcements'); // Redirect to the announcements page after success
     } catch (error) {
       console.error('Error creating announcement:', error);
     }
   };
+  // const handleSubmit = async () => {
+  //   const formData = new FormData();
+  //   formData.append('title', title);
+  //   formData.append('description', description);
+  //   formData.append('createdBy', user.id);
+  //   attachments.forEach(file => {
+  //     const rawFile = file.url; // You may need to adjust this depending on how you store files
+  //     formData.append('attachments', rawFile);
+  //   });
+
+  //   try {
+  //     const response = await axios.post('http://localhost:3000/api/anouncement', formData, {
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //     });
+  //     console.log('Announcement created:', response.data);
+  //     // navigate('/announcements'); // Redirect to the announcements page after success
+  //   } catch (error) {
+  //     console.error('Error creating announcement:', error);
+  //   }
+  // };
 
   return (
     <Layout>

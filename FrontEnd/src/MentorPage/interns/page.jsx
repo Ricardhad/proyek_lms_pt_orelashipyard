@@ -50,7 +50,7 @@ export default function InternsPage() {
   useEffect(() => {
     const fetchInterns = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/Mentor/${user.id}/Profile`);
+        const response = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`);
         console.log("Mentor Profile Response:", response.data);
 
         if (response.data.mentor.courseID && response.data.mentor.courseID.length > 0) {

@@ -35,9 +35,9 @@ const upload = multer({
 });
 
 // Create new announcement with optional PDF attachment
-router.post('/', upload.array('attachments', 5), async (req, res) => {
+router.post('/createannouncement', upload.array('attachments', 5), async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description ,userID} = req.body;
     const files = req.files;
 
     const attachments = files ? files.map(file => ({
@@ -51,7 +51,7 @@ router.post('/', upload.array('attachments', 5), async (req, res) => {
     const announcement = new Announcement({
       title,
       description,
-      createdBy: req.user._id, // Assuming you have user authentication middleware
+      createdBy: userID, // Assuming you have user authentication middleware
       attachments
     });
 
