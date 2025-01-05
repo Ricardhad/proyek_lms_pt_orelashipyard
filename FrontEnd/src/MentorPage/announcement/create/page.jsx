@@ -46,33 +46,11 @@ export default function CreateAnnouncementPage() {
         },
       });
       console.log('Announcement created:', response.data);
-      // navigate('/announcements'); // Redirect to the announcements page after success
+      navigate('homeMentor/announcements'); // Redirect to the announcements page after success
     } catch (error) {
       console.error('Error creating announcement:', error);
     }
   };
-  // const handleSubmit = async () => {
-  //   const formData = new FormData();
-  //   formData.append('title', title);
-  //   formData.append('description', description);
-  //   formData.append('createdBy', user.id);
-  //   attachments.forEach(file => {
-  //     const rawFile = file.url; // You may need to adjust this depending on how you store files
-  //     formData.append('attachments', rawFile);
-  //   });
-
-  //   try {
-  //     const response = await axios.post('http://localhost:3000/api/anouncement', formData, {
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data',
-  //       },
-  //     });
-  //     console.log('Announcement created:', response.data);
-  //     // navigate('/announcements'); // Redirect to the announcements page after success
-  //   } catch (error) {
-  //     console.error('Error creating announcement:', error);
-  //   }
-  // };
 
   return (
     <Layout>

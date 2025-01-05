@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const Announcement = require('../models/Announcement');
 
+
 // Multer configuration for PDF storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -63,11 +64,21 @@ router.post('/createannouncement', upload.array('attachments', 5), async (req, r
 });
 
 // Get all announcements
-router.get('/', async (req, res) => {
+router.get('/allAnnouncement', async (req, res) => {
   try {
-    const announcements = await Announcement.find()
-      .populate('createdBy', 'namaUser email')
+    // Extract the title query parameter
+    const { title } = req.query;
+
+    // Create a filter object
+    let filter = {};
+    if (title) {
+      filter.title = { $regex: title, $options: 'i' }; // Case-insensitive search
+    }
+
+    const announcements = await Announcement.find(filter)
+      .populate('createdBy', 'namaUser email roleType')
       .sort({ date: -1 });
+
     res.json({ success: true, data: announcements });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -75,10 +86,10 @@ router.get('/', async (req, res) => {
 });
 
 // Get single announcement by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id/singleAnnouncement', async (req, res) => {
   try {
     const announcement = await Announcement.findById(req.params.id)
-      .populate('createdBy', 'namaUser email');
+      .populate('createdBy', 'namaUser email roleType')
     
     if (!announcement) {
       return res.status(404).json({ success: false, error: 'Announcement not found' });
@@ -91,7 +102,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update announcement
-router.put('/:id', upload.array('attachments', 5), async (req, res) => {
+router.put('/:id/editAnnouncement', upload.array('attachments', 5), async (req, res) => {
   try {
     const { title, description } = req.body;
     const files = req.files;
@@ -135,7 +146,7 @@ router.put('/:id', upload.array('attachments', 5), async (req, res) => {
 });
 
 // Delete announcement
-router.delete('/:id', async (req, res) => {
+router.delete('/:id/deleteAnnouncement', async (req, res) => {
   try {
     const announcement = await Announcement.findById(req.params.id);
     if (!announcement) {

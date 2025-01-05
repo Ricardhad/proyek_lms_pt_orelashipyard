@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Import Axios
 import {
   Box,
   Typography,
@@ -35,9 +36,37 @@ export default function AnnouncementPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  const handleDelete = (id) => {
-    setAnnouncements(announcements.filter(announcement => announcement.id !== id));
+  // Fetch announcements from the API
+  const fetchAnnouncements = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/announcement/allAnnouncement?title=${searchQuery}`);
+      setAnnouncements(response.data.data);
+      console.log('Announcements fetched:', response.data);
+    } catch (error) {
+      console.error('Error fetching announcements:', error);
+    }
   };
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, [searchQuery]); // Fetch announcements whenever the search query changes
+
+  // useEffect(() => {
+  //   console.log('Announcements updated:', announcements);
+  // }, [announcements]);
+  const handleDelete = async (id) => {
+    const confirmed = window.confirm('Are you sure you want to delete this announcement?');
+    if (confirmed) {
+      try {
+        await axios.delete(`http://localhost:3000/api/announcement/${id}/deleteAnnouncement`);
+        setAnnouncements(prevAnnouncements => prevAnnouncements.filter(announcement => announcement._id !== id));
+        alert('Announcement deleted successfully');
+      } catch (error) {
+        console.error('Error deleting announcement:', error);
+      }
+    }
+  };
+
 
   const handleAddClick = () => {
     navigate('/homeMentor/announcements/create');
@@ -109,14 +138,18 @@ export default function AnnouncementPage() {
                     justifyContent: 'space-between',
                     cursor: 'pointer'
                   }}
-                  onClick={() => handleViewClick(announcement.id)}
+                  onClick={() => handleViewClick(announcement._id)}
                 >
                   <Box>
                     <Typography variant="h6" sx={{ mb: 1 }}>
                       {announcement.title}
                     </Typography>
                     <Typography variant="body2">
-                      {announcement.admin}, {announcement.date}
+                      {announcement.createdBy?.roleType === 1 
+                        ? `${announcement.createdBy.namaUser} (mentor), ${announcement.date}`
+                        : announcement.createdBy?.roleType === 0 
+                        ? `${announcement.createdBy.namaUser} (admin), ${announcement.date}`
+                        : `${announcement.createdBy?.namaUser || 'Unknown User'}, ${announcement.date}`} {/* Fallback for undefined */}
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -132,7 +165,7 @@ export default function AnnouncementPage() {
                         }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleEditClick(announcement.id);
+                          handleEditClick(announcement._id);
                         }}
                       >
                         Edit
@@ -150,7 +183,7 @@ export default function AnnouncementPage() {
                         }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDelete(announcement.id);
+                          handleDelete(announcement._id);
                         }}
                       >
                         Delete
