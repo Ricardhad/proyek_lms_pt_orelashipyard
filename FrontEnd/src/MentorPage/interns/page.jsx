@@ -47,17 +47,6 @@ export default function InternsPage() {
   const [interns, setInterns] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const user = useSelector((state) => state.auth.user);
-  const intern = [
-    {
-    id: '123456789',
-    name: 'Esthera Jackson',
-    email: 'esthera@simmmple.com',
-    phone: '08123456789',
-    course: 'Learning and Development',
-    avatar: '/placeholder.svg'
-    },
-    // Add more intern data as needed
-    ]
   useEffect(() => {
     const fetchInterns = async () => {
       try {

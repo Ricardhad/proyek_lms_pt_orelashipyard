@@ -11,7 +11,7 @@ export default function MainLayout({ children }) {
         sx={{
           flexGrow: 1,
           p: 3,
-          ml: '240px', // This should match the width of the Sidebar
+          ml: '200px', // This should match the width of the Sidebar
           bgcolor: 'background.default',
         }}
       >

@@ -14,34 +14,34 @@ import {
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 
-const announcements = [
-  {
-    id: 1,
-    title: 'Perubahan jadwal masuk magang',
-    date: '30 Oktober 2099',
-    author: 'Admin Magang',
-    content: 'Mohon perhatian untuk semua peserta magang. Mulai minggu depan, jadwal masuk akan berubah menjadi pukul 08.00 WIB. Harap disesuaikan.',
-  },
-  {
-    id: 2,
-    title: 'Pengumpulan laporan bulanan',
-    date: '25 Oktober 2099',
-    author: 'Koordinator Magang',
-    content: 'Diingatkan kepada seluruh peserta magang untuk mengumpulkan laporan bulanan paling lambat tanggal 5 setiap bulannya.',
-  },
-  {
-    id: 3,
-    title: 'Seminar online: Teknologi AI terbaru',
-    date: '20 Oktober 2099',
-    author: 'Divisi Pelatihan',
-    content: 'Kami mengundang seluruh peserta magang untuk mengikuti seminar online tentang perkembangan terbaru dalam teknologi AI. Seminar akan diadakan pada tanggal 1 November 2099.',
-  },
-];
+// const announcements = [
+//   {
+//     id: 1,
+//     title: 'Perubahan jadwal masuk magang',
+//     date: '30 Oktober 2099',
+//     author: 'Admin Magang',
+//     content: 'Mohon perhatian untuk semua peserta magang. Mulai minggu depan, jadwal masuk akan berubah menjadi pukul 08.00 WIB. Harap disesuaikan.',
+//   },
+//   {
+//     id: 2,
+//     title: 'Pengumpulan laporan bulanan',
+//     date: '25 Oktober 2099',
+//     author: 'Koordinator Magang',
+//     content: 'Diingatkan kepada seluruh peserta magang untuk mengumpulkan laporan bulanan paling lambat tanggal 5 setiap bulannya.',
+//   },
+//   {
+//     id: 3,
+//     title: 'Seminar online: Teknologi AI terbaru',
+//     date: '20 Oktober 2099',
+//     author: 'Divisi Pelatihan',
+//     content: 'Kami mengundang seluruh peserta magang untuk mengikuti seminar online tentang perkembangan terbaru dalam teknologi AI. Seminar akan diadakan pada tanggal 1 November 2099.',
+//   },
+// ];
 
 export default function Announcements() {
   return (
    <MainLayout>
-    <Box sx={{ py: 4 }}>
+    {/* <Box sx={{ py: 4 }}>
       <Typography variant="h4" gutterBottom>
         Announcements
       </Typography>
@@ -98,7 +98,7 @@ export default function Announcements() {
           </List>
         </CardContent>
       </Card>
-    </Box>
+    </Box> */}
     </MainLayout>
   );
 }

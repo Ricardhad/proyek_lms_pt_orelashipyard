@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const modulSchema = new mongoose.Schema({
     courseID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Course' },
+    mentorID: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Mentor' },
+    gambar: { type: String }, // New field to store image path
     namaModul: { type: String, required: true },
     Deskripsi: { type: String },
     Deadline: { type: Date, required: true },

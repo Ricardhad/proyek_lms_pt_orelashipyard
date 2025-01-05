@@ -7,6 +7,7 @@ import { Send, AttachFile, Camera, Mic, WidthFull } from '@mui/icons-material'
 import Layout from '../components/layout'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
+import io from 'socket.io-client';
 
 // Mock chat messages data
 const initialMessages = [
@@ -190,4 +191,6 @@ export default function ChatPage() {
     </Layout>
   )
 }
+
+
 

@@ -25,38 +25,80 @@ router.get('/',verifyToken([2]), async (req, res) => {
     }
 });
 
-// router.get('/:userID/Profile', async (req, res) => {
-//     const { userID } = req.params;
+router.get('/:userID/Profile', async (req, res) => {
+    const { userID } = req.params;
   
-//     try {
-//       // Find the user by userID
-//       const user = await UserData.findById(userID);
-//       if (!user) {
-//         return res.status(404).json({ error: 'User not found' });
-//       }
+    try {
+      // Find the user by userID
+      const user = await UserData.findById(userID);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
   
-//       // Find the mentor associated with the userID
-//       const anakmagang = await AnakMagang.findOne({ userID: user._id });
-      
-//       // Prepare course data if mentor exists
-//     //   let courses = [];
-//     //   if (anakmagang) {
-//     //     courses = await Course.find({ _id: AnakMagang.courseID });
-//     //   }
+      // Find the anakMagang record associated with the userID
+      const anakMagang = await AnakMagang.findOne({ userID: user._id });
   
-//       // Prepare the response data
-//       const responseData = {
-//         user,
-//         anakmagang: anakmagang || null, // Include mentor data if found, otherwise null
-//         // courses: courses || [], // Include courses if found, otherwise empty array
-//       };
+      // Prepare course data if anakMagang exists
+      let courses = [];
+      if (anakMagang) {
+        courses = await Course.find({ _id: { $in: anakMagang.courseID } }); // Access courseID from anakMagang instance
+      }
   
-//       res.status(200).json(responseData);
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ error: 'An error occurred while retrieving data' });
-//     }
-//   });
+      // Prepare the response data
+      const responseData = {
+        user,
+        anakMagang: anakMagang || null, // Include anakMagang data if found, otherwise null
+        courses: courses || [], // Include courses if found, otherwise empty array
+      };
+  
+      res.status(200).json(responseData);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while retrieving data' });
+    }
+  });
+
+
+// Modify user and anakMagang information
+router.put("/:anakMagangId/ProfileEdit", async (req, res) => {
+    const { anakMagangId } = req.params;
+    const { namaUser, email, noTelpon, asalSekolah } = req.body;
+  
+    try {
+      // Find the AnakMagang record
+      const findUser = await AnakMagang.findById(anakMagangId).populate('userID'); // Populate to get user data
+  
+      if (!findUser) {
+        return res.status(404).json({ message: "AnakMagang not found" });
+      }
+  
+      // Prepare updates for UserData
+      const updates = {};
+      if (namaUser) updates.namaUser = namaUser;
+      if (email) updates.email = email;
+      if (noTelpon) updates.noTelpon = noTelpon;
+  
+      // Update UserData if there are changes
+      if (Object.keys(updates).length > 0) {
+        const updatedUser = await UserData.findByIdAndUpdate(findUser.userID, updates, { new: true });
+  
+        if (!updatedUser) {
+          return res.status(404).json({ message: "User update failed" });
+        }
+      }
+  
+      // Update AsalSekolah for AnakMagang
+      if (asalSekolah) {
+        findUser.AsalSekolah = asalSekolah;
+        await findUser.save(); // Save changes to AnakMagang
+      }
+  
+      res.status(200).json({ user: findUser.userID, anakMagang: findUser });
+    } catch (err) {
+      console.error("Update error:", err);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
 
 router.get("/Jawaban",verifyToken([2]), async (req, res) => {
     const { namaCourse, namaSoal, namaUser, jawabanType } = req.query;
