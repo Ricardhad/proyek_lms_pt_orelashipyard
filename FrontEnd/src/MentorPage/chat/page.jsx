@@ -63,7 +63,7 @@ export default function ChatPage() {
       try {
         // Fetch user profile data
         const userResponse = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`);
-        
+        console
         if (!userResponse.data.courses?.length) {
           throw new Error('No courses found');
         }
@@ -73,6 +73,7 @@ export default function ChatPage() {
 
         // Fetch chat messages for the course
         const messagesResponse = await axios.get(`http://localhost:3000/api/chat/${courseId}`);
+        console.log("messagesResponse",messagesResponse.data);
         const formattedMessages = messagesResponse.data.chats.map(msg => ({
           id: msg._id,
           text: msg.content,
@@ -80,7 +81,7 @@ export default function ChatPage() {
             hour: '2-digit', 
             minute: '2-digit' 
           }),
-          avatar: "/placeholder.svg",
+          avatar: msg.senderID.Profile_Picture,
           isSentByMe: msg.senderID._id === user.id
         }));
         setMessages(formattedMessages);
