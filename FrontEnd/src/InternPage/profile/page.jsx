@@ -49,7 +49,7 @@ export default function Profile() {
   console.log("user",user);
   return (
     <Layout>
-      <Box sx={{ p: 3 ,transform: 'translateX(-15%)'}}>
+      <Box sx={{ p: 3 }}>
         <Typography variant="h4" sx={{ mb: 3 }}>interns</Typography>
         <Paper sx={{ p: 4, backgroundColor: '#f5f5f5', borderRadius: '16px' }}>
           <Grid container spacing={4} alignItems="center">
