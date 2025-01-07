@@ -1,54 +1,42 @@
-const express = require('express')
-const router = express()
-
-const {
-    Course, Mentor, Admin, UserData, AnakMagang,
-    Modul, JawabanModul, SoalModul, NilaiModul,Absensi,
-    validateArrayOfIDs,
-    checkIdValid,
-    checkIdExist,
-    validateArrayOfIDsCheckRole
-} = require("./functions");
-
-const Joi = require('joi');
+const express = require('express');
+const router = express.Router();
+const Chat = require('../models/Chat'); // Import the Chat model
 const mongoose = require('mongoose');
-const { upload } = require('./Middleware');
+const { io } = require('../index'); // Import socket.io instance from index.js
 
-
-const mongoose = require('mongoose');
-
-// Route to get all chats by courseID
-router.get('/chats/:courseID', async (req, res) => {
-    const { courseID } = req.params;
-
+// Route to fetch chat messages for a specific course
+router.get('/:courseID', async (req, res) => {
     try {
-        const chats = await Chat.find({ courseID }).populate('senderID', 'name') // Populating senderID to get user details
-            .populate('courseID', 'title'); // Populating courseID to get course details
-        res.status(200).json(chats);
+        const { courseID } = req.params;
+        // Find all chat messages for the course
+        const chats = await Chat.find({ courseID: mongoose.Types.ObjectId(courseID) }).populate('senderID', 'name').populate('courseID', 'courseName').sort({ chatDate: 1 });
+        res.status(200).json({ chats });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error retrieving chats' });
+        res.status(500).json({ error: 'Error fetching chats' });
     }
 });
 
-// Route to create a new chat
-router.post('/chats', async (req, res) => {
-    const { senderID, courseID, content, attachments } = req.body;
-
+// Route to send a new chat message
+router.post('/', async (req, res) => {
     try {
+        const { senderID, courseID, content, attachments } = req.body;
+
         const newChat = new Chat({
-            senderID,
-            courseID,
+            senderID: mongoose.Types.ObjectId(senderID),
+            courseID: mongoose.Types.ObjectId(courseID),
             content,
             attachments,
-            chatDate: new Date() // Optional: Set current date
+            chatDate: new Date(),
         });
 
         await newChat.save();
-        res.status(201).json(newChat);
+
+        // Emit the new message to all connected clients (via WebSocket)
+        io.emit('newChat', newChat); // Broadcasting the new chat message to all clients
+
+        res.status(201).json({ message: 'Chat created successfully', newChat });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error creating chat' });
+        res.status(500).json({ error: 'Error sending chat message' });
     }
 });
 

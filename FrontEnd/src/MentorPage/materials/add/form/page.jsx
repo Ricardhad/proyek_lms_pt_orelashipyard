@@ -166,72 +166,69 @@ export default function AddFormPage() {
         </Box>
        
         <Box sx={{ mb: 4 }}>
-           <Typography variant="h4"  sx={{ mb: 3, textAlign: 'center' }}>ADD FORM</Typography>
-      <Grid container spacing={3}>
-  <Grid item xs={12} md={6}>
-    <Paper
-            sx={{
-              p: 3,
-              mb: 3,
-              borderRadius: 1,
-        textAlign: 'center',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-            }}
-          >
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
-  <Image sx={{ fontSize: 48, color: '#666' }} />
-</Box>
-      <Typography>Drop your image here or browse</Typography>
-            
-</Paper>
-  </Grid>
-  <Grid item xs={12} md={6}>
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
-      <TextField
-        fullWidth
-        label="JUDUL"
-        variant="outlined"
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        fullWidth
-        label="DESKRIPSI"
-        variant="outlined"
-        multiline
-        rows={4}
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        fullWidth
-        label="DEADLINE"
-        variant="outlined"
-        type="datetime-local"
-      />
-    </Box>
-  </Grid>
-</Grid>
-          
-        </Box>
+          <Typography variant="h4"  sx={{ mb: 3, textAlign: 'center' }}>ADD FORM</Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <Paper
+                sx={{
+                  p: 3,
+                  mb: 3,
+                  borderRadius: 1,
+                  textAlign: 'center',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
+                  <Image sx={{ fontSize: 48, color: '#666' }} />
+                </Box>
+                  <Typography>Drop your image here or browse</Typography>         
+                  </Paper>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
+                        <TextField
+                          fullWidth
+                          label="JUDUL"
+                          variant="outlined"
+                          sx={{ mb: 2 }}
+                        />
+                        <TextField
+                          fullWidth
+                          label="DESKRIPSI"
+                          variant="outlined"
+                          multiline
+                          rows={4}
+                          sx={{ mb: 2 }}
+                        />
+                        <TextField
+                          fullWidth
+                          label="DEADLINE"
+                          variant="outlined"
+                          type="datetime-local"
+                        />
+                      </Box>
+                    </Grid>
+                  </Grid>
+              </Box>
+                {questions.map((question, index) => (
+                  question.type === 'essay' ? (
+                    <EssayQuestion 
+                      key={question.id}
+                      number={index + 1}
+                      onDelete={() => handleDeleteQuestion(question.id)}
+                    />
+                  ) : (
+                    <MultipleChoiceQuestion
+                      key={question.id}
+                      onDelete={() => handleDeleteQuestion(question.id)}
+                    />
+                  )
+                ))}
 
-        {questions.map((question, index) => (
-          question.type === 'essay' ? (
-            <EssayQuestion 
-              key={question.id}
-              number={index + 1}
-              onDelete={() => handleDeleteQuestion(question.id)}
-            />
-          ) : (
-            <MultipleChoiceQuestion
-              key={question.id}
-              onDelete={() => handleDeleteQuestion(question.id)}
-            />
-          )
-        ))}
-
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <IconButton
             sx={{
               backgroundColor: '#f0f0f0',

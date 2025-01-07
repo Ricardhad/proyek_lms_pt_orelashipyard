@@ -5,6 +5,7 @@ const anakMagangRouter = require('./anakMagang.route')
 const mentorRouter = require('./Mentor.route')
 const modulRouter = require('./Modul.route')
 const announcementRouter = require('./Announcement.route')
+const chatRouter = require('./Chat.route')
 const express = require('express')
 const { upload } = require('./Middleware')
 const router = express()
@@ -19,6 +20,7 @@ router.use('/anakMagang', anakMagangRouter)
 router.use('/mentor', mentorRouter)
 router.use('/modul', modulRouter)
 router.use('/announcement', announcementRouter)
+router.use('/chat', chatRouter); 
 router.post('/upload', upload.single('uploadSoal'), (req, res) => {
    console.log(req.file)
     const Gambar = req.file //sesuain key nya sama fieldname diatas(uploadSoal bukan Gambar);

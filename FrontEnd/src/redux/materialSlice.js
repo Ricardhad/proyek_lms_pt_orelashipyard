@@ -1,26 +1,38 @@
-// src/store/materialSlice.js
+// materialSlice.js
 import { createSlice } from '@reduxjs/toolkit';
+
+const initialState = {
+  courseID: '',
+  mentorID: '',
+  gambar: null,        // Store image path
+  imagePreview: null,  // For UI preview
+  namaModul: '',
+  Deskripsi: '',
+  Deadline: ''
+};
 
 const materialSlice = createSlice({
   name: 'material',
-  initialState: {
-    title: '',
-    description: '',
-    deadline: '',
-  },
+  initialState,
   reducers: {
     setMaterial: (state, action) => {
-      state.title = action.payload.title;
-      state.description = action.payload.description;
-      state.deadline = action.payload.deadline;
+      return { ...state, ...action.payload };
     },
-    clearMaterial: (state) => {
-      state.title = '';
-      state.description = '';
-      state.deadline = '';
+    setGambar: (state, action) => {
+      state.gambar = action.payload.path;
+      state.imagePreview = action.payload.preview;
     },
-  },
+    clearMaterial: () => initialState
+  }
 });
 
-export const { setMaterial, clearMaterial } = materialSlice.actions;
+export const { 
+  setMaterial, 
+  setGambar, 
+  clearMaterial 
+} = materialSlice.actions;
+
+// Selectors
+export const selectMaterial = (state) => state.material;
+
 export default materialSlice.reducer;
