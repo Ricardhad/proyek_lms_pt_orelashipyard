@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import MainLayout from '../main-layout';
+import Layout from '../components/layout';
 import {
   Box,
   Card,
@@ -32,7 +32,7 @@ export default function Homework() {
   ];
 
   return (
-    <MainLayout>
+    <Layout>
       <Box sx={{ p: 4 }}>
         <Typography variant="h2" sx={{ mb: 4, fontWeight: 'bold', textAlign: 'center' }}>
           Home Work
@@ -124,7 +124,7 @@ export default function Homework() {
           ))}
         </Stack>
       </Box>
-    </MainLayout>
+    </Layout>
   );
 }
 

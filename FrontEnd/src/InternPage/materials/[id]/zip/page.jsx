@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import MainLayout from '../../../main-layout';
+import Layout from '../../../components/layout';
 import {
   Box,
   Typography,
@@ -34,7 +34,7 @@ export default function MaterialZip({ params }) {
   };
 
   return (
-    <MainLayout>
+    <Layout>
       <Box sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
         <Stack direction="row" justifyContent="space-between" sx={{ mb: 4 }}>
           <Typography variant="h3">Materi {params.id}</Typography>
@@ -115,7 +115,7 @@ export default function MaterialZip({ params }) {
           </Stack>
         </Paper>
       </Box>
-    </MainLayout>
+    </Layout>
   );
 }
 

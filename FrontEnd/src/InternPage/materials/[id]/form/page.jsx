@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import MainLayout from '../../../main-layout';
+import Layout from '../../../components/layout';
 import {
   Box,
   Typography,
@@ -34,7 +34,7 @@ export default function MaterialForm() {
   };
 
   return (
-    <MainLayout>
+    <Layout>
       <Box sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
         <Stack direction="row" justifyContent="space-between" sx={{ mb: 4 }}>
           <Typography variant="h3">Materi {id}</Typography>
@@ -148,7 +148,7 @@ export default function MaterialForm() {
           </Paper>
         </Stack>
       </Box>
-    </MainLayout>
+    </Layout>
   );
 }
 

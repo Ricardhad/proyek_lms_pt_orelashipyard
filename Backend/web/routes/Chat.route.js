@@ -40,8 +40,8 @@ router.post('/', async (req, res) => {
 
         // Create a new chat message
         const newChat = new Chat({
-            senderID: mongoose.Types.ObjectId(senderID),
-            courseID: mongoose.Types.ObjectId(courseID),
+            senderID,
+            courseID,
             content,
             attachments,
             chatDate: new Date(), // Set the current date and time

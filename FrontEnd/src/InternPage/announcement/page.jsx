@@ -1,46 +1,142 @@
-import React from 'react';
-import MainLayout from '../main-layout';
+import {useState,useEffect} from 'react';
+import Layout from '../components/layout';
 import {
-  Typography,
-  Card,
-  CardContent,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
   Box,
-  TextField,
-  InputAdornment,
+  Typography,
+  Paper,
+  IconButton,
+  Fab,
+  Button,
+  InputBase,
 } from '@mui/material';
-import { Search as SearchIcon } from '@mui/icons-material';
+import {
+  Add as AddIcon,
+  Search as SearchIcon,
+  ChevronRight,
+} from '@mui/icons-material';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { use } from 'react';
 
-const announcements = [
+
+const MotionPaper = motion.create(Paper);
+const MotionFab = motion.create(Fab);
+
+const initialAnnouncements = [
   {
     id: 1,
     title: 'Perubahan jadwal masuk magang',
+    admin: 'Admin Magang',
     date: '30 Oktober 2099',
-    author: 'Admin Magang',
-    content: 'Mohon perhatian untuk semua peserta magang. Mulai minggu depan, jadwal masuk akan berubah menjadi pukul 08.00 WIB. Harap disesuaikan.',
-  },
-  {
-    id: 2,
-    title: 'Pengumpulan laporan bulanan',
-    date: '25 Oktober 2099',
-    author: 'Koordinator Magang',
-    content: 'Diingatkan kepada seluruh peserta magang untuk mengumpulkan laporan bulanan paling lambat tanggal 5 setiap bulannya.',
-  },
-  {
-    id: 3,
-    title: 'Seminar online: Teknologi AI terbaru',
-    date: '20 Oktober 2099',
-    author: 'Divisi Pelatihan',
-    content: 'Kami mengundang seluruh peserta magang untuk mengikuti seminar online tentang perkembangan terbaru dalam teknologi AI. Seminar akan diadakan pada tanggal 1 November 2099.',
   },
 ];
 
 export default function Announcements() {
+  const [announcements, setAnnouncements] = useState(initialAnnouncements);
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  // Fetch announcements from the API
+  const fetchAnnouncements = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/api/announcement/allAnnouncement?title=${searchQuery}`);
+      setAnnouncements(response.data.data);
+      console.log('Announcements fetched:', response.data);
+    } catch (error) {
+      console.error('Error fetching announcements:', error);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchAnnouncements();
+  }, [searchQuery]);
+
+  useEffect(() => {
+    console.log('Announcements updated:', announcements);
+  })
+  const handleViewClick = (id) => {
+    navigate(`/homeMagang/announcements/${id}`);
+  };
   return (
-   <MainLayout>
+   <Layout>
+    <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Box sx={{ p: 3, position: 'relative', minHeight: '100vh' }}>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            mb: 4
+          }}>
+            <Typography variant="h4">Announcement</Typography>
+            <Paper
+              sx={{
+                p: '2px 4px',
+                display: 'flex',
+                alignItems: 'center',
+                width: 400,
+                borderRadius: '20px',
+                backgroundColor: '#fff'
+              }}
+            >
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <IconButton sx={{ p: '10px' }}>
+                <SearchIcon />
+              </IconButton>
+            </Paper>
+          </Box>
+
+          {/* Announcements List */}
+          <AnimatePresence>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {announcements.map((announcement) => (
+                <MotionPaper
+                  key={announcement.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                  sx={{
+                    p: 2,
+                    backgroundColor: '#ff7f7f',
+                    color: 'white',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => handleViewClick(announcement._id)}
+                >
+                  <Box>
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                      {announcement.title}
+                    </Typography>
+                    <Typography variant="body2">
+                      {announcement.createdBy?.roleType === 1 
+                        ? `${announcement.createdBy.namaUser} (mentor), ${announcement.date}`
+                        : announcement.createdBy?.roleType === 0 
+                        ? `${announcement.createdBy.namaUser} (admin), ${announcement.date}`
+                        : `${announcement.createdBy?.namaUser || 'Unknown User'}, ${announcement.date}`} {/* Fallback for undefined */}
+                    </Typography>
+                  </Box>
+                </MotionPaper>
+              ))}
+            </Box>
+          </AnimatePresence>
+        </Box>
+      </motion.div>
     {/* <Box sx={{ py: 4 }}>
       <Typography variant="h4" gutterBottom>
         Announcements
@@ -99,7 +195,7 @@ export default function Announcements() {
         </CardContent>
       </Card>
     </Box> */}
-    </MainLayout>
+    </Layout>
   );
 }
 

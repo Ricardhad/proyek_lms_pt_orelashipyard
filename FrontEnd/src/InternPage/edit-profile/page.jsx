@@ -1,4 +1,4 @@
-import MainLayout from '../main-layout';
+import Layout from '../components/layout';
 import React, { useEffect, useState } from 'react';
 import {
   Typography,
@@ -107,8 +107,8 @@ export default function EditProfile() {
   };
 
   return (
-    <MainLayout>
-      <Box sx={{ py: 4 }}>
+    <Layout>
+      <Box sx={{ py: 4 ,maxWidth: '800px', margin: '0 auto'}}>
         <Typography variant="h4" gutterBottom>
           Edit Profile
         </Typography>
@@ -215,6 +215,6 @@ export default function EditProfile() {
           </CardContent>
         </Card>
       </Box>
-    </MainLayout>
+    </Layout>
   );
 }

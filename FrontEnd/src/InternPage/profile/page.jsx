@@ -8,7 +8,7 @@ import {
   Paper,
   Grid2 as Grid,
 } from '@mui/material';
-import MainLayout from '../main-layout';
+import Layout from '../components/layout';
 import { useSelector,useDispatch } from 'react-redux';
 import axios from 'axios';// Import useDispatch
 import { setUser } from "../../redux/authSlice"; // Import the setUser action
@@ -48,7 +48,7 @@ export default function Profile() {
   console.log("profile",userData);
   console.log("user",user);
   return (
-    <MainLayout>
+    <Layout>
       <Box sx={{ p: 3 ,transform: 'translateX(-15%)'}}>
         <Typography variant="h4" sx={{ mb: 3 }}>interns</Typography>
         <Paper sx={{ p: 4, backgroundColor: '#f5f5f5', borderRadius: '16px' }}>
@@ -224,7 +224,7 @@ export default function Profile() {
           </Card>
         </Box>
       </Box> */}
-    </MainLayout>
+    </Layout>
   );
 }
 

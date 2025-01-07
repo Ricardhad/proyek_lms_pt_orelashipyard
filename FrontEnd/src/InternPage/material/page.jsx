@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import MainLayout from '../main-layout';
+import Layout from '../components/layout';
 import {
   Box,
   Card,
@@ -57,8 +57,8 @@ export default function Materials() {
   ];
 
   return (
-    <MainLayout>
-      <Box sx={{ p: 4 }}>
+    <Layout>
+      <Box sx={{ p: 4 ,maxWidth: '1000px', margin: '0 auto'}}>
         {/* Header Section */}
         <Card sx={{ mb: 4, bgcolor: '#f0f0f0', position: 'relative', p: 4 }}>
           <Grid container spacing={2}>
@@ -219,7 +219,7 @@ export default function Materials() {
           ))}
         </Grid>
       </Box>
-    </MainLayout>
+    </Layout>
   );
 }
 
