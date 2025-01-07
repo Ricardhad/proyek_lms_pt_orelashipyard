@@ -1,41 +1,82 @@
-import { useState, useEffect } from 'react'
-import { Box, Button, TextField, Typography, Paper } from '@mui/material'
-import { motion } from 'framer-motion'
-import Layout from '../../../components/layout'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { Box, Button, TextField, Typography, Paper } from '@mui/material';
+import { motion } from 'framer-motion';
+import Layout from '../../../components/layout';
+import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
-const MotionPaper = motion.create(Paper)
-
-// Mock function to fetch announcement data
-const fetchAnnouncementData = async (id) => {
-  // In a real application, this would be an API call
-  return {
-    id: id,
-    title: 'Perubahan jadwal masuk magang',
-    description: 'Jadwal masuk magang akan diubah mulai minggu depan.',
-    admin: 'Admin Magang',
-    date: '2099-10-30',
-  }
-}
+const MotionPaper = motion.create(Paper);
 
 export default function EditAnnouncementPage() {
-  const navigate = useNavigate()
-  const params = useParams()
-  const [announcement, setAnnouncement] = useState(null)
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const [announcement, setAnnouncement] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Fetch announcement data
   useEffect(() => {
-    const loadAnnouncement = async () => {
-      const data = await fetchAnnouncementData(params.id)
-      setAnnouncement(data)
-    }
-    loadAnnouncement()
-  }, [params.id])
+    const fetchAnnouncementData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/announcement/${id}/singleAnnouncement`);
+        setAnnouncement(response.data.data);
+        console.log('Announcement fetched:', response.data);
+      } catch (err) {
+        setError(err.response ? err.response.data.error : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchAnnouncementData();
+  }, [id]);
+
+  // Handle form input changes
   const handleChange = (e) => {
     setAnnouncement({
       ...announcement,
-      [e.target.name]: e.target.value
-    })
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/announcement/${id}/editAnnouncement`,
+        announcement
+      );
+      console.log('Announcement updated:', response.data);
+      navigate(-1); // Go back to the previous page after successful update
+    } catch (err) {
+      console.error('Error updating announcement:', err);
+      setError(err.response ? err.response.data.error : 'An error occurred');
+    }
+  };
+
+  if (loading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Typography>Loading...</Typography>
+      </motion.div>
+    );
+  }
+
+  if (error) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Typography color="error">{error}</Typography>
+      </motion.div>
+    );
   }
 
   if (!announcement) {
@@ -45,9 +86,9 @@ export default function EditAnnouncementPage() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <Typography>Loading...</Typography>
+        <Typography>No announcement found.</Typography>
       </motion.div>
-    )
+    );
   }
 
   return (
@@ -64,11 +105,11 @@ export default function EditAnnouncementPage() {
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   variant="contained"
-                  sx={{ 
-                    backgroundColor: '#e0e0e0', 
+                  sx={{
+                    backgroundColor: '#e0e0e0',
                     color: 'black',
                     borderRadius: '20px',
-                    textTransform: 'none'
+                    textTransform: 'none',
                   }}
                   onClick={() => navigate(-1)}
                 >
@@ -76,12 +117,13 @@ export default function EditAnnouncementPage() {
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button 
-                  variant="contained" 
-                  sx={{ 
+                <Button
+                  variant="contained"
+                  sx={{
                     borderRadius: '20px',
-                    textTransform: 'none'
+                    textTransform: 'none',
                   }}
+                  onClick={handleSubmit}
                 >
                   Save Changes
                 </Button>
@@ -150,6 +192,5 @@ export default function EditAnnouncementPage() {
         </Box>
       </motion.div>
     </Layout>
-  )
+  );
 }
-

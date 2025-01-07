@@ -46,7 +46,7 @@ export default function CreateAnnouncementPage() {
         },
       });
       console.log('Announcement created:', response.data);
-      navigate('homeMentor/announcements'); // Redirect to the announcements page after success
+      navigate(-1); // Redirect to the announcements page after success
     } catch (error) {
       console.error('Error creating announcement:', error);
     }
