@@ -167,13 +167,16 @@ router.post('/login', async (req, res) => {
     // Cek apakah password yang dimasukkan sesuai dengan password yang ada di database
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid email or password.' });
-
     // Generate JWT token
     const token = jwt.sign(
       { id: user._id, email: user.email, roleType: user.roleType },
       process.env.JWT_SECRET || 'your_jwt_secret',
       { expiresIn: '24h' }
     );
+    console.log({id: user._id, email: user.email, roleType: user.roleType})
+
+    
+    
 
     // Cek roleType dan arahkan sesuai dengan role
     let roleBasedRedirect = '';
@@ -195,7 +198,9 @@ router.post('/login', async (req, res) => {
     res.status(200).json({ 
       message: 'Login successful.',
       token,
-      roleBasedRedirect
+      roleBasedRedirect,
+      
+
     });
   } catch (error) {
     console.error(error);

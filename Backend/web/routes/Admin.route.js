@@ -402,9 +402,9 @@ router.get('/mentors', async (req, res) => {
   }
 });
 
-// Endpoint untuk menambahkan user dengan roleType 1 dan isVerified true
-router.post('/Mentor', async (req, res) => {
-  const { namaUser, Profile_Picture, noTelpon, email, password } = req.body;
+// Endpoint untuk menambahkan user dengan roleType 1 dan isVerified true, serta membuat mentor
+router.post('/Mentor', verifyToken([0]), async (req, res) => {
+  const { namaUser, Profile_Picture, noTelpon, email, password, courseID } = req.body;
 
   // Cek jika semua field yang dibutuhkan ada
   if (!namaUser || !Profile_Picture || !noTelpon || !email || !password) {
@@ -412,24 +412,37 @@ router.post('/Mentor', async (req, res) => {
   }
 
   try {
-    // Membuat instance baru untuk UserData dengan roleType 1 dan isVerified true
+    // Membuat instance baru untuk UserData
     const newUser = new UserData({
       namaUser,
       Profile_Picture,
       noTelpon,
       email,
       password, // pastikan password sudah di-hash di frontend sebelum dikirim
-      roleType: 1,        // Set roleType menjadi 1
+      roleType: 1,        // Set roleType menjadi 1 untuk Mentor
       isVerified: true,   // Set isVerified menjadi true
     });
 
     // Simpan data user ke database
-    await newUser.save();
+    const savedUser = await newUser.save();
+
+    // Membuat instance baru untuk Mentor dengan userID dari user yang baru dibuat
+    const newMentor = new Mentor({
+      userID: savedUser._id,
+      courseID: courseID ? courseID : [], // Mengisi courseID jika ada, atau kosong
+    });
+
+    // Simpan data mentor ke database
+    const savedMentor = await newMentor.save();
 
     // Response jika berhasil
-    res.status(201).json({ message: 'User created successfully', user: newUser });
+    res.status(201).json({
+      message: 'Mentor created successfully',
+      user: savedUser,
+      mentor: savedMentor,
+    });
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.error('Error creating mentor:', error);
     res.status(500).json({ message: 'Server error', error });
   }
 });
@@ -512,30 +525,42 @@ router.get("/announcements", async (req, res) => {
 // Konfigurasi multer untuk upload file
 // POST endpoint to create a new announcement
 // POST endpoint to create a new announcement
-router.post('/announcement', verifyToken, async (req, res) => {
-  const { title, description, attachments, userName } = req.body; // Ambil userName dari body request
-
+// POST endpoint to create a new announcement
+router.post("/announcement", verifyToken([0]), upload.fields([
+  { name: 'attachments', maxCount: 5 } // Mendukung multiple file untuk attachments
+]), async (req, res) => {
   try {
-    // Mencari user berdasarkan userName untuk mendapatkan userId
-    const user = await UserData.findOne({ namaUser: userName });
+      const { title, description, createdBy } = req.body;
+      const attachments = req.files.attachments || []; // Handle multiple files
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+      // Create new Announcement document
+      const newAnnouncement = new Announcement({
+          title,
+          description,
+          createdBy,
+          attachments: attachments.map(file => ({
+              fileName: file.originalname,
+              filePath: file.path,
+              fileType: file.mimetype,
+              fileSize: file.size,
+              uploadDate: new Date(),
+          })),
+          date: new Date(),
+      });
 
-    // Buat pengumuman dengan userId yang didapat
-    const newAnnouncement = new Announcement({
-      title,
-      description,
-      createdBy: user._id, // Menyertakan userId yang ditemukan
-      attachments,
-    });
+      // Save the announcement to the database
+      await newAnnouncement.save();
 
-    await newAnnouncement.save();
-    res.status(201).json({ message: "Announcement created successfully", announcement: newAnnouncement });
-  } catch (error) {
-    console.error("Error creating announcement:", error);
-    res.status(500).json({ message: "Failed to create announcement", error: error.message });
+      res.status(201).json({
+          message: 'Announcement created successfully.',
+          announcement: newAnnouncement,
+      });
+  } catch (err) {
+      console.error('Error creating announcement:', err);
+      res.status(500).json({
+          message: 'Failed to create announcement.',
+          error: err.message,
+      });
   }
 });
 

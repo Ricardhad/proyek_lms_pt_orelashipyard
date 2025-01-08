@@ -10,28 +10,22 @@ const api = require('./routes/index'); // Import your API routes
 const app = express();
 const server = http.createServer(app);
 
-// Configure Socket.IO with CORS
-const io = socketIo(server, {
-  cors: {
-    origin: 'http://localhost:5173', // Allow frontend origin
-    methods: ['GET', 'POST'], // Allowed methods
-    allowedHeaders: ['Content-Type'], // Allowed headers
-  },
-});
 
 // Attach io to the app object
-app.set('io', io);
 
 const port = 3000;
+const corsOptions = {
+  origin: 'http://localhost:5173', // Allow frontend origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers, tambahkan Authorization
+};
 
-// Middleware
-app.use(
-  cors({
-    origin: 'http://localhost:5173', // Allow frontend origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-    allowedHeaders: ['Content-Type'], // Allowed headers
-  })
-);
+// Middleware CORS untuk Express
+app.use(cors(corsOptions));
+
+// Konfigurasi Socket.IO dengan CORS yang sama
+const io = socketIo(server, { cors: corsOptions });
+app.set('io', io);
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
 

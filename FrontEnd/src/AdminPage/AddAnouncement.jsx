@@ -5,40 +5,44 @@ import axios from "../client";
 const AddAnnouncement = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); // Untuk menampilkan error
+  const [attachments, setAttachments] = useState([]); // Untuk menyimpan file lampiran
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+
+  const handleFileChange = (e) => {
+    setAttachments(e.target.files); // Menyimpan file yang dipilih
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validasi input sebelum submit
     if (!title.trim() || !content.trim()) {
       setErrorMessage("Title and content are required.");
       return;
     }
 
-    // Ambil token dari localStorage
     const token = localStorage.getItem("token");
-
     if (!token) {
       setErrorMessage("User is not logged in.");
       return;
     }
 
     try {
-      // Data yang akan dikirim ke backend
-      const payload = {
-        title,
-        description: content,  // Menggunakan "content" untuk deskripsi
-        createdBy: "67624e55e0e2c189da418030",  // Ganti sesuai dengan ID pengguna yang login
-      };
+      // Buat FormData untuk mengirim data dengan file
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("description", content);
+      formData.append("createdBy", "67624e55e0e2c189da418030"); // Ganti dengan ID pengguna yang login
 
-      console.log("Payload being sent:", payload);
+      // Tambahkan setiap file ke FormData
+      for (let i = 0; i < attachments.length; i++) {
+        formData.append("attachments", attachments[i]);
+      }
 
-      // Kirim data ke backend dengan menambahkan token di header Authorization
-      await axios.post("/api/admin/announcements", payload, {
+      // Kirim data ke backend
+      await axios.post("/api/admin/announcement", formData, {
         headers: {
-          Authorization: `Bearer ${token}`,  // Mengirim token di header
+          Authorization: `Bearer ${token}`, // Mengirim token di header
         },
       });
 
@@ -47,7 +51,6 @@ const AddAnnouncement = () => {
     } catch (error) {
       console.error("Error adding announcement:", error);
 
-      // Tampilkan pesan error jika tersedia dari backend
       if (error.response) {
         setErrorMessage(error.response.data.message || "An error occurred.");
       } else {
@@ -78,6 +81,16 @@ const AddAnnouncement = () => {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
+          />
+        </div>
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Attachments (max 5 files)</label>
+          <input
+            type="file"
+            style={styles.input}
+            multiple
+            onChange={handleFileChange}
+            accept=".pdf,.png,.jpg,.jpeg"
           />
         </div>
         <button style={styles.submitButton} type="submit">

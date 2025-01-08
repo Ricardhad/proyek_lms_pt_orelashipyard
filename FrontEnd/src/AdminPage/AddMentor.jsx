@@ -23,20 +23,23 @@ const AddMentor = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Prepare data for submission
+      const token = localStorage.getItem("token"); // Ambil token dari local storage
       const requestData = {
         namaUser: formData.namaUser,
         Profile_Picture: formData.Profile_Picture,
         noTelpon: formData.noTelpon,
         email: formData.email,
-        password: formData.password, // Pastikan password di-hash di backend
+        password: formData.password,
       };
-
-      // Make API call to create mentor
-      const response = await client.post("/api/user/create", requestData);
+  
+      // Panggil API dengan menyertakan token di header Authorization
+      const response = await client.post("/api/admin/Mentor", requestData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
       setMessage(`Mentor added successfully: ${response.data.user.namaUser}`);
-
-      // Reset form
       setFormData({
         namaUser: "",
         Profile_Picture: "",
@@ -44,10 +47,9 @@ const AddMentor = () => {
         email: "",
         password: "",
       });
-
-      // Navigate to mentor list page after success
+  
       setTimeout(() => {
-        navigate("/mentors");
+        navigate("/home");
       }, 2000);
     } catch (error) {
       console.error("Error adding mentor:", error);
