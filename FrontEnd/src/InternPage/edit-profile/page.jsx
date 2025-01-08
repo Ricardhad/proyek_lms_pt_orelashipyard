@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Input = styled('input')({
@@ -32,6 +33,7 @@ export default function EditProfile() {
   const [userData, setUserData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -99,6 +101,8 @@ export default function EditProfile() {
       // });
 
       console.log('Profile updated successfully:', response.data);
+      navigate(-1)
+
       // Optionally, you can update local state or show a success message
     } catch (error) {
       console.error('Error updating profile:', error);

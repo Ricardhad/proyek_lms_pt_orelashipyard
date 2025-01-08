@@ -19,6 +19,7 @@ import InternMaterials from "./InternPage/material/page";
 import InternHomework from "./InternPage/homework/page";
 import InternEditProfile from "./InternPage/edit-profile/page";
 import InternAnnouncements from "./InternPage/announcement/page";
+import InternViewAnnouncement from "./InternPage/announcement/[id]/page";
 import InternGroupChat from "./InternPage/group-chat/page";
 import InternMaterialForm from "./InternPage/materials/[id]/form/page";
 import InternMaterialZip from "./InternPage/materials/[id]/zip/page";
@@ -112,6 +113,7 @@ function App() {
         <Route path="/homeMagang/homework" element={<ProtectedRoute element={InternHomework} requiredRole={2} />} />
         <Route path="/homeMagang/edit-profile" element={<ProtectedRoute element={InternEditProfile} requiredRole={2} />} />
         <Route path="/homeMagang/announcements" element={<ProtectedRoute element={InternAnnouncements} requiredRole={2} />} />
+        <Route path="/homeMagang/announcements/:id" element={<ProtectedRoute element={InternViewAnnouncement} requiredRole={2} />} />
         <Route path="/homeMagang/group-chat" element={<ProtectedRoute element={InternGroupChat} requiredRole={2} />} />
         <Route path="/homeMagang/materials/:id/form" element={<ProtectedRoute element={InternMaterialForm} requiredRole={2} />} />
         <Route path="/homeMagang/materials/:id/zip" element={<ProtectedRoute element={InternMaterialZip} requiredRole={2} />} />

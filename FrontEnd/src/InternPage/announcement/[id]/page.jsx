@@ -5,33 +5,72 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import Layout from '../../components/layout';
+import axios from 'axios';
 
 const MotionPaper = motion.create(Paper);
 
 // Mock function to fetch announcement data
-const fetchAnnouncementData = async (id) => {
-  // In a real application, this would be an API call
-  return {
-    id: id,
-    title: 'Perubahan jadwal masuk magang',
-    description: 'Jadwal masuk magang akan diubah mulai minggu depan. Mohon perhatikan perubahan ini dan sesuaikan jadwal Anda.',
-    admin: 'Admin Magang',
-    date: '2099-10-30',
-  };
-}
+// const fetchAnnouncementData = async (id) => {
+//   // In a real application, this would be an API call
+//   return {
+//     id: id,
+//     title: 'Perubahan jadwal masuk magang',
+//     description: 'Jadwal masuk magang akan diubah mulai minggu depan. Mohon perhatikan perubahan ini dan sesuaikan jadwal Anda.',
+//     admin: 'Admin Magang',
+//     date: '2099-10-30',
+//   };
+// }
 
 export default function ViewAnnouncementPage() {
   const navigate = useNavigate();
   const params = useParams();
+  console.log(params.id);
   const [announcement, setAnnouncement] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const loadAnnouncement = async () => {
-      const data = await fetchAnnouncementData(params.id);
-      setAnnouncement(data);
+      try {
+        const response = await axios.get(`http://localhost:3000/api/announcement/${params.id}/singleAnnouncement`);
+        setAnnouncement(response.data.data);
+        console.log('Announcement fetched:', response.data);
+      } catch (err) {
+        setError(err.response ? err.response.data.error : 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
     };
     loadAnnouncement();
   }, [params.id]);
+
+  // if (loading) {
+  //   return (
+
+  //       <Typography>Loading...</Typography>
+  //   );
+  // }
+
+  if (error) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Typography color="error">{error}</Typography>
+      </motion.div>
+    );
+  }
+
+  // useEffect(() => {
+  //   const loadAnnouncement = async () => {
+  //     const data = await fetchAnnouncementData(params.id);
+  //     setAnnouncement(data);
+  //   };
+  //   loadAnnouncement();
+  // }, [params.id]);
+
 
   if (!announcement) {
     return (
@@ -78,7 +117,13 @@ export default function ViewAnnouncementPage() {
             <Typography variant="h5" sx={{ mb: 2 }}>{announcement.title}</Typography>
             <Typography variant="body1" sx={{ mb: 3 }}>{announcement.description}</Typography>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography variant="body2">Posted by: {announcement.admin}</Typography>
+              <Typography variant="body2">Created by: 
+                {announcement.createdBy?.roleType === 1 
+                  ? `${announcement.createdBy.namaUser} (mentor)`
+                  : announcement.createdBy?.roleType === 0 
+                  ? `${announcement.createdBy.namaUser} (admin)`
+                  : `${announcement.createdBy?.namaUser || 'Unknown User'}`} {/* Fallback for undefined */}
+              </Typography>
               <Typography variant="body2">Date: {announcement.date}</Typography>
             </Box>
           </MotionPaper>
