@@ -10,7 +10,7 @@ const Course = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await client.get("/api/admin/courses");
+        const response = await client.get("/api/admin/Course");
         setCourses(response.data.courses);
       } catch (error) {
         console.error("Error fetching courses:", error);

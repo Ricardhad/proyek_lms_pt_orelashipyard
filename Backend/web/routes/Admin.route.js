@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express()
 const mongoose = require('mongoose');
+const cors = require('cors');
+
 
 const { 
   Course,Mentor,Admin,UserData,AnakMagang,
@@ -10,7 +12,8 @@ const {
 } =require("./functions");
 
 const Joi = require('joi');
-const { verifyToken } = require('./Middleware');
+const { upload,verifyToken } = require('./Middleware');
+const Announcement = require('../models/Announcement');
 
 
 router.get('/',verifyToken([0]), async (req, res) => {
@@ -31,7 +34,7 @@ router.get('/',verifyToken([0]), async (req, res) => {
 
 //rey tambahkan course
 // Endpoint untuk mengambil semua course
-router.get("/Course",verifyToken([0]), async (req, res) => {
+router.get("/Course", async (req, res) => {
   try {
     const courses = await Course.aggregate([
       {
@@ -68,34 +71,38 @@ router.get("/Course",verifyToken([0]), async (req, res) => {
   }
 });
 
-router.put('/:userId/verify',verifyToken([0]), async (req, res) => {
+// Aktifkan CORS hanya pada endpoint ini
+router.put('/:userId', async (req, res) => { 
+
   const { userId } = req.params;
-  const { isVerified } = req.body; // Pastikan ini boolean
+  const updatedData = req.body; // Data user yang akan diupdate
 
-
-  //   console.log(token)
-
-  if (typeof isVerified !== 'boolean') {
-    return res.status(400).json({ message: 'isVerified must be a boolean.' });
-  }
-
-  // Update user with the boolean value
   try {
+    // Cari dan update data user berdasarkan userId
     const updatedUser = await UserData.findByIdAndUpdate(
       userId,
-      { isVerified },
-      { new: true }
+      updatedData,
+      { new: true, runValidators: true }
     );
+
+    // Jika user tidak ditemukan
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
     res.status(200).json(updatedUser);
   } catch (err) {
-    console.error("Error updating verification:", err);
-    res.status(500).json({ message: "Error updating verification status." });
+    console.error("Error updating user data:", err);
+    res.status(500).json({ message: "Error updating user data.", error: err.message });
   }
 });
 
+
+
+
 //rey tambahkan edit user
 // Endpoint untuk edit user berdasarkan ID
-router.put('/:userId/editUser',verifyToken([0]), async (req, res) => {
+router.put('/:userId/editUser', async (req, res) => {
   const { userId } = req.params;
   const { namaUser, roletype, password, noTelpon } = req.body;
 
@@ -265,64 +272,78 @@ router.put("/:courseId/Course",verifyToken([0]), async (req, res) => {
   }
 });
 
-router.post("/Course",verifyToken([0]), async (req, res) => {
-  const { name, desc, MentorID, daftarKelas } = req.body;
+// router.post("/Course", async (req, res) => {
+//   const { name, desc, MentorID, daftarKelas } = req.body;
 
-  // Joi validation schema
-  const schema = Joi.object({
-    name: Joi.string().required(),
-    desc: Joi.string().optional().allow(""),
-    MentorID: Joi.array().items(Joi.string()).optional(),
-    daftarKelas: Joi.array().items(Joi.string()).optional(),
-  });
-  const exist= checkDupes(Course,'namaCourse',name);
-  if(exist){
-    return res.status(400).json({message:"duplicate name enter new name"});
-  }
+//   // Joi validation schema
+//   const schema = Joi.object({
+//     name: Joi.string().required(),
+//     desc: Joi.string().optional().allow(""),
+//     MentorID: Joi.array().items(Joi.string()).optional(),
+//     daftarKelas: Joi.array().items(Joi.string()).optional(),
+//   });
+//   const exist= checkDupes(Course,'namaCourse',name);
+//   if(exist){
+//     return res.status(400).json({message:"duplicate name enter new name"});
+//   }
 
-  // Validate request body
-  const { error } = schema.validateAsync({ name, desc, MentorID, daftarKelas });
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
+//   // Validate request body
+//   const { error } = schema.validateAsync({ name, desc, MentorID, daftarKelas });
+//   if (error) {
+//     return res.status(400).json({ message: error.details[0].message });
+//   }
 
+//   try {
+//     // Validate daftarKelas if provided
+//     let daftarCourse
+//     if (daftarKelas) {
+//       daftarCourse= await validateArrayOfIDs(AnakMagang,daftarKelas,"AnakMagang")
+//     }
+//     let daftarMentor
+//     if (MentorID) {
+//        daftarMentor= await validateArrayOfIDs(Mentor,MentorID,"Mentor")
+//     }
+//     // Create new course
+//     const newCourse = new Course({
+//       namaCourse: name,
+//       Deskripsi: desc,
+//       mentorID: daftarMentor || [],
+//       daftarKelas: daftarCourse || [],
+//     });
+
+//     const savedCourse = await newCourse.save();
+
+//     // Send success response
+//     res.status(201).json(savedCourse);
+//   } catch (err) {
+//     console.error("Error creating course:", err);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
+
+router.post("/Course", async (req, res) => {
   try {
-    // Validate daftarKelas if provided
-    let daftarCourse
-    if (daftarKelas) {
-      daftarCourse= await validateArrayOfIDs(AnakMagang,daftarKelas,"AnakMagang")
-    }
-    let daftarMentor
-    if (MentorID) {
-       daftarMentor= await validateArrayOfIDs(Mentor,MentorID,"Mentor")
-    }
-    // Create new course
+    // Menerima data dari request body
+    const { namaCourse, Deskripsi, mentorID, daftarKelas } = req.body;
+
+    // Membuat instance baru Course
     const newCourse = new Course({
-      namaCourse: name,
-      Deskripsi: desc,
-      mentorID: daftarMentor || [],
-      daftarKelas: daftarCourse || [],
+      namaCourse,
+      Deskripsi,
+      mentorID: mentorID || [],  // Jika mentorID tidak diberikan, tetap mengirimkan array kosong
+      daftarKelas: daftarKelas || []  // Jika daftarKelas tidak diberikan, tetap mengirimkan array kosong
     });
 
+    // Menyimpan Course ke database
     const savedCourse = await newCourse.save();
 
-    // Send success response
+    // Mengirimkan response dengan status 201 (Created) dan data Course yang baru disimpan
     res.status(201).json(savedCourse);
-  } catch (err) {
-    console.error("Error creating course:", err);
-    res.status(500).json({ message: "Internal server error" });
+  } catch (error) {
+    // Jika terjadi error, kirimkan response dengan status 500 (Internal Server Error)
+    res.status(500).json({ message: "Error creating course", error });
   }
 });
-
-
-// router.get("/Course",verifyToken([0]), async (req, res) => {
-//   const {name} = req.query;
-//   const result = await Course.find({namaCourse: {$regex: new RegExp(name, 'i')}});
-//   if(!result){
-//     return res.status(404).json({ message: "course not found" });
-//   }
-//   return res.status(200).json(result);
-// })
 
 router.get("/anakMagang",verifyToken([0]), async (req, res) => {
     const { namaUser } = req.query;
@@ -360,41 +381,60 @@ router.get("/anakMagang",verifyToken([0]), async (req, res) => {
     }
 });
 
-router.get("/Mentor",verifyToken([0]), async (req, res) => {
-    const { namaUser } = req.query;
 
-    try {
-        let pipeline = [
-            {
-                $lookup: {
-                    from: 'UserData', // assuming the collection name for user is 'users'
-                    localField: 'userID',
-                    foreignField: '_id',
-                    as: 'user'
-                }
-            },
-            {$unwind: '$user'},
-            {
-                $match: {
-                    $or: [
-                        { 'user.namaUser': { $regex: new RegExp(namaUser, 'i') } },
-                    ]
-                }
-            }
-        ];
 
-        const results = await Mentor.aggregate(pipeline);
+// Endpoint untuk mengambil semua data UserData dengan roleType 1 (mentor)
+router.get('/mentors', async (req, res) => {
+  try {
+    // Cari semua user dengan roleType 1 (mentor)
+    const mentors = await UserData.find({ roleType: 1 });
 
-        if (results.length === 0) {
-            return res.status(404).json({ message: "No results found" });
-        }
-
-        return res.status(200).json(results);
-    } catch (error) {
-        console.error("Error fetching JawabanModul data:", error);
-        return res.status(500).json({ message: "Server error" });
+    // Jika tidak ada mentor ditemukan
+    if (mentors.length === 0) {
+      return res.status(404).json({ message: 'No mentors found.' });
     }
+
+    // Kirimkan data mentor yang ditemukan
+    res.status(200).json({ mentors });
+  } catch (error) {
+    console.error('Error fetching mentors:', error);
+    res.status(500).json({ message: 'Error fetching mentors.', error });
+  }
 });
+
+// Endpoint untuk menambahkan user dengan roleType 1 dan isVerified true
+router.post('/Mentor', async (req, res) => {
+  const { namaUser, Profile_Picture, noTelpon, email, password } = req.body;
+
+  // Cek jika semua field yang dibutuhkan ada
+  if (!namaUser || !Profile_Picture || !noTelpon || !email || !password) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    // Membuat instance baru untuk UserData dengan roleType 1 dan isVerified true
+    const newUser = new UserData({
+      namaUser,
+      Profile_Picture,
+      noTelpon,
+      email,
+      password, // pastikan password sudah di-hash di frontend sebelum dikirim
+      roleType: 1,        // Set roleType menjadi 1
+      isVerified: true,   // Set isVerified menjadi true
+    });
+
+    // Simpan data user ke database
+    await newUser.save();
+
+    // Response jika berhasil
+    res.status(201).json({ message: 'User created successfully', user: newUser });
+  } catch (error) {
+    console.error('Error creating user:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
+
 
 
 //======================= Anouncement =======================
@@ -402,136 +442,101 @@ router.get("/Mentor",verifyToken([0]), async (req, res) => {
 
 
 // GET: Mengambil semua pengumuman
-router.get("/announcements",verifyToken([0]), async (req, res) => {
+router.get("/announcements", async (req, res) => {
   try {
-    const adminData = await Admin.findOne();
-    if (!adminData || !adminData.announcements) {
-      return res.status(404).json({ message: "No announcements found" });
-    }
-    res.status(200).json(adminData.announcements);
+    const announcements = await Announcement.find()
+      .populate("createdBy", "namaUser") // Mengambil data user yang membuat pengumuman
+      .exec();
+    res.status(200).json(announcements);
   } catch (error) {
-    console.error("Error fetching announcements:", error.message); // Log pesan error
-    console.error(error.stack); // Log stack trace
-    res.status(500).json({ message: "Server error" });
+    console.error("Error fetching announcements:", error);
+    res.status(500).json({ message: "Failed to fetch announcements" });
   }
 });
 
 
-// POST: Menambahkan pengumuman baru
-router.post('/announcements',verifyToken([0]), async (req, res) => {
-  const { title, description, createdBy } = req.body;
+// // POST: Menambahkan pengumuman baru
+// router.post('/announcements',verifyToken([0]), async (req, res) => {
+//   const { title, description, createdBy } = req.body;
 
-  // Validasi input
-  if (!title || !description || !createdBy) {
-    return res.status(400).json({ message: 'Title, description, and createdBy are required.' });
-  }
+//   // Validasi input
+//   if (!title || !description || !createdBy) {
+//     return res.status(400).json({ message: 'Title, description, and createdBy are required.' });
+//   }
+
+//   try {
+//     // Verifikasi apakah user dengan ID `createdBy` ada
+//     const user = await UserData.findById(createdBy);
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found.' });
+//     }
+    
+//     console.log("User found:", user); // Untuk debugging
+
+//     // Temukan admin yang terkait dengan user dan tambahkan pengumuman ke array announcements
+//     let admin = await Admin.findOne({ 'userID': createdBy });
+
+//     if (!admin) {
+//       // Jika admin tidak ditemukan, kita buat entri admin baru
+//       console.log("Admin not found, creating new admin entry...");
+
+//       admin = new Admin({
+//         userID: createdBy,
+//         announcements: [],  // Array pengumuman kosong di awal
+//         calenderPicture: {} // Ganti dengan info gambar jika diperlukan
+//       });
+
+//       await admin.save(); // Simpan entri admin baru
+//       console.log("New admin created:", admin);
+//     }
+
+//     // Membuat pengumuman baru
+//     const newAnnouncement = {
+//       title,
+//       description,
+//       createdBy,
+//       date: new Date(),
+//     };
+
+//     // Tambahkan pengumuman ke array announcements di admin
+//     admin.announcements.push(newAnnouncement);
+//     await admin.save(); // Simpan perubahan di database
+
+//     res.status(201).json({ message: 'Announcement created successfully!', announcement: newAnnouncement });
+//   } catch (error) {
+//     console.error('Error adding announcement:', error);
+//     res.status(500).json({ message: 'An error occurred while adding the announcement.' });
+//   }
+// });
+
+// Konfigurasi multer untuk upload file
+// POST endpoint to create a new announcement
+// POST endpoint to create a new announcement
+router.post('/announcement', verifyToken, async (req, res) => {
+  const { title, description, attachments, userName } = req.body; // Ambil userName dari body request
 
   try {
-    // Verifikasi apakah user dengan ID `createdBy` ada
-    const user = await UserData.findById(createdBy);
+    // Mencari user berdasarkan userName untuk mendapatkan userId
+    const user = await UserData.findOne({ namaUser: userName });
+
     if (!user) {
-      return res.status(404).json({ message: 'User not found.' });
-    }
-    
-    console.log("User found:", user); // Untuk debugging
-
-    // Temukan admin yang terkait dengan user dan tambahkan pengumuman ke array announcements
-    let admin = await Admin.findOne({ 'userID': createdBy });
-
-    if (!admin) {
-      // Jika admin tidak ditemukan, kita buat entri admin baru
-      console.log("Admin not found, creating new admin entry...");
-
-      admin = new Admin({
-        userID: createdBy,
-        announcements: [],  // Array pengumuman kosong di awal
-        calenderPicture: {} // Ganti dengan info gambar jika diperlukan
-      });
-
-      await admin.save(); // Simpan entri admin baru
-      console.log("New admin created:", admin);
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Membuat pengumuman baru
-    const newAnnouncement = {
+    // Buat pengumuman dengan userId yang didapat
+    const newAnnouncement = new Announcement({
       title,
       description,
-      createdBy,
-      date: new Date(),
-    };
+      createdBy: user._id, // Menyertakan userId yang ditemukan
+      attachments,
+    });
 
-    // Tambahkan pengumuman ke array announcements di admin
-    admin.announcements.push(newAnnouncement);
-    await admin.save(); // Simpan perubahan di database
-
-    res.status(201).json({ message: 'Announcement created successfully!', announcement: newAnnouncement });
+    await newAnnouncement.save();
+    res.status(201).json({ message: "Announcement created successfully", announcement: newAnnouncement });
   } catch (error) {
-    console.error('Error adding announcement:', error);
-    res.status(500).json({ message: 'An error occurred while adding the announcement.' });
+    console.error("Error creating announcement:", error);
+    res.status(500).json({ message: "Failed to create announcement", error: error.message });
   }
 });
-
-
-
-// PUT: Mengedit pengumuman
-router.put('/announcements/:announcementId',verifyToken([0]), async (req, res) => {
-  const { announcementId } = req.params;
-  const { title, description } = req.body;
-
-  // Validasi input
-  const { error } = announcementValidationSchema.validate({ title, description });
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
-
-  try {
-    const admin = await Admin.findOneAndUpdate(
-      { "announcements._id": announcementId },
-      {
-        $set: {
-          "announcements.$.title": title,
-          "announcements.$.description": description,
-        },
-      },
-      { new: true }
-    );
-
-    if (!admin) {
-      return res.status(404).json({ message: "Announcement not found" });
-    }
-
-    res.status(200).json({ message: "Announcement updated successfully" });
-  } catch (error) {
-    console.error("Error updating announcement:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-// DELETE: Menghapus pengumuman
-router.delete('/announcements/:announcementId',verifyToken([0]), async (req, res) => {
-  const { announcementId } = req.params;
-
-  try {
-    const admin = await Admin.findOneAndUpdate(
-      { "announcements._id": announcementId },
-      {
-        $pull: { announcements: { _id: announcementId } },
-      },
-      { new: true }
-    );
-
-    if (!admin) {
-      return res.status(404).json({ message: "Announcement not found" });
-    }
-
-    res.status(200).json({ message: "Announcement deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting announcement:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-
-
 
 module.exports = router;

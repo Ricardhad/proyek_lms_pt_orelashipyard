@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import client from "../client"; // Koneksi backend (axios instance)
 
-
 const ListInterns = () => {
-  const [interns, setInterns] = useState([]); // State untuk data interns
-  const [filteredInterns, setFilteredInterns] = useState([]); // State untuk data setelah search
-  const [searchQuery, setSearchQuery] = useState(""); // State untuk input search
+  const [interns, setInterns] = useState([]);
+  const [filteredInterns, setFilteredInterns] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
 
-  const navigate = useNavigate(); // Untuk navigasi ke halaman Edit
+  const navigate = useNavigate(); // Hook untuk navigasi
 
-  // Fetch data dari backend saat komponen dimount
   useEffect(() => {
     const fetchInterns = async () => {
       try {
@@ -26,7 +24,7 @@ const ListInterns = () => {
     fetchInterns();
   }, []);
 
-  // Fungsi untuk handle pencarian
+  // Fungsi untuk pencarian
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
@@ -39,9 +37,9 @@ const ListInterns = () => {
     setFilteredInterns(filtered);
   };
 
-  // Fungsi untuk handle tombol Edit
-  const handleEdit = (userId) => {
-    navigate(`/edit/${userId}`); // Navigasi ke halaman Edit dengan userId
+  // Fungsi untuk tombol Detail
+  const handleDetail = (userId) => {
+    navigate(`/detail/${userId}`); // Navigasi ke halaman DetailIntern
   };
 
   return (
@@ -84,9 +82,7 @@ const ListInterns = () => {
                   <td style={styles.td}>
                     <div style={styles.nameEmailContainer}>
                       <img
-                        src={
-                          intern.Profile_Picture || "https://via.placeholder.com/30"
-                        }
+                        src={intern.Profile_Picture || "https://via.placeholder.com/30"}
                         alt="Profile"
                         style={styles.profileImage}
                       />
@@ -102,13 +98,14 @@ const ListInterns = () => {
                   <td style={styles.td}>
                     <button
                       style={{ ...styles.button, ...styles.editButton }}
-                      onClick={() => handleEdit(intern._id)} // Panggil handleEdit
+                      onClick={() => navigate(`/edit/${intern._id}`)}
                     >
                       Edit
                     </button>
 
                     <button
                       style={{ ...styles.button, ...styles.detailButton }}
+                      onClick={() => handleDetail(intern._id)} // Navigasi ke Detail
                     >
                       Detail
                     </button>

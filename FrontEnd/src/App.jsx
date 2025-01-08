@@ -3,7 +3,8 @@ import Login from "./pages/LoginForm";
 import Register from "./pages/RegisterForm";
 import Test from "./pages/Test";
 import Home from "./AdminPage/Home";
-import ListInterns from "./AdminPage/ListInterns"; 
+import ListInterns from "./AdminPage/ListInterns";
+import DetailIntern from "./AdminPage/DetailIntern"; 
 import EditUser from "./AdminPage/EditUser"; 
 import AddMentor from "./AdminPage/AddMentor";
 import Course from "./AdminPage/Course";
@@ -59,6 +60,7 @@ function App() {
         <Route path="/course" element={<Course />} />
         <Route path="/addcourse" element={<AddCourse />} />
         <Route path="/addannouncement" element={<AddAnnouncement />} />
+        <Route path="/detail/:id" element={<DetailIntern />} />
 
         {/* <Route path="/homeMentor" element={<MentorPage />} />
         <Route path="/homeMentor/materials" element={<MaterialsPage />} />

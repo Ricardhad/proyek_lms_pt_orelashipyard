@@ -6,32 +6,35 @@ const jwt = require('jsonwebtoken');
 
 const verifyToken = (allowedRoles = []) => {
     return (req, res, next) => {
-      const token = req.header('Authorization')?.replace('Bearer ', '');
-  
-      console.log("Received Token:", token); // Log the received token
-  
-      if (!token) {
-        return res.status(401).json({ message: 'Access denied. No token provided.' });
-      }
-  
-      try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
-        req.user = decoded;
-  
-        // Check if the user's role is allowed
-        if (allowedRoles.length && !allowedRoles.includes(decoded.roleType)) {
-          return res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
-        }
-  
-        next();
-      } catch (err) {
-        console.error("Invalid token:", err);
-        res.status(400).json({ message: 'Invalid token.' });
-      }
-    };
-  };
-  
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+        
+        console.log("Received Token:", token); // Log token yang diterima
 
+        if (!token) {
+            return res.status(401).json({ message: 'Access denied. No token provided.' });
+        }
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+            req.user = decoded;
+
+            // Log decoded token untuk memastikan isinya
+            console.log("Decoded Token:", decoded);
+
+            // Check if the user's role is allowed
+            if (allowedRoles.length && !allowedRoles.includes(decoded.roleType)) {
+                return res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
+            }
+
+            next();
+        } catch (err) {
+            console.error("Invalid token:", err);
+            res.status(400).json({ message: 'Invalid token.', error: err.message });
+        }
+    };
+};
+
+  
 // module.exports = verifyToken;
 
 // Ensure the upload directories for answers and questions exist

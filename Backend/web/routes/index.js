@@ -12,8 +12,6 @@ const router = express()
 const path = require("path");
 const fs = require("fs");
 
-
-
 router.use('/user', userDataRouter)
 router.use('/admin', adminRouter)
 router.use('/anakMagang', anakMagangRouter)

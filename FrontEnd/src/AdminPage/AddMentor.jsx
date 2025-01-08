@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import client from "../client"; // Axios instance
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
-const AddCourse = () => {
+const AddMentor = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    desc: "",
-    MentorID: "",
+    namaUser: "",
+    Profile_Picture: "",
+    noTelpon: "",
+    email: "",
+    password: "",
   });
   const [message, setMessage] = useState("");
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   // Handle input changes
   const handleChange = (e) => {
@@ -21,55 +23,82 @@ const AddCourse = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Prepare request data
+      // Prepare data for submission
       const requestData = {
-        name: formData.name,
-        desc: formData.desc,
-        MentorID: formData.MentorID ? formData.MentorID.split(",") : [], // Convert comma-separated MentorID to array
+        namaUser: formData.namaUser,
+        Profile_Picture: formData.Profile_Picture,
+        noTelpon: formData.noTelpon,
+        email: formData.email,
+        password: formData.password, // Pastikan password di-hash di backend
       };
 
-      // Make API call
-      const response = await client.post("/api/admin/Course", requestData);
-      setMessage(`Course created successfully: ${response.data.namaCourse}`);
+      // Make API call to create mentor
+      const response = await client.post("/api/user/create", requestData);
+      setMessage(`Mentor added successfully: ${response.data.user.namaUser}`);
 
       // Reset form
-      setFormData({ name: "", desc: "", MentorID: "" });
+      setFormData({
+        namaUser: "",
+        Profile_Picture: "",
+        noTelpon: "",
+        email: "",
+        password: "",
+      });
 
-      // Navigate back to courses page after success
+      // Navigate to mentor list page after success
       setTimeout(() => {
-        navigate("/course");
+        navigate("/mentors");
       }, 2000);
     } catch (error) {
-      console.error("Error creating course:", error);
-      setMessage("Failed to create course. Please try again.");
+      console.error("Error adding mentor:", error);
+      setMessage("Failed to add mentor. Please try again.");
     }
   };
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>Add New Course</h1>
+      <h1 style={styles.title}>Add New Mentor</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
         <input
           type="text"
-          name="name"
-          placeholder="Course Name"
-          value={formData.name}
+          name="namaUser"
+          placeholder="Full Name"
+          value={formData.namaUser}
           onChange={handleChange}
           style={styles.input}
           required
         />
-        <textarea
-          name="desc"
-          placeholder="Course Description"
-          value={formData.desc}
+        <input
+          type="text"
+          name="Profile_Picture"
+          placeholder="Profile Picture URL"
+          value={formData.Profile_Picture}
           onChange={handleChange}
-          style={styles.textarea}
+          style={styles.input}
         />
         <input
           type="text"
-          name="MentorID"
-          placeholder="Mentor ID (comma-separated)"
-          value={formData.MentorID}
+          name="noTelpon"
+          placeholder="Phone Number"
+          value={formData.noTelpon}
+          onChange={handleChange}
+          style={styles.input}
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          style={styles.input}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
           onChange={handleChange}
           style={styles.input}
           required
@@ -107,13 +136,6 @@ const styles = {
     borderRadius: "5px",
     border: "1px solid #ccc",
   },
-  textarea: {
-    padding: "10px",
-    fontSize: "16px",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
-    resize: "none",
-  },
   button: {
     padding: "10px",
     fontSize: "16px",
@@ -130,4 +152,4 @@ const styles = {
   },
 };
 
-export default AddCourse;
+export default AddMentor;

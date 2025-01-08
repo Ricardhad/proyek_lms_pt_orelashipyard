@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import client from "../client"; // Import client.js untuk koneksi API
+import axios from "axios";  // Import axios untuk koneksi API
 
 const AddInterns = () => {
   const [userData, setUserData] = useState([]);
@@ -19,19 +20,22 @@ const AddInterns = () => {
     fetchUserData();
   }, []);
 
-  const updateVerificationStatus = async (userId, isVerified) => {
+  
+
+  const updateVerificationStatus = async (internId) => {
     try {
-      const token = localStorage.getItem("token");
-      await client.put(
-        `/api/admin/${userId}/verify`,
-        { isVerified },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const response = await axios.put(
+        `http://localhost:3000/api/admin/${internId}`,
+        {} // Body request jika diperlukan
       );
-      alert("Data telah diubah!");
-    } catch (err) {
-      setError(err.response?.data?.message || "Failed to update verification.");
+      console.log('Verification successful:', response.data);
+    } catch (error) {
+      console.error('Failed to update verification:', error);
     }
   };
+  
+
+  
 
   return (
     <div style={styles.container}>

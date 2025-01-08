@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const Mentor = () => {
   const [mentors, setMentors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     // Fungsi untuk mengambil data mentor dari API
@@ -72,19 +74,19 @@ const Mentor = () => {
           {/* Tombol Add + di samping card */}
           <button
             style={{
-              backgroundColor: '#28a745',  // Hijau untuk tombol tambah
+              backgroundColor: '#28a745',
               color: '#fff',
               border: 'none',
               padding: '15px 25px',
               cursor: 'pointer',
               borderRadius: '5px',
               marginLeft: '20px',
-              fontSize: '20px',  // Membuat tombol lebih besar
+              fontSize: '20px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
-            onClick={() => alert('Add Mentor clicked')}  // Ganti dengan fungsi yang sesuai
+            onClick={() => alert('Add Mentor clicked')} // Ganti dengan logika yang sesuai jika diperlukan
           >
             +
           </button>
@@ -100,7 +102,7 @@ const Mentor = () => {
       >
         <button
           style={{
-            backgroundColor: '#007bff',  // Biru untuk tombol utama
+            backgroundColor: '#007bff',
             color: '#fff',
             border: 'none',
             padding: '15px 30px',
@@ -108,7 +110,7 @@ const Mentor = () => {
             borderRadius: '10px',
             fontSize: '20px',
           }}
-          onClick={() => alert('Open Add Mentor Form')} // Ganti dengan logika untuk membuka form
+          onClick={() => navigate('/addmentor')} // Navigasi ke halaman AddMentor
         >
           + Add New Mentor
         </button>

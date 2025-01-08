@@ -74,7 +74,7 @@ const Announcement = () => {
 
 const styles = {
   container: {
-    padding: "20px",
+    padding: "300px",
     backgroundColor: "#f9f9f9",
     minHeight: "100vh",
     position: "relative",
