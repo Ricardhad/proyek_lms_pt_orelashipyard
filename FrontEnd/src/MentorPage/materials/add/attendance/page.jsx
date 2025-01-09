@@ -1,90 +1,127 @@
-import { useState } from 'react'
-import { 
-  Box, 
-  Typography, 
-  TextField, 
-  Paper, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
+import React, { useEffect, useState } from 'react';
+import {
+  Box,
+  Typography,
+  TextField,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
   TableRow,
   Avatar,
   Checkbox,
-  Button
-} from '@mui/material'
-import { useNavigate } from 'react-router-dom'
-import { Image, Add } from '@mui/icons-material'
-import Layout from '../../../components/layout'
-
-// Mock data for interns
-const interns = [
-  {
-    id: '123456789',
-    name: 'Esthera Jackson',
-    email: 'esthera@simmmple.com',
-    phone: '08123456789',
-    course: 'Learning and Development',
-    avatar: '/placeholder.svg',
-    isPresent: false
-  },
-  {
-    id: '987654321',
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '08987654321',
-    course: 'Web Development',
-    avatar: '/placeholder.svg',
-    isPresent: false
-  },
-  {
-    id: '456789123',
-    name: 'Jane Smith',
-    email: 'jane@example.com',
-    phone: '08456789123',
-    course: 'Data Science',
-    avatar: '/placeholder.svg',
-    isPresent: false
-  },
-  {
-    id: '789123456',
-    name: 'Alice Johnson',
-    email: 'alice@example.com',
-    phone: '08789123456',
-    course: 'Mobile App Development',
-    avatar: '/placeholder.svg',
-    isPresent: false
-  },
-  {
-    id: '321654987',
-    name: 'Bob Williams',
-    email: 'bob@example.com',
-    phone: '08321654987',
-    course: 'UI/UX Design',
-    avatar: '/placeholder.svg',
-    isPresent: false
-  },
-  {
-    id: '654987321',
-    name: 'Emma Brown',
-    email: 'emma@example.com',
-    phone: '08654987321',
-    course: 'Artificial Intelligence',
-    avatar: '/placeholder.svg',
-    isPresent: false
-  }
-]
+  Button,
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Image, Add } from '@mui/icons-material';
+import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
+import Layout from '../../../components/layout';
+import { setMaterial } from '../../../../redux/materialSlice'; // Import the action
 
 export default function AttendancePage() {
-  const [attendance, setAttendance] = useState(interns)
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [interns, setInterns] = useState([]); // State for fetched interns
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const user = useSelector((state) => state.auth.user); // Get logged-in user from Redux
+  const material = useSelector((state) => state.material); // Get material state from Redux
 
+  // Fetch interns when the component mounts or searchQuery changes
+  useEffect(() => {
+    const fetchInterns = async () => {
+      try {
+        // Fetch mentor profile to get courseID
+        const mentorResponse = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`);
+        const courseID = mentorResponse.data.mentor.courseID[0];
+
+        // Fetch interns for the course
+        const params = searchQuery ? { namaUser: searchQuery } : {};
+        const internsResponse = await axios.get(`http://localhost:3000/api/Mentor/${courseID}/AnakMagang`, { params });
+
+        // Format interns data
+        const formattedInterns = internsResponse.data.anakMagang.map((intern) => ({
+          id: intern._id,
+          name: intern.userID.namaUser,
+          email: intern.userID.email || 'N/A',
+          phone: intern.userID.noTelpon,
+          course: {
+            id: intern.course.id,
+            namaCourse: intern.course.namaCourse,
+            deskripsi: intern.course.deskripsi,
+            mentorID: intern.course.mentorID,
+          },
+          avatar: intern.userID.Profile_Picture || '/placeholder.svg',
+          isPresent: false, // Default attendance status
+        }));
+
+        setInterns(formattedInterns);
+      } catch (error) {
+        console.error('Error fetching interns:', error);
+      }
+    };
+
+    fetchInterns();
+  }, [user.id, searchQuery]);
+
+  // Handle attendance checkbox toggle
   const handleToggleAttendance = (id) => {
-    setAttendance(attendance.map(intern => 
-      intern.id === id ? { ...intern, isPresent: !intern.isPresent } : intern
-    ))
-  }
+    setInterns((prevInterns) =>
+      prevInterns.map((intern) =>
+        intern.id === id ? { ...intern, isPresent: !intern.isPresent } : intern
+      )
+    );
+  };
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      dispatch(setMaterial({ [name]: value }));
+    };
+
+  // Handle attendance submission
+  const handleSubmit = async () => {
+    try {
+      // Prepare attendance data for submission
+      const attendanceData = interns.map((intern) => ({
+        anakMagangID: intern.id,
+        isPresent: intern.isPresent,
+      }));
+
+      // Submit attendance data to the backend
+      const response = await axios.post('/api/materials/attendance', {
+        courseID: interns[0]?.course.id, // Assuming all interns belong to the same course
+        tanggalAbsensi: new Date().toISOString(), // Use current date as attendance date
+        absensiKelas: attendanceData,
+      });
+
+      console.log('Attendance submitted successfully:', response.data);
+      alert('Attendance submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting attendance:', error.response?.data || error.message);
+      alert('Error submitting attendance. Please try again.');
+    }
+  };
+
+  // Handle image drop
+  const handleImageDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files[0] || e.target.files[0];
+
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Update the material state with the image preview
+        dispatch(setMaterial({ imagePreview: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle drag over
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
 
   return (
     <Layout>
@@ -98,44 +135,89 @@ export default function AttendancePage() {
             >
               Back
             </Button>
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={handleSubmit}>
               Submit
             </Button>
           </Box>
         </Box>
-        <Typography variant="h4" sx={{ textAlign: 'center'}}>ABSENSI</Typography>
-        <Box sx={{ mb: 4 ,display:'flex',justifyContent: 'space-between'}}>
-          <Paper
+        <Typography variant="h4" sx={{ textAlign: 'center' }}>
+          ABSENSI
+        </Typography>
+        <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between' }}>
+          {/* Image Upload Box */}
+          <Box
+            component="label"
+            htmlFor="image-upload"
             sx={{
+              border: '2px dashed #ccc',
+              borderRadius: 1,
               p: 3,
-              mb: 3,
+              textAlign: 'center',
               width: 400, // Increased width
               height: 225, // Adjusted height for 16:9 aspect ratio
               display: 'flex',
               flexDirection: 'column',
-              alignItems: 'center',
               justifyContent: 'center',
+              cursor: 'pointer',
+              position: 'relative',
               backgroundColor: '#f0f0f0',
+              '&:hover': {
+                borderColor: '#666',
+              },
             }}
+            onDrop={handleImageDrop}
+            onDragOver={handleDragOver}
           >
-            <Image sx={{ fontSize: 40, mb: 1 }} />
-            <Add fontSize="small" />
-          </Paper>
+            <input
+              id="image-upload"
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleImageDrop}
+            />
+            {material.imagePreview ? (
+              <Box
+                sx={{
+                  width: '100%',
+                  height: '200px',
+                  backgroundImage: `url(${material.imagePreview})`,
+                  backgroundSize: 'contain',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                }}
+              />
+            ) : (
+              <>
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
+                  <Image sx={{ fontSize: 48, color: '#666' }} />
+                </Box>
+                <Typography>Drop your image here or browse</Typography>
+              </>
+            )}
+          </Box>
+
+          {/* Keep the rest of the code unchanged */}
           <Box>
             <TextField
-            fullWidth
-            label="JUDUL"
-            variant="outlined"
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="DESKRIPSI"
-            variant="outlined"
-            multiline
-            rows={4}
-            sx={{ mb: 2 }}
-          />
+              fullWidth
+              label="JUDUL"
+              variant="outlined"
+              name="namaModul"
+              value={material.namaModul || ''}
+              onChange={handleChange}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              fullWidth
+              label="DESKRIPSI"
+              name="Deskripsi"
+              value={material.Deskripsi || ''}
+              onChange={handleChange}
+              variant="outlined"
+              multiline
+              rows={4}
+              sx={{ mb: 2 }}
+            />
           </Box>
         </Box>
 
@@ -151,7 +233,7 @@ export default function AttendancePage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {attendance.map((intern, index) => (
+              {interns.map((intern, index) => (
                 <TableRow key={index}>
                   <TableCell>{intern.id}</TableCell>
                   <TableCell>
@@ -166,7 +248,7 @@ export default function AttendancePage() {
                     </Box>
                   </TableCell>
                   <TableCell>{intern.phone}</TableCell>
-                  <TableCell>{intern.course}</TableCell>
+                  <TableCell>{intern.course.namaCourse}</TableCell> {/* Render namaCourse */}
                   <TableCell>
                     <Checkbox
                       checked={intern.isPresent}
@@ -180,6 +262,5 @@ export default function AttendancePage() {
         </TableContainer>
       </Box>
     </Layout>
-  )
+  );
 }
-

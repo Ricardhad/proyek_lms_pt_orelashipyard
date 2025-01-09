@@ -10,7 +10,7 @@ import axios from 'axios';
 
 export default function AddMaterialPage() {
   const user = useSelector((state) => state.auth.user);
-  console.log("add materials",user.id);
+  // console.log("add materials",user.id);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const material = useSelector(selectMaterial);
@@ -23,7 +23,7 @@ export default function AddMaterialPage() {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`); // Adjust the base URL if necessary
-        console.log("goblok",response.data);
+        // console.log("profile response",response.data);
         setUserData(response.data);
       } catch (err) {
         setError(err.response?.data?.error || 'An error occurred');
@@ -35,6 +35,9 @@ export default function AddMaterialPage() {
     fetchUserData();
   }, [user.id]);
 
+  // useEffect(() => {
+  //   console.log("add materials data",userData);
+  // })
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -68,22 +71,33 @@ export default function AddMaterialPage() {
     e.preventDefault();
     
     try {
-      const formData = new FormData();
-      formData.append('courseID', material.courseID);
-      formData.append('mentorID', material.mentorID);
-      formData.append('namaModul', material.namaModul);
-      formData.append('Deskripsi', material.Deskripsi);
-      formData.append('Deadline', material.Deadline);
-      if (imageFile) {
-        formData.append('gambar', imageFile);
-      }
+      dispatch(setMaterial({
+        courseID: userData.mentor.courseID[0], // Assuming courseID is an array
+        mentorID: userData.mentor._id,
+        namaModul: material.namaModul,
+        Deskripsi: material.Deskripsi,
+        Deadline: material.Deadline,
+        gambar: imageFile ? imageFile.name : null, // Store the image file name
+        imagePreview: material.imagePreview, // Keep the image preview
+      }));
+
+      // Log the updated material state
+      // console.log('Material State:', {
+      //   courseID: userData.mentor.courseID[0],
+      //   mentorID: userData.mentor._id,
+      //   namaModul: material.namaModul,
+      //   Deskripsi: material.Deskripsi,
+      //   Deadline: material.Deadline,
+      //   gambar: imageFile ? imageFile.name : null,
+      //   imagePreview: material.imagePreview,
+      // });
 
       // Make your API call here
       // const response = await axios.post('/api/materials', formData);
-      console.log('Submitting:', formData);
+      console.log('Submitting:', material);
       
       // Clear form after successful submission
-      dispatch(clearMaterial());
+      // dispatch(clearMaterial());
       setImageFile(null);
       
     } catch (error) {
@@ -198,7 +212,12 @@ export default function AddMaterialPage() {
                       cursor: 'pointer',
                       '&:hover': { backgroundColor: '#f5f5f5' },
                     }}
-                    onClick={() => navigate('/homeMentor/materials/add/form')}
+                    onClick={async (e) => {
+                      // Create a synthetic event if one isn't provided
+                      const event = e || { preventDefault: () => {} };
+                      await handleSubmit(event); // Pass the event object to handleSubmit
+                      navigate('/homeMentor/materials/add/form'); // Navigate after submission
+                    }}
                   >
                     <Description sx={{ fontSize: 32, mb: 1 }} />
                     <Typography>Tugas Form</Typography>
@@ -233,9 +252,6 @@ export default function AddMaterialPage() {
                   </Paper>
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid item xs={12} sx={{ textAlign: 'center', mt: 3 }}>
-              <Button variant="contained" type="submit">Submit</Button>
             </Grid>
           </form>
         </Paper>

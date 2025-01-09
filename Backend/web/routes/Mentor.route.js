@@ -168,7 +168,7 @@ router.get('/:courseID/AnakMagang', async (req, res) => {
         res.status(200).json({ anakMagang: response });
     } catch (error) {
         console.error("Error fetching AnakMagang:", error);
-        res.status(500).json({ error: 'An error occurred while retrieving data' });
+        res.status(500).json({ error : 'An error occurred while retrieving data' });
     }
 });
 // Get AnakMagang by ID
@@ -790,6 +790,7 @@ router.post('/absensi',verifyToken([1]), async (req, res) => {
         res.status(500).json({ message: 'An error occurred on the server.' });
     }
 });
+  
 router.put('/:id/absensi',verifyToken([1]), async (req, res) => {
     const id = req.params.id;
     const { mentorID, anakMagangID } = req.body;
@@ -861,6 +862,58 @@ router.put('/:id/absensi',verifyToken([1]), async (req, res) => {
     }
 });
 
-
+// Route to handle form submission
+router.post('/form', async (req, res) => {
+    const { courseID, mentorID, namaModul, Deskripsi, Deadline, soalModul } = req.body;
+  
+    try {
+      // Validate course and mentor
+      const course = await Course.findById(courseID);
+      const mentor = await Mentor.findById(mentorID);
+  
+      if (!course || !mentor) {
+        return res.status(404).json({ message: 'Course or Mentor not found' });
+      }
+  
+      // Create the Modul
+      const newModul = new Modul({
+        courseID,
+        mentorID,
+        namaModul,
+        Deskripsi,
+        Deadline,
+        Dinilai: false, // Default to false
+      });
+  
+      // Save the Modul
+      const savedModul = await newModul.save();
+  
+      // Create SoalModul entries
+      if (soalModul && soalModul.length > 0) {
+        for (const soal of soalModul) {
+          const newSoalModul = new SoalModul({
+            namaSoal: soal.namaSoal,
+            Deskripsi: soal.Deskripsi,
+            Gambar: soal.Gambar,
+            SoalType: soal.SoalType,
+            Pilihan: soal.Pilihan,
+            kunciJawaban: soal.kunciJawaban,
+          });
+  
+          const savedSoalModul = await newSoalModul.save();
+  
+          // Add the SoalModul ID to the Modul
+          savedModul.soalID.push(savedSoalModul._id);
+        }
+  
+        // Save the updated Modul with SoalModul IDs
+        await savedModul.save();
+      }
+  
+      res.status(201).json({ message: 'Modul and SoalModul created successfully', modul: savedModul });
+    } catch (error) {
+      res.status(500).json({ message: 'Error creating Modul and SoalModul', error: error.message });
+    }
+  });
 
 module.exports = router;

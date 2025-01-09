@@ -6,8 +6,9 @@ const modulSchema = new mongoose.Schema({
     gambar: { type: String }, // New field to store image path
     namaModul: { type: String, required: true },
     Deskripsi: { type: String },
-    Deadline: { type: Date, required: true },
+    Deadline: { type: Date },
     soalID: [{ type: mongoose.Schema.Types.ObjectId, ref: 'SoalModul' }],
+    absensiID:{ type: mongoose.Schema.Types.ObjectId, ref: 'Absensi' },
     Dinilai: { type: Boolean },
 }, {
     collection: 'Modul',
