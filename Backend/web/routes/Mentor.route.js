@@ -222,22 +222,22 @@ router.get('/:userID/Profile', async (req, res) => {
     }
   });
 
-router.get("/Modul",verifyToken([1]), async (req, res) => {
-    const { filter } = req.query;
-    let search;
-    if (filter) {
-        search = await Modul.find({ namaModul: { $regex: filter, $options: 'i' } });
-        if (search.length === 0) {
-            search = await Modul.find({ Deskripsi: { $regex: filter, $options: 'i' } });
-        }
-    } else {
-        search = await Modul.find();
-    }
-    if (search.length === 0) {
-        return res.status(404).json({ message: "No results found" });
-    }
-    return res.status(200).json(search);
-})
+// router.get("/Modul",verifyToken([1]), async (req, res) => {
+//     const { filter } = req.query;
+//     let search;
+//     if (filter) {
+//         search = await Modul.find({ namaModul: { $regex: filter, $options: 'i' } });
+//         if (search.length === 0) {
+//             search = await Modul.find({ Deskripsi: { $regex: filter, $options: 'i' } });
+//         }
+//     } else {
+//         search = await Modul.find();
+//     }
+//     if (search.length === 0) {
+//         return res.status(404).json({ message: "No results found" });
+//     }
+//     return res.status(200).json(search);
+// })
 
 router.get("/Soal",verifyToken([1]), async (req, res) => {
     const { filter, SoalType } = req.query;
@@ -258,48 +258,48 @@ router.get("/Soal",verifyToken([1]), async (req, res) => {
     return res.status(200).json(search);
 })
 
-router.post("/Modul",verifyToken([1]), async (req, res) => {
-    const { name, desc, courseID, soalID, deadline } = req.body;
+// router.post("/Modul",verifyToken([1]), async (req, res) => {
+//     const { name, desc, courseID, soalID, deadline } = req.body;
 
-    // Joi validation schema
-    const schema = Joi.object({
-        name: Joi.string().required(),
-        desc: Joi.string().optional().allow(""),
-        courseID: Joi.string().custom(checkIdValid, "ObjectId validation").required(),
-        soalID: Joi.array().items(Joi.string()).optional(),
-        deadline: Joi.date().iso().min(new Date(Date.now() + 60 * 60 * 1000)).required()
-    });
+//     // Joi validation schema
+//     const schema = Joi.object({
+//         name: Joi.string().required(),
+//         desc: Joi.string().optional().allow(""),
+//         courseID: Joi.string().custom(checkIdValid, "ObjectId validation").required(),
+//         soalID: Joi.array().items(Joi.string()).optional(),
+//         deadline: Joi.date().iso().min(new Date(Date.now() + 60 * 60 * 1000)).required()
+//     });
 
-    // Validate request body
-    const { error } = schema.validate({ ...req.body });
-    if (error) {
-        return res.status(400).json({ message: error.details[0].message });
-    }
-    try {
-        // Validate daftarKelas if provided
-        let soalIDs
-        if (soalID && soalID != []) {
-            soalIDs = validateArrayOfIDs(Modul, soalID, "Modul");
-        }
-        const findCourse = await Course.findById(courseID)
-        if (!findCourse) { return res.status(404).json({ message: "course not found" }) }
-        // Create new course
-        const newModul = new Modul({
-            namaModul: name,
-            Deskripsi: desc,
-            courseID: findCourse,
-            soalID: soalIDs || [],
-            Deadline: deadline,
-            Dinilai: false,
-        });
-        const savedModul = await newModul.save();
-        // Send success response
-        res.status(201).json(savedModul);
-    } catch (err) {
-        console.error("Error creating course:", err);
-        res.status(500).json({ message: "Internal server error" });
-    }
-});
+//     // Validate request body
+//     const { error } = schema.validate({ ...req.body });
+//     if (error) {
+//         return res.status(400).json({ message: error.details[0].message });
+//     }
+//     try {
+//         // Validate daftarKelas if provided
+//         let soalIDs
+//         if (soalID && soalID != []) {
+//             soalIDs = validateArrayOfIDs(Modul, soalID, "Modul");
+//         }
+//         const findCourse = await Course.findById(courseID)
+//         if (!findCourse) { return res.status(404).json({ message: "course not found" }) }
+//         // Create new course
+//         const newModul = new Modul({
+//             namaModul: name,
+//             Deskripsi: desc,
+//             courseID: findCourse,
+//             soalID: soalIDs || [],
+//             Deadline: deadline,
+//             Dinilai: false,
+//         });
+//         const savedModul = await newModul.save();
+//         // Send success response
+//         res.status(201).json(savedModul);
+//     } catch (err) {
+//         console.error("Error creating course:", err);
+//         res.status(500).json({ message: "Internal server error" });
+//     }
+// });
 
 
 // POST route
@@ -913,6 +913,101 @@ router.post('/form', async (req, res) => {
       res.status(201).json({ message: 'Modul and SoalModul created successfully', modul: savedModul });
     } catch (error) {
       res.status(500).json({ message: 'Error creating Modul and SoalModul', error: error.message });
+    }
+  });
+
+  router.post('/createmodul', async (req, res) => {
+    try {
+      const { courseID, mentorID, gambar, namaModul, Deskripsi, Deadline, soalID, absensiID, Dinilai } = req.body;
+  
+      // Validate if the course and mentor exist
+    //   const course = await Course.findById(courseID);
+    //   const mentor = await Mentor.findById(mentorID);
+    //   if (!course || !mentor) {
+    //     return res.status(400).json({ message: 'Course or Mentor not found' });
+    //   }
+  
+      // Create a new Modul
+      const newModul = new Modul({
+        courseID,
+        mentorID,
+        gambar,
+        namaModul,
+        Deskripsi,
+        Deadline,
+        soalID,
+        absensiID,
+        Dinilai,
+      });
+  
+      // Save the Modul to the database
+      await newModul.save();
+  
+      res.status(201).json({ message: 'Modul created successfully', modul: newModul });
+    } catch (error) {
+      console.error('Error creating Modul:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
+  router.post('/materials/attendance', async (req, res) => {
+    try {
+      const { courseID, modulID, absensiKelas } = req.body;
+  
+      // Log the incoming request payload
+      console.log('Received attendance data:', req.body);
+  
+      // Validate if the module exists and belongs to the course
+      const modul = await Modul.findOne({ _id: modulID, courseID });
+      if (!modul) {
+        console.error('Module not found or does not belong to the course');
+        return res.status(400).json({ message: 'Module not found or does not belong to the course' });
+      }
+  
+      // Log the module data
+      console.log('Module found:', modul);
+  
+      // Create a new Absensi document
+      const newAbsensi = new Absensi({
+        courseID,
+        modulID,
+        absensiKelas: absensiKelas.map((attendance) => ({
+          anakMagangID: attendance.anakMagangID,
+          isPresent: attendance.isPresent,
+        })),
+      });
+  
+      // Log the new Absensi document
+      console.log('New Absensi document:', newAbsensi);
+  
+      // Save the Absensi document
+      await newAbsensi.save();
+  
+      // Log the saved Absensi document
+      console.log('Absensi document saved:', newAbsensi);
+  
+      // Update the AnakMagang documents with the new Absensi ID
+      for (const attendance of absensiKelas) {
+        await AnakMagang.findByIdAndUpdate(attendance.anakMagangID, {
+          $push: { absensiKelas: newAbsensi._id },
+        });
+      }
+  
+      // Log the updated AnakMagang documents
+      console.log('AnakMagang documents updated');
+  
+      // Update the Modul document with the new Absensi ID
+      await Modul.findByIdAndUpdate(modulID, {
+        $set: { absensiID: newAbsensi._id },
+      });
+  
+      // Log the updated Modul document
+      console.log('Modul document updated');
+  
+      res.status(201).json({ message: 'Attendance submitted successfully', absensi: newAbsensi });
+    } catch (error) {
+      console.error('Error submitting attendance:', error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
     }
   });
 

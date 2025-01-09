@@ -35,9 +35,9 @@ export default function AddMaterialPage() {
     fetchUserData();
   }, [user.id]);
 
-  // useEffect(() => {
-  //   console.log("add materials data",userData);
-  // })
+  useEffect(() => {
+    console.log("add materials data",userData);
+  })
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
@@ -231,7 +231,12 @@ export default function AddMaterialPage() {
                       cursor: 'pointer',
                       '&:hover': { backgroundColor: '#f5f5f5' },
                     }}
-                    onClick={() => navigate('/homeMentor/materials/add/zip')}
+                    onClick={async (e) => {
+                      // Create a synthetic event if one isn't provided
+                      const event = e || { preventDefault: () => {} };
+                      await handleSubmit(event); // Pass the event object to handleSubmit
+                      navigate('/homeMentor/materials/add/zip'); // Navigate after submission
+                    }}
                   >
                     <Add sx={{ fontSize: 32, mb: 1 }} />
                     <Typography>Pengumpulan Folder .ZIP</Typography>
@@ -245,7 +250,12 @@ export default function AddMaterialPage() {
                       cursor: 'pointer',
                       '&:hover': { backgroundColor: '#f5f5f5' },
                     }}
-                    onClick={() => navigate('/homeMentor/materials/add/attendance')}
+                    onClick={async (e) => {
+                      // Create a synthetic event if one isn't provided
+                      const event = e || { preventDefault: () => {} };
+                      await handleSubmit(event); // Pass the event object to handleSubmit
+                      navigate('/homeMentor/materials/add/attendance'); // Navigate after submission
+                    }}
                   >
                     <Person sx={{ fontSize: 32, mb: 1 }} />
                     <Typography>Absensi</Typography>

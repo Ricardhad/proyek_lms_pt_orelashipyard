@@ -111,7 +111,7 @@ export default function ZipSubmissionPage() {
             <Box
               sx={{
                 width: '100%',
-                height: '100%',
+                height: '200px',
                 backgroundImage: `url(${material.imagePreview})`,
                 backgroundSize: 'contain',
                 backgroundPosition: 'center',

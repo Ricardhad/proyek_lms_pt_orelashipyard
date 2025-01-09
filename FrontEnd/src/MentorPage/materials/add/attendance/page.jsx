@@ -74,32 +74,85 @@ export default function AttendancePage() {
       )
     );
   };
-    const handleChange = (e) => {
-      const { name, value } = e.target;
-      dispatch(setMaterial({ [name]: value }));
-    };
+
+  useEffect(() => {
+    console.log('Internsmaterial:', material);
+  })
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    dispatch(setMaterial({ [name]: value }));
+  };
 
   // Handle attendance submission
   const handleSubmit = async () => {
     try {
-      // Prepare attendance data for submission
-      const attendanceData = interns.map((intern) => ({
-        anakMagangID: intern.id,
-        isPresent: intern.isPresent,
-      }));
+      // Filter interns who are marked as present
+      const presentInterns = interns.filter((intern) => intern.isPresent).map((intern) => intern.id);
 
-      // Submit attendance data to the backend
-      const response = await axios.post('/api/materials/attendance', {
+      // Prepare the data to be sent to the backend
+      const attendanceData = {
         courseID: interns[0]?.course.id, // Assuming all interns belong to the same course
         tanggalAbsensi: new Date().toISOString(), // Use current date as attendance date
-        absensiKelas: attendanceData,
-      });
+        absensiKelas: presentInterns, // Array of IDs of present interns
+      };
+
+      // Call the API to submit attendance
+      const response = await axios.post('http://localhost:3000/api/mentor/attendance', interns);
 
       console.log('Attendance submitted successfully:', response.data);
       alert('Attendance submitted successfully!');
     } catch (error) {
       console.error('Error submitting attendance:', error.response?.data || error.message);
       alert('Error submitting attendance. Please try again.');
+    }
+  };
+
+  // Handle module creation
+  const handleCreateModul = async () => {
+    try {
+      const { namaModul, Deskripsi, imagePreview, courseID } = material;
+  
+      // Prepare the data for module creation
+      const modulData = {
+        courseID, // Assuming all interns belong to the same course
+        mentorID: user.id, // Use the logged-in user's ID as the mentor ID
+        gambar: imagePreview, // Use the image preview URL
+        namaModul,
+        Deskripsi,
+        Deadline: new Date().toISOString(), // Use current date as the deadline
+        soalID: [], // Empty array for now (can be populated later)
+        absensiID: null, // No attendance ID initially
+        Dinilai: false, // Default to false
+      };
+  
+      console.log('Modul Data:', modulData);
+  
+      // Call the API to create a new module
+      const response = await axios.post('http://localhost:3000/api/mentor/createmodul', modulData);
+  
+      console.log('Module created successfully:', response.data);
+      alert('Module created successfully!');
+  
+      // Prepare the data for attendance submission
+      const attendanceData = {
+        courseID: courseID, // Assuming all interns belong to the same course
+        modulID: response.data.modul._id, // Get modulID from the created module response
+        absensiKelas: interns.map((intern) => ({
+          anakMagangID: intern.id, // ID of the intern (ObjectId)
+          isPresent: intern.isPresent, // Attendance status (true/false)
+        })),
+      };
+  
+      console.log('Submitting attendance with data:', attendanceData);
+  
+      // Call the API to submit attendance
+      const responseAttendance = await axios.post('http://localhost:3000/api/mentor/materials/attendance', attendanceData);
+  
+      console.log('Attendance submitted successfully:', responseAttendance.data);
+      alert('Attendance submitted successfully!');
+    } catch (error) {
+      console.error('Error:', error.response?.data || error.message);
+      alert(`Error: ${error.response?.data?.message || error.message}`);
     }
   };
 
@@ -137,6 +190,9 @@ export default function AttendancePage() {
             </Button>
             <Button variant="contained" color="primary" onClick={handleSubmit}>
               Submit
+            </Button>
+            <Button variant="contained" color="secondary" onClick={handleCreateModul}>
+              Create Module
             </Button>
           </Box>
         </Box>
