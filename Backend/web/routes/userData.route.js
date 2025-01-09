@@ -85,7 +85,7 @@ router.post('/register', async (req, res) => {
 
 
     // Hash password untuk keamanan
-    const hashedPassword = await bcrypt.hash(password, 10);
+const hashedPassword = await bcrypt.hash(password, 10);
 
     // Buat objek pengguna baru
     const newUser = new UserData({
