@@ -1010,5 +1010,41 @@ router.post('/form', async (req, res) => {
       res.status(500).json({ message: 'Internal server error', error: error.message });
     }
   });
+  router.post('/addquestions', async (req, res) => {
+    try {
+      const { modulID, questions } = req.body;
+  
+      // Validate if the module exists
+      const modul = await Modul.findById(modulID);
+      if (!modul) {
+        return res.status(400).json({ message: 'Module not found' });
+      }
+  
+      // Create and save the questions
+      const savedQuestions = await Promise.all(
+        questions.map(async (question) => {
+          const newQuestion = new SoalModul({
+            Soal: question.question,
+            SoalType: question.type === 'essay' ? 1 : 0, // 1 for essay, 0 for multiple choice
+            Pilihan: question.options || [], // For multiple-choice questions
+            kunciJawaban: question.answer || '', // For multiple-choice questions
+            nilai: question.score || 0,
+          });
+          return await newQuestion.save();
+        })
+      );
+  
+      // Update the module with the new questions
+      const questionIDs = savedQuestions.map((q) => q._id);
+      await Modul.findByIdAndUpdate(modulID, {
+        $push: { soalID: { $each: questionIDs } },
+      });
+  
+      res.status(201).json({ message: 'Questions added successfully', questions: savedQuestions });
+    } catch (error) {
+      console.error('Error adding questions:', error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  });
 
 module.exports = router;

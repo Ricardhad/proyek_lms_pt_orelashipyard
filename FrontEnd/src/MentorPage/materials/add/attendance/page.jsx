@@ -21,7 +21,7 @@ import axios from 'axios';
 import Layout from '../../../components/layout';
 import { setMaterial } from '../../../../redux/materialSlice'; // Import the action
 
-export default function AttendancePage() {
+export default function AttendancePage() { 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [interns, setInterns] = useState([]); // State for fetched interns
@@ -84,28 +84,28 @@ export default function AttendancePage() {
   };
 
   // Handle attendance submission
-  const handleSubmit = async () => {
-    try {
-      // Filter interns who are marked as present
-      const presentInterns = interns.filter((intern) => intern.isPresent).map((intern) => intern.id);
+  // const handleSubmit = async () => {
+  //   try {
+  //     // Filter interns who are marked as present
+  //     const presentInterns = interns.filter((intern) => intern.isPresent).map((intern) => intern.id);
 
-      // Prepare the data to be sent to the backend
-      const attendanceData = {
-        courseID: interns[0]?.course.id, // Assuming all interns belong to the same course
-        tanggalAbsensi: new Date().toISOString(), // Use current date as attendance date
-        absensiKelas: presentInterns, // Array of IDs of present interns
-      };
+  //     // Prepare the data to be sent to the backend
+  //     const attendanceData = {
+  //       courseID: interns[0]?.course.id, // Assuming all interns belong to the same course
+  //       tanggalAbsensi: new Date().toISOString(), // Use current date as attendance date
+  //       absensiKelas: presentInterns, // Array of IDs of present interns
+  //     };
 
-      // Call the API to submit attendance
-      const response = await axios.post('http://localhost:3000/api/mentor/attendance', interns);
+  //     // Call the API to submit attendance
+  //     const response = await axios.post('http://localhost:3000/api/mentor/attendance', interns);
 
-      console.log('Attendance submitted successfully:', response.data);
-      alert('Attendance submitted successfully!');
-    } catch (error) {
-      console.error('Error submitting attendance:', error.response?.data || error.message);
-      alert('Error submitting attendance. Please try again.');
-    }
-  };
+  //     console.log('Attendance submitted successfully:', response.data);
+  //     alert('Attendance submitted successfully!');
+  //   } catch (error) {
+  //     console.error('Error submitting attendance:', error.response?.data || error.message);
+  //     alert('Error submitting attendance. Please try again.');
+  //   }
+  // };
 
   // Handle module creation
   const handleCreateModul = async () => {
@@ -188,12 +188,12 @@ export default function AttendancePage() {
             >
               Back
             </Button>
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
+            <Button variant="contained" color="primary" onClick={handleCreateModul}>
               Submit
             </Button>
-            <Button variant="contained" color="secondary" onClick={handleCreateModul}>
+            {/* <Button variant="contained" color="secondary" onClick={handleCreateModul}>
               Create Module
-            </Button>
+            </Button> */}
           </Box>
         </Box>
         <Typography variant="h4" sx={{ textAlign: 'center' }}>

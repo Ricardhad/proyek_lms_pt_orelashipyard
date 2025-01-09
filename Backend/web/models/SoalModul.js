@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const soalModulSchema = new mongoose.Schema({
-    Soal: { type: String, required: true },
-    Deskripsi: { type: String },
+    Soal: { type: String},
+    // Deskripsi: { type: String },
     // Gambar: { type: String },
     Gambar: {
         fileName: { type: String, default: null },
