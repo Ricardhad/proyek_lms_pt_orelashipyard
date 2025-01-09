@@ -22,7 +22,7 @@ const Announcement = () => {
   // Fungsi untuk menangani penghapusan pengumuman
   const handleDelete = async (announcementId) => {
     try {
-      await axios.delete(`/admin/announcements/${announcementId}`);
+      await axios.delete(`/api/admin/announcement/${announcementId}`);
       setAnnouncements((prev) =>
         prev.filter((announcement) => announcement._id !== announcementId)
       );
@@ -39,16 +39,17 @@ const Announcement = () => {
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Announcement</h1>
-      <div>
+      <div style={styles.announcementList}>
         {announcements.map((announcement) => (
           <div key={announcement._id} style={styles.card}>
             <div style={styles.cardContent}>
-              <h3>{announcement.title}</h3>
-              <p style={styles.author}>
-                {announcement.author} • {new Date(announcement.date).toLocaleDateString()}
+              <h3 style={styles.announcementTitle}>{announcement.title}</h3>
+              <p style={styles.authorDate}>
+                {announcement.author} •{" "}
+                {new Date(announcement.date).toLocaleDateString()}
               </p>
             </div>
-            <div>
+            <div style={styles.cardActions}>
               <button
                 style={styles.editButton}
                 onClick={() => navigate(`/editannouncement/${announcement._id}`)}
@@ -66,7 +67,7 @@ const Announcement = () => {
         ))}
       </div>
       <button style={styles.addButton} onClick={handleAddAnnouncement}>
-        +
+        Add Announcement
       </button>
     </div>
   );
@@ -74,32 +75,48 @@ const Announcement = () => {
 
 const styles = {
   container: {
-    padding: "300px",
+    padding: "20px",
+    maxWidth: "800px",
+    margin: "0 auto",
     backgroundColor: "#f9f9f9",
     minHeight: "100vh",
     position: "relative",
   },
   title: {
-    fontSize: "24px",
+    fontSize: "28px",
     fontWeight: "bold",
     marginBottom: "20px",
+    textAlign: "center",
+  },
+  announcementList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
   },
   card: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#ffdddd",
-    padding: "15px",
+    backgroundColor: "#ffe5e5",
+    padding: "20px",
     borderRadius: "8px",
-    marginBottom: "10px",
-    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
   },
   cardContent: {
     flex: 1,
   },
-  author: {
-    color: "#555",
+  announcementTitle: {
+    fontSize: "18px",
+    fontWeight: "bold",
+    marginBottom: "5px",
+  },
+  authorDate: {
+    color: "#666",
     fontSize: "14px",
+  },
+  cardActions: {
+    display: "flex",
+    gap: "10px",
   },
   editButton: {
     backgroundColor: "#007bff",
@@ -108,7 +125,6 @@ const styles = {
     padding: "10px 15px",
     borderRadius: "5px",
     cursor: "pointer",
-    marginRight: "10px",
   },
   deleteButton: {
     backgroundColor: "#dc3545",
@@ -125,11 +141,11 @@ const styles = {
     backgroundColor: "#28a745",
     color: "white",
     border: "none",
-    padding: "15px",
-    borderRadius: "50%",
-    fontSize: "24px",
+    padding: "12px 20px",
+    borderRadius: "5px",
+    fontSize: "16px",
     cursor: "pointer",
-    boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.2)",
   },
 };
 

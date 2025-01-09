@@ -1,119 +1,86 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import { PlusCircle, Edit, Info } from 'lucide-react';
 
 const Mentor = () => {
   const [mentors, setMentors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fungsi untuk mengambil data mentor dari API
     const fetchMentors = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/admin/mentors'); // URL sesuai dengan endpoint Anda
-        setMentors(response.data.mentors); // Menyimpan data mentor ke state
-        setLoading(false); // Mengubah loading menjadi false setelah data diterima
+        const response = await axios.get('http://localhost:3000/api/admin/mentors');
+        setMentors(response.data.mentors);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching mentors:', error);
-        setLoading(false); // Mengubah loading menjadi false jika ada error
+        setLoading(false);
       }
     };
 
-    fetchMentors(); // Memanggil fungsi fetchMentors saat komponen pertama kali dirender
+    fetchMentors();
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Menampilkan loading jika data sedang diambil
+    return <div className="text-center text-gray-500">Loading...</div>;
   }
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-      {mentors.map((mentor) => (
-        <div
-          key={mentor._id}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginBottom: '20px',
-            marginRight: '20px',
-            border: '1px solid #ddd',
-            padding: '10px',
-            borderRadius: '10px',
-            width: '300px',
-          }}
-        >
-          <div
-            style={{
-              borderRadius: '50%',
-              width: '80px',
-              height: '80px',
-              backgroundColor: '#eee',
-              marginRight: '20px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <img
-              src={mentor.Profile_Picture || 'https://via.placeholder.com/80'}
-              alt="profile"
-              style={{
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-                objectFit: 'cover',
-              }}
-            />
-          </div>
-          <div style={{ flex: 1 }}>
-            <h3>{mentor.namaUser}</h3>
-            <p>Role: {mentor.roleType === 1 ? 'Mentor' : 'Other'}</p>
-          </div>
-          
-          {/* Tombol Add + di samping card */}
-          <button
-            style={{
-              backgroundColor: '#28a745',
-              color: '#fff',
-              border: 'none',
-              padding: '15px 25px',
-              cursor: 'pointer',
-              borderRadius: '5px',
-              marginLeft: '20px',
-              fontSize: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            onClick={() => alert('Add Mentor clicked')} // Ganti dengan logika yang sesuai jika diperlukan
-          >
-            +
-          </button>
-        </div>
-      ))}
-      
-      {/* Tombol untuk menambahkan mentor baru */}
-      <div
-        style={{
-          marginTop: '20px',
-          textAlign: 'center',
-        }}
-      >
+    <div className="p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold">Mentors</h2>
         <button
-          style={{
-            backgroundColor: '#007bff',
-            color: '#fff',
-            border: 'none',
-            padding: '15px 30px',
-            cursor: 'pointer',
-            borderRadius: '10px',
-            fontSize: '20px',
-          }}
-          onClick={() => navigate('/addmentor')} // Navigasi ke halaman AddMentor
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg flex items-center hover:bg-blue-700"
+          onClick={() => navigate('/addmentor')}
         >
-          + Add New Mentor
+          <PlusCircle className="mr-2" size={20} /> Add New Mentor
         </button>
+      </div>
+
+      {/* Mentor Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {mentors.map((mentor) => (
+          <div
+            key={mentor._id}
+            className="bg-white shadow-lg rounded-lg overflow-hidden"
+          >
+            {/* Profile Picture */}
+            <div className="w-full h-40 bg-gray-200 flex items-center justify-center">
+              <img
+                src={mentor.Profile_Picture || 'https://via.placeholder.com/120'}
+                alt="profile"
+                className="w-24 h-24 object-cover rounded-full border-4 border-white shadow-md"
+              />
+            </div>
+
+            {/* Mentor Info */}
+            <div className="p-4">
+              <h3 className="text-lg font-semibold">{mentor.namaUser}</h3>
+              <p className="text-gray-500">
+                Role: {mentor.roleType === 1 ? 'Mentor' : 'Other'}
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="p-4 border-t flex justify-between">
+              <button
+                className="bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-yellow-600"
+                onClick={() => navigate(`/editmentor/${mentor._id}`)}
+              >
+                <Edit className="mr-2" size={16} /> Edit
+              </button>
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center hover:bg-blue-600"
+                onClick={() => navigate(`/detailmentor/${mentor._id}`)}
+              >
+                <Info className="mr-2" size={16} /> Detail
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

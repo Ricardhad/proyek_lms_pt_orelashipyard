@@ -28,7 +28,7 @@ const EditUser = () => {
 
       // Alert sukses dan navigasi kembali ke halaman ListInterns
       alert(response.data.message || "User updated successfully!");
-      navigate("/home/listInterns"); // Sesuaikan dengan rute halaman ListInterns Anda
+      navigate("/home"); // Sesuaikan dengan rute halaman ListInterns Anda
     } catch (err) {
       console.error("Error updating user:", err);
       setError(err.response?.data?.message || "Failed to update user.");
