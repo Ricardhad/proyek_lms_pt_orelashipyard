@@ -167,16 +167,13 @@ router.post('/login', async (req, res) => {
     // Cek apakah password yang dimasukkan sesuai dengan password yang ada di database
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid email or password.' });
+
     // Generate JWT token
     const token = jwt.sign(
       { id: user._id, email: user.email, roleType: user.roleType },
       process.env.JWT_SECRET || 'your_jwt_secret',
       { expiresIn: '24h' }
     );
-    console.log({id: user._id, email: user.email, roleType: user.roleType})
-
-    
-    
 
     // Cek roleType dan arahkan sesuai dengan role
     let roleBasedRedirect = '';
@@ -198,29 +195,31 @@ router.post('/login', async (req, res) => {
     res.status(200).json({ 
       message: 'Login successful.',
       token,
-      roleBasedRedirect,
-      
-
+      roleBasedRedirect
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error logging in.', error: error.message });
   }
 });
+ 
 
-
-router.get('/all', async (req, res) => {
+router.get('/all',async (req, res) => {
   try {
-    const users = await UserData.find(); // Mengambil semua data dari koleksi UserData
+    // Mengambil semua user dengan roleType = 2
+    const users = await UserData.find({ roleType: 2 });
+
     if (users.length === 0) {
-      return res.status(404).json({ message: "No users found" });
+      return res.status(404).json({ message: "No users with roleType 2 found" });
     }
+
     res.status(200).json(users);
   } catch (error) {
     console.error("Error fetching users:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 router.get('/allUnverifiedIntern', async (req, res) => {
   try {

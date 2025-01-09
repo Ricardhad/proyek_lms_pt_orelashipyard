@@ -51,8 +51,9 @@ io.on('connection', (socket) => {
 // Connect to MongoDB
 mongoose
   .connect('mongodb://localhost:27017/projectFPW', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
+    // sy matikan karena error terus 
   })
   .then(() => {
     console.log('Database connected');

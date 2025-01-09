@@ -2,7 +2,8 @@ const express = require('express')
 const router = express()
 const mongoose = require('mongoose');
 const cors = require('cors');
-
+const fs = require('fs');
+const bcrypt = require('bcrypt');
 
 const { 
   Course,Mentor,Admin,UserData,AnakMagang,
@@ -14,9 +15,10 @@ const {
 const Joi = require('joi');
 const { upload,verifyToken } = require('./Middleware');
 const Announcement = require('../models/Announcement');
+const Absensi = require('../models/Absensi');
 
 
-router.get('/',verifyToken([0]), async (req, res) => {
+router.get('/admin',verifyToken([0]), async (req, res) => {
   // const token = localStorage.getItem('token');
   // console.log(token)
   try {
@@ -143,6 +145,65 @@ router.put('/:userId/editUser', async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+// Endpoint untuk mendapatkan detail intern
+router.get('/intern/:id', async (req, res) => {
+  try {
+    const internId = req.params.id;
+
+    // Ambil data user (Anak Magang)
+    const user = await UserData.findById(internId).select('namaUser Profile_Picture email noTelpon');
+
+    if (!user) {
+      return res.status(404).json({ message: 'Intern not found' });
+    }
+
+    // Cari course yang diikuti oleh intern
+    const courses = await Course.find({ daftarKelas: internId })
+      .populate({
+        path: 'mentorID',
+        select: 'userID',
+        populate: {
+          path: 'userID',
+          select: 'namaUser Profile_Picture',
+        },
+      })
+      .select('namaCourse Deskripsi mentorID');
+
+    // Cari absensi berdasarkan course yang diikuti
+    const absensi = await Absensi.find({ absensiKelas: internId })
+      .populate('courseID', 'namaCourse')
+      .select('tanggalAbsensi');
+
+    // Format respons
+    const response = {
+      user: {
+        nama: user.namaUser,
+        profilePicture: user.Profile_Picture,
+        email: user.email,
+        noTelpon: user.noTelpon,
+      },
+      courses: courses.map((course) => ({
+        namaCourse: course.namaCourse,
+        deskripsi: course.Deskripsi,
+        mentor: course.mentorID.map((mentor) => ({
+          namaMentor: mentor.userID.namaUser,
+          profilePicture: mentor.userID.Profile_Picture,
+        })),
+      })),
+      absensi: absensi.map((record) => ({
+        course: record.courseID.namaCourse,
+        tanggal: record.tanggalAbsensi,
+      })),
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 
 router.put("/:anakMagangId/anakMagang",verifyToken([0]), async (req, res) => {
@@ -402,7 +463,8 @@ router.get('/mentors', async (req, res) => {
   }
 });
 
-// Endpoint untuk menambahkan user dengan roleType 1 dan isVerified true, serta membuat mentor
+
+
 router.post('/Mentor', verifyToken([0]), async (req, res) => {
   const { namaUser, Profile_Picture, noTelpon, email, password, courseID } = req.body;
 
@@ -412,15 +474,18 @@ router.post('/Mentor', verifyToken([0]), async (req, res) => {
   }
 
   try {
+    // Hash password menggunakan bcryptjs
+    const hashedPassword = await bcrypt.hash(password, 10); // 10 adalah saltRounds untuk bcrypt
+
     // Membuat instance baru untuk UserData
     const newUser = new UserData({
       namaUser,
       Profile_Picture,
       noTelpon,
       email,
-      password, // pastikan password sudah di-hash di frontend sebelum dikirim
-      roleType: 1,        // Set roleType menjadi 1 untuk Mentor
-      isVerified: true,   // Set isVerified menjadi true
+      password: hashedPassword, // Gunakan hashedPassword yang telah di-hash
+      roleType: 1,              // Set roleType menjadi 1 untuk Mentor
+      isVerified: true,         // Set isVerified menjadi true
     });
 
     // Simpan data user ke database
@@ -446,6 +511,7 @@ router.post('/Mentor', verifyToken([0]), async (req, res) => {
     res.status(500).json({ message: 'Server error', error });
   }
 });
+
 
 
 
@@ -561,6 +627,103 @@ router.post("/announcement", verifyToken([0]), upload.fields([
           message: 'Failed to create announcement.',
           error: err.message,
       });
+  }
+});
+
+// DELETE endpoint untuk menghapus announcement
+router.delete("/announcement/:id", async (req, res) => {
+  try {
+    const announcementId = req.params.id;
+    const announcement = await Announcement.findById(announcementId);
+
+    if (!announcement) {
+      return res.status(404).json({
+        message: 'Announcement tidak ditemukan'
+      });
+    }
+
+    // Hapus file attachments dari storage jika ada
+    if (announcement.attachments && announcement.attachments.length > 0) {
+      announcement.attachments.forEach(attachment => {
+        fs.unlink(attachment.filePath, (err) => {
+          if (err) console.error('Error deleting file:', err);
+        });
+      });
+    }
+
+    await Announcement.findByIdAndDelete(announcementId);
+
+    res.status(200).json({
+      message: 'Announcement berhasil dihapus'
+    });
+  } catch (err) {
+    console.error('Error menghapus announcement:', err);
+    res.status(500).json({
+      message: 'Gagal menghapus announcement',
+      error: err.message
+    });
+  }
+});
+
+// PUT endpoint untuk mengupdate announcement
+router.put("/announcement/:id", upload.fields([
+  { name: 'attachments', maxCount: 5 }
+]), async (req, res) => {
+  try {
+    const announcementId = req.params.id;
+    const { title, description } = req.body;
+    const newAttachments = req.files.attachments || [];
+
+    const announcement = await Announcement.findById(announcementId);
+
+    if (!announcement) {
+      return res.status(404).json({
+        message: 'Announcement tidak ditemukan'
+      });
+    }
+
+    // Hapus file attachments lama jika ada attachments baru
+    if (newAttachments.length > 0 && announcement.attachments.length > 0) {
+      announcement.attachments.forEach(attachment => {
+        fs.unlink(attachment.filePath, (err) => {
+          if (err) console.error('Error deleting old file:', err);
+        });
+      });
+    }
+
+    const updateData = {
+      title,
+      description,
+      updatedAt: new Date()
+    };
+
+    // Tambahkan attachments baru jika ada
+    if (newAttachments.length > 0) {
+      updateData.attachments = newAttachments.map(file => ({
+        fileName: file.originalname,
+        filePath: file.path,
+        fileType: file.mimetype,
+        fileSize: file.size,
+        uploadDate: new Date(),
+      }));
+    }
+
+    const updatedAnnouncement = await Announcement.findByIdAndUpdate(
+      announcementId,
+      updateData,
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: 'Announcement berhasil diupdate',
+      announcement: updatedAnnouncement
+    });
+  } catch (err) {
+    console.error('Error mengupdate announcement:', err);
+    res.status(500).json({
+      message: 'Gagal mengupdate announcement',
+      error: err.message
+    });
   }
 });
 
