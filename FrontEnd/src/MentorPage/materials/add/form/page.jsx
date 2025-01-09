@@ -145,6 +145,25 @@ export default function AddFormPage() {
     console.log("Questions State:", questions);
   }, [material, questions]);
 
+  // Handle image drop
+  const handleImageDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files[0] || e.target.files[0];
+
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Update the material state with the image preview
+        dispatch(setMaterial({ imagePreview: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+    // Handle drag over
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
   const handleAddClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -220,6 +239,8 @@ export default function AddFormPage() {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
               <Paper
+                component="label"
+                htmlFor="image-upload"
                 sx={{
                   p: 3,
                   mb: 3,
@@ -229,13 +250,42 @@ export default function AddFormPage() {
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'center',
+                  cursor: 'pointer',
+                  backgroundColor: '#f0f0f0',
+                  '&:hover': {
+                    borderColor: '#666',
+                  },
                 }}
+                onDrop={handleImageDrop}
+                onDragOver={handleDragOver}
               >
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
-                  <Image sx={{ fontSize: 48, color: '#666' }} />
-                </Box>
-                <Typography>Drop your image here or browse</Typography>
-              </Paper>
+                <input
+                  id="image-upload"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handleImageDrop}
+                />
+                {material.imagePreview ? (
+                  <Box
+                    sx={{
+                      width: '100%',
+                      height: '100%',
+                      backgroundImage: `url(${material.imagePreview})`,
+                      backgroundSize: 'contain',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
+                    }}
+                  />
+                ) : (
+                  <>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
+                      <Image sx={{ fontSize: 48, color: '#666' }} />
+                    </Box>
+                    <Typography>Drop your image here or browse</Typography>
+                  </>
+                )}
+            </Paper>
             </Grid>
             <Grid item xs={12} md={6}>
               <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>

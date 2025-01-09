@@ -23,6 +23,19 @@ export default function ZipSubmissionPage() {
       alert('Please upload a valid ZIP file.');
     }
   };
+  const handleImageDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files[0] || e.target.files[0];
+
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Update the material state with the image preview
+        dispatch(setMaterial({ imagePreview: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -66,23 +79,54 @@ export default function ZipSubmissionPage() {
           <Typography variant="h4"  sx={{ mb: 3, textAlign: 'center' }}>PENGUMPULAN ZIP</Typography>
       <Grid container spacing={3}>
         <Grid item xs={12} md={6}>
-          <Paper
-            sx={{
-              p: 3,
-              mb: 3,
-              borderRadius: 1,
-              textAlign: 'center',
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-                  }}
-                >
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
-              <Image sx={{ fontSize: 48, color: '#666' }} />
-            </Box>
-            <Typography>Drop your image here or browse</Typography>
-          </Paper>
+        <Paper
+          component="label"
+          htmlFor="image-upload"
+          sx={{
+            p: 3,
+            mb: 3,
+            borderRadius: 1,
+            textAlign: 'center',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            backgroundColor: '#f0f0f0',
+            '&:hover': {
+              borderColor: '#666',
+            },
+          }}
+          onDrop={handleImageDrop}
+          onDragOver={handleDragOver}
+        >
+          <input
+            id="image-upload"
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleImageDrop}
+          />
+          {material.imagePreview ? (
+            <Box
+              sx={{
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${material.imagePreview})`,
+                backgroundSize: 'contain',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            />
+          ) : (
+            <>
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
+                <Image sx={{ fontSize: 48, color: '#666' }} />
+              </Box>
+              <Typography>Drop your image here or browse</Typography>
+            </>
+          )}
+        </Paper>
         </Grid>
           <Grid item xs={12} md={6}>
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
