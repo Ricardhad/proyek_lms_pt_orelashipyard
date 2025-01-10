@@ -35,9 +35,9 @@ const Course = () => {
             <h3 className="text-4xl font-medium">Learning and Developer</h3>
           </div>
           <div className="absolute right-20 bottom-0 transform translate-y-1/2">
-            <div className="w-64 h-64 bg-gray-200 rounded-full overflow-hidden border-8 border-white">
+            {/* <div className="w-64 h-64 bg-gray-200 rounded-full overflow-hidden border-8 border-white">
               <div className="w-full h-full bg-gray-300" />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

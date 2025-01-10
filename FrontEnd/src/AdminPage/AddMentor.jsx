@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import client from "../client"; // Axios instance
 import { useNavigate } from "react-router-dom";
 
@@ -9,9 +9,25 @@ const AddMentor = () => {
     noTelpon: "",
     email: "",
     password: "",
+    course: "", // Field untuk menyimpan course yang dipilih
   });
+  const [courses, setCourses] = useState([]); // State untuk menyimpan daftar course
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+
+  // Fetch daftar course dari backend saat komponen dimuat
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await client.get("/api/admin/Course"); // Panggil endpoint backend
+        setCourses(response.data.courses); // Simpan daftar course di state
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+        setMessage("Failed to fetch courses. Please try again.");
+      }
+    };
+    fetchCourses();
+  }, []);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -30,15 +46,16 @@ const AddMentor = () => {
         noTelpon: formData.noTelpon,
         email: formData.email,
         password: formData.password,
+        course: formData.course, // Sertakan course dalam request
       };
-  
-      // Panggil API dengan menyertakan token di header Authorization
+
+      // Panggil API untuk menambahkan mentor
       const response = await client.post("/api/admin/Mentor", requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       setMessage(`Mentor added successfully: ${response.data.user.namaUser}`);
       setFormData({
         namaUser: "",
@@ -46,8 +63,10 @@ const AddMentor = () => {
         noTelpon: "",
         email: "",
         password: "",
+        course: "",
       });
-  
+
+      // Redirect ke halaman home setelah 2 detik
       setTimeout(() => {
         navigate("/home");
       }, 2000);
@@ -105,6 +124,22 @@ const AddMentor = () => {
           style={styles.input}
           required
         />
+        <select
+          name="course"
+          value={formData.course}
+          onChange={handleChange}
+          style={styles.input}
+          required
+        >
+          <option value="" disabled>
+            Select a course
+          </option>
+          {courses.map((course) => (
+            <option key={course._id} value={course.namaCourse}>
+              {course.namaCourse}
+            </option>
+          ))}
+        </select>
         <button type="submit" style={styles.button}>
           Submit
         </button>
