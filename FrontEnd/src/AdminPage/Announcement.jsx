@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../client"; // Pastikan ini mengarah ke instance Axios Anda
+import client from "../client"; // Koneksi backend (axios instance)
 
 const Announcement = () => {
   const [announcements, setAnnouncements] = useState([]);
@@ -10,7 +11,7 @@ const Announcement = () => {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const response = await axios.get("/api/admin/announcements");
+        const response = await client.get("/api/admin/announcements"); // Use client instead of axios
         setAnnouncements(response.data);
       } catch (error) {
         console.error("Error fetching announcements:", error);
@@ -20,16 +21,18 @@ const Announcement = () => {
   }, []);
 
   // Fungsi untuk menangani penghapusan pengumuman
-  const handleDelete = async (announcementId) => {
-    try {
-      await axios.delete(`/api/admin/announcement/${announcementId}`);
-      setAnnouncements((prev) =>
-        prev.filter((announcement) => announcement._id !== announcementId)
-      );
-    } catch (error) {
-      console.error("Error deleting announcement:", error);
-    }
-  };
+ 
+const handleDelete = async (announcementId) => {
+  try {
+    await client.delete(`/api/admin/announcement/${announcementId}`); // Use client instead of axios
+    setAnnouncements((prev) =>
+      prev.filter((announcement) => announcement._id !== announcementId)
+    );
+  } catch (error) {
+    console.error("Error deleting announcement:", error);
+  }
+};
+
 
   // Navigasi ke halaman AddAnnouncement
   const handleAddAnnouncement = () => {

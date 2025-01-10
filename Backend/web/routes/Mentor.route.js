@@ -1081,33 +1081,22 @@ router.get('/modul/:courseID', async (req, res) => {
   }
 });
 
-router.get('/:modulID/attendace', async (req, res) => {
+// Endpoint untuk mendapatkan absensi berdasarkan modulId
+router.get('/:modulId/attendance', async (req, res) => {
+    const { modulId } = req.params;
+  
     try {
-      const { modulID } = req.params;
+      // Mencari absensi berdasarkan modulId
+      const absensi = await Absensi.find({ modulID: modulId });
   
-      // Validate if modulID is a valid ObjectId
-      if (!mongoose.Types.ObjectId.isValid(modulID)) {
-        return res.status(400).json({ message: 'Invalid modulID' });
+      if (!absensi) {
+        return res.status(404).json({ message: "Absensi tidak ditemukan untuk modul ini." });
       }
   
-      // Find the Modul by modulID and populate the absensi field
-      const modul = await Modul.findById(modulID).populate({
-        path: 'absensi', // Assuming 'absensi' is a field in the Modul schema
-        populate: {
-          path: 'absensiKelas.anakMagangID', // Populate anakMagangID in absensiKelas
-          model: 'AnakMagang', // Reference the AnakMagang model
-        },
-      });
-  
-      if (!modul) {
-        return res.status(404).json({ message: 'Modul not found' });
-      }
-  
-      // Return the Modul with populated absensi data
-      res.status(200).json(modul);
+      return res.status(200).json(absensi);
     } catch (error) {
-      console.error('Error fetching Modul:', error);
-      res.status(500).json({ message: 'Error fetching Modul' });
+      console.error("Error fetching attendance:", error);
+      return res.status(500).json({ message: "Terjadi kesalahan saat mengambil data absensi." });
     }
   });
 

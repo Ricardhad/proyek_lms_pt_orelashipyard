@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../client";
+import client from "../client";
 
 const AddAnnouncement = () => {
   const [title, setTitle] = useState("");
@@ -15,42 +15,42 @@ const AddAnnouncement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!title.trim() || !content.trim()) {
       setErrorMessage("Title and content are required.");
       return;
     }
-
+  
     const token = localStorage.getItem("token");
     if (!token) {
       setErrorMessage("User is not logged in.");
       return;
     }
-
+  
     try {
-      // Buat FormData untuk mengirim data dengan file
+      // Create FormData to send data with file
       const formData = new FormData();
       formData.append("title", title);
       formData.append("description", content);
-      formData.append("createdBy", "67624e55e0e2c189da418030"); // Ganti dengan ID pengguna yang login
-
-      // Tambahkan setiap file ke FormData
+      formData.append("createdBy", "67624e55e0e2c189da418030"); // Replace with the logged-in user's ID
+  
+      // Add each file to FormData
       for (let i = 0; i < attachments.length; i++) {
         formData.append("attachments", attachments[i]);
       }
-
-      // Kirim data ke backend
-      await axios.post("/api/admin/announcement", formData, {
+  
+      // Send the data to the backend
+      await client.post("/api/admin/announcement", formData, {
         headers: {
-          Authorization: `Bearer ${token}`, // Mengirim token di header
+          Authorization: `Bearer ${token}`, // Send token in the header
         },
       });
-
-      // Redirect ke halaman pengumuman setelah berhasil
+  
+      // Redirect to the announcements page after success
       navigate("/home");
     } catch (error) {
       console.error("Error adding announcement:", error);
-
+  
       if (error.response) {
         setErrorMessage(error.response.data.message || "An error occurred.");
       } else {
