@@ -619,7 +619,7 @@ router.get("/announcements", async (req, res) => {
 // POST endpoint to create a new announcement
 // POST endpoint to create a new announcement
 // POST endpoint to create a new announcement
-router.post("/announcement", verifyToken([0]), upload.single("attachments"), async (req, res) => {  // Use upload.array for multiple files
+router.post("/announcement", verifyToken([0]),upload.single("attachments"),  async (req, res) => {  // Use upload.array for multiple files
   try {
       const { title, description, createdBy } = req.body;
       // const { attachments } = req.files || []; // Handle multiple files
@@ -634,6 +634,7 @@ router.post("/announcement", verifyToken([0]), upload.single("attachments"), asy
       }
       : null;
       
+      console.log( attachments)
       if (!attachments ) {
           return res.status(400).json({ message: "No attachments uploaded." });
       }
@@ -650,7 +651,7 @@ router.post("/announcement", verifyToken([0]), upload.single("attachments"), asy
       // Save the announcement to the database
       await newAnnouncement.save();
 
-      res.status(201).json({
+      return res.status(201).json({
           message: 'Announcement created successfully.',
           announcement: newAnnouncement,
       });
