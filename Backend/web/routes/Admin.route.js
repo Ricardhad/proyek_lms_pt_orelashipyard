@@ -9,7 +9,8 @@ const {
   Course,Mentor,Admin,UserData,AnakMagang,
   Modul,JawabanModul,SoalModul,NilaiModul,
   validateArrayOfIDs,checkIdValid,
-  checkDupes
+  checkDupes,
+  checkIdExist
 } =require("./functions");
 
 const Joi = require('joi');
@@ -465,52 +466,78 @@ router.get('/mentors', async (req, res) => {
 
 
 
+
+
+// Schema untuk validasi request body
+const mentorSchema = Joi.object({
+  namaUser: Joi.string().required(),
+  Profile_Picture: Joi.string().allow(null, ''),
+  noTelpon: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).required(),
+  course: Joi.string().required(),
+});
+
 router.post('/Mentor', verifyToken([0]), async (req, res) => {
-  const { namaUser, Profile_Picture, noTelpon, email, password, courseID } = req.body;
-
-  // Cek jika semua field yang dibutuhkan ada
-  if (!namaUser || !Profile_Picture || !noTelpon || !email || !password) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-
   try {
-    // Hash password menggunakan bcryptjs
-    const hashedPassword = await bcrypt.hash(password, 10); // 10 adalah saltRounds untuk bcrypt
+    // Validasi request body menggunakan Joi
+    const { namaUser, Profile_Picture, noTelpon, email, password, course } = req.body;
+    const { error } = mentorSchema.validate(req.body);
+    if (error) {
+      console.error('Validation error:', error.details[0].message);
+      return res.status(400).json({ message: error.details[0].message });
+    }
 
-    // Membuat instance baru untuk UserData
+    // Periksa apakah email sudah terdaftar
+    const existingUser = await UserData.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already registered.' });
+    }
+
+    // Periksa apakah course ada di database
+    const courseExist = await Course.findOne({ namaCourse: course });
+    if (!courseExist) {
+      return res.status(400).json({ message: 'Course not found.' });
+    }
+
+    // Hash password untuk keamanan
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Buat objek user baru dengan isVerified = true
     const newUser = new UserData({
       namaUser,
-      Profile_Picture,
+      Profile_Picture: Profile_Picture || null,
+      roleType: 1, // 1 untuk mentor
       noTelpon,
       email,
-      password: hashedPassword, // Gunakan hashedPassword yang telah di-hash
-      roleType: 1,              // Set roleType menjadi 1 untuk Mentor
-      isVerified: true,         // Set isVerified menjadi true
+      password: hashedPassword,
+      isVerified: true, // Mengatur isVerified menjadi true
     });
 
-    // Simpan data user ke database
+    // Simpan user ke database
     const savedUser = await newUser.save();
 
-    // Membuat instance baru untuk Mentor dengan userID dari user yang baru dibuat
+    // Buat objek mentor baru
     const newMentor = new Mentor({
       userID: savedUser._id,
-      courseID: courseID ? courseID : [], // Mengisi courseID jika ada, atau kosong
+      courseID: [courseExist._id], // Menggunakan ID course dari database
     });
 
-    // Simpan data mentor ke database
+    // Simpan mentor ke database
     const savedMentor = await newMentor.save();
 
     // Response jika berhasil
     res.status(201).json({
-      message: 'Mentor created successfully',
+      message: 'Mentor created successfully.',
       user: savedUser,
       mentor: savedMentor,
     });
   } catch (error) {
     console.error('Error creating mentor:', error);
-    res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Error creating mentor.', error: error.message });
   }
 });
+
 
 
 

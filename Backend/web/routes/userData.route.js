@@ -24,7 +24,11 @@ const registerSchema = Joi.object({
   noTelpon: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
-  course: Joi.string().optional(),
+  course: Joi.string().when('roleType', {
+    is: 1, // Only required when roleType is 2 (Anak Magang)
+    then: Joi.required(),
+    otherwise: Joi.optional()
+  }),
   asalSekolah: Joi.string().when('roleType', {
     is: 2, // Only required when roleType is 2 (Anak Magang)
     then: Joi.required(),
