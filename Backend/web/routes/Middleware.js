@@ -42,6 +42,7 @@ const answerDir = path.join(__dirname, "../uploads/answers");
 const questionPicsDir = path.join(__dirname, "../uploads/questions/pictures");
 const questionDocsDir = path.join(__dirname, "../uploads/questions/documents");
 const profilePictureDir = path.join(__dirname, "../uploads/profile");
+const AnnouncementDir = path.join(__dirname, "../uploads/announcements");
 
 if (!fs.existsSync(answerDir)) {
     fs.mkdirSync(answerDir, { recursive: true });
@@ -57,6 +58,9 @@ if (!fs.existsSync(questionDocsDir)) {
 
 if (!fs.existsSync(profilePictureDir)) {
     fs.mkdirSync(profilePictureDir, { recursive: true });
+}
+if (!fs.existsSync(AnnouncementDir)) {
+    fs.mkdirSync(AnnouncementDir, { recursive: true });
 }
 
 // Multer storage configuration
@@ -79,6 +83,8 @@ const storage = multer.diskStorage({
             cb(null, questionDocsDir); // Save documents in 'uploads/questions/documents' directory
         } else if (file.fieldname === "uploadProfile") {
             cb(null, profilePictureDir); // Save profile pictures in 'uploads/profile' directory
+        } else if (file.fieldname === "attachments") {
+            cb(null, AnnouncementDir); // Save profile pictures in 'uploads/profile' directory
         } else {
             cb(new Error("Unknown fieldname or invalid file type, cannot determine directory."), false); // Handle unknown fieldnames or invalid file types
         }
@@ -104,9 +110,9 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+    limits: { fileSize: 20 * 1024 * 1024 }, // Limit file size to 20MB
 });
 
 
 // bakal ditambah validation middleware buat jwt
-module.exports = { upload,answerDir,questionDocsDir,questionPicsDir,profilePictureDir,verifyToken };
+module.exports = { upload,answerDir,questionDocsDir,questionPicsDir,profilePictureDir,AnnouncementDir,verifyToken };

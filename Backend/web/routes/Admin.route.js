@@ -619,25 +619,31 @@ router.get("/announcements", async (req, res) => {
 // POST endpoint to create a new announcement
 // POST endpoint to create a new announcement
 // POST endpoint to create a new announcement
-router.post("/announcement", verifyToken([0]), upload.fields([
-  { name: 'attachments', maxCount: 5 } // Mendukung multiple file untuk attachments
-]), async (req, res) => {
+router.post("/announcement", verifyToken([0]), upload.single("attachments"), async (req, res) => {  // Use upload.array for multiple files
   try {
       const { title, description, createdBy } = req.body;
-      const attachments = req.files.attachments || []; // Handle multiple files
+      // const { attachments } = req.files || []; // Handle multiple files
+
+      // console.log(attachments);  // Log the attachments
+      const attachments  = req.file
+      ? {
+          fileName: req.file.filename,
+          filePath: req.file.path,
+          fileType: req.file.mimetype,
+          uploadDate: new Date(),
+      }
+      : null;
+      
+      if (!attachments ) {
+          return res.status(400).json({ message: "No attachments uploaded." });
+      }
 
       // Create new Announcement document
       const newAnnouncement = new Announcement({
           title,
           description,
           createdBy,
-          attachments: attachments.map(file => ({
-              fileName: file.originalname,
-              filePath: file.path,
-              fileType: file.mimetype,
-              fileSize: file.size,
-              uploadDate: new Date(),
-          })),
+          attachments: attachments,
           date: new Date(),
       });
 
@@ -656,6 +662,7 @@ router.post("/announcement", verifyToken([0]), upload.fields([
       });
   }
 });
+
 
 // DELETE endpoint untuk menghapus announcement
 router.delete("/announcement/:id", async (req, res) => {
