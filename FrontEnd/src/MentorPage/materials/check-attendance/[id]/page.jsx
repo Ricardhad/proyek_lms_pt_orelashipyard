@@ -6,44 +6,47 @@ import { Image } from '@mui/icons-material';
 import axios from 'axios'; // Import Axios for making API calls
 
 const CheckAttendancePage = () => {
-  const { id } = useParams(); // Get the modulID from the URL
+  const { modulId } = useParams(); // Get the modulId from the URL
   const navigate = useNavigate();
 
-  // State to store the fetched modul and attendance data
-  const [modul, setModul] = useState(null);
+  // State to store the fetched attendance data
+  const [attendanceData, setAttendanceData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch modul and attendance data when the component mounts
+  // Fetch attendance data when the component mounts
   useEffect(() => {
-    const fetchModulData = async () => {
+    const fetchAttendanceData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/mentor/${id}/attendace`);
-        setModul(response.data); // Update state with fetched data
+        // Call the API endpoint to get attendance data based on modulId
+        const response = await axios.get(`http://localhost:3000/api/mentor/${modulId}/attendance`);
+        setAttendanceData(response.data); // Update state with fetched data
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching modul data:', err);
-        if (err.response && err.response.status === 500) {
+        console.error('Error fetching attendance data:', err);
+        if (err.response && err.response.status === 404) {
+          setError('Attendance data not found for this module.');
+        } else if (err.response && err.response.status === 500) {
           setError('Server error: Please try again later.');
         } else {
-          setError('Failed to fetch modul data');
+          setError('Failed to fetch attendance data');
         }
         setLoading(false);
       }
     };
-  
-    fetchModulData();
-  }, [id]);
+
+    fetchAttendanceData();
+  }, [modulId]);
 
   // Function to handle attendance checkbox change
   const handleAttendanceChange = (anakMagangID) => {
-    const updatedAbsensi = modul.absensi.absensiKelas.map((attendance) => {
+    const updatedAttendance = attendanceData.map((attendance) => {
       if (attendance.anakMagangID._id === anakMagangID) {
         return { ...attendance, isPresent: !attendance.isPresent };
       }
       return attendance;
     });
-    setModul({ ...modul, absensi: { ...modul.absensi, absensiKelas: updatedAbsensi } }); // Update state with the new attendance status
+    setAttendanceData(updatedAttendance); // Update state with the new attendance status
   };
 
   // Display loading state
@@ -96,11 +99,11 @@ const CheckAttendancePage = () => {
           </Paper>
 
           <Box sx={{ flex: 1 }}>
-            <Typography variant="h5" sx={{ mb: 2 }}>Attendance for {modul.title}</Typography>
-            <Typography sx={{ mb: 2 }}>{modul.description}</Typography>
+            <Typography variant="h5" sx={{ mb: 2 }}>Attendance for Module {modulId}</Typography>
+            <Typography sx={{ mb: 2 }}>Module description goes here.</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography>DATE : </Typography>
-              <Typography color="error">{new Date(modul.createdAt).toLocaleDateString()}</Typography>
+              <Typography color="error">{new Date().toLocaleDateString()}</Typography>
             </Box>
           </Box>
         </Box>
@@ -117,7 +120,7 @@ const CheckAttendancePage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {modul.absensi.absensiKelas.map((attendance, index) => (
+              {attendanceData.map((attendance, index) => (
                 <TableRow key={index}>
                   <TableCell>{attendance.anakMagangID._id}</TableCell>
                   <TableCell>
@@ -132,7 +135,7 @@ const CheckAttendancePage = () => {
                     </Box>
                   </TableCell>
                   <TableCell>{attendance.anakMagangID.phone}</TableCell>
-                  <TableCell>{modul.title}</TableCell>
+                  <TableCell>Course Name</TableCell>
                   <TableCell>
                     <Checkbox
                       checked={attendance.isPresent}

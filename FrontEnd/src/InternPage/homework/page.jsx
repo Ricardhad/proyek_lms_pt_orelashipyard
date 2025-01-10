@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../components/layout';
 import {
   Box,
@@ -10,26 +10,64 @@ import {
   Stack,
   Chip,
 } from '@mui/material';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 export default function Homework() {
-  const homework = [
-    {
-      id: 1,
-      title: 'Materi 1',
-      mentor: 'Mentor Name',
-      score: '90/100',
-      deadline: '12:30 pm',
-      type: 'Tugas',
-    },
-    {
-      id: 3,
-      title: 'Materi 3',
-      mentor: 'Mentor Name',
-      score: '90/100',
-      deadline: '12:30 pm',
-      type: 'Latihan',
-    },
-  ];
+  const user = useSelector((state) => state.auth.user);
+  const [userData, setUserData] = useState(null);
+  const [modulList, setModulList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Fetch user profile data
+        const response = await axios.get(`http://localhost:3000/api/anakMagang/${user.id}/Profile`);
+        const profileData = response.data;
+
+        if (profileData?.courses?.length > 0) {
+          setUserData(profileData);
+
+          // Fetch modul data for the first course
+          const firstCourseId = profileData.courses[0]._id;
+
+          try {
+            const modulResponse = await axios.get(
+              `http://localhost:3000/api/anakMagang/modul/${firstCourseId}/getallmodul`
+            );
+            const modulData = modulResponse.data.modulList;
+
+            if (Array.isArray(modulData)) {
+              setModulList(modulData);
+            } else {
+              setError("Invalid data format for modul list.");
+            }
+          } catch (modulError) {
+            console.error("Error fetching modul data:", modulError);
+            setError(modulError.response?.data?.error || "Error fetching modul data");
+          }
+        } else {
+          setError("No courses found for the user.");
+        }
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        setError(err.response?.data?.error || "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user.id]);
+
+  useEffect(() => {
+    console.log('modulList:', modulList);
+  }, [modulList]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <Layout>
@@ -39,9 +77,9 @@ export default function Homework() {
         </Typography>
 
         <Stack spacing={3}>
-          {homework.map((assignment) => (
+        {modulList.map((modul) => (
             <Card
-              key={assignment.id}
+              key={modul._id}
               sx={{
                 display: 'flex',
                 flexDirection: { xs: 'column', sm: 'row' },
@@ -52,6 +90,7 @@ export default function Homework() {
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
               }}
             >
+              {/* Placeholder for Image */}
               <Box
                 sx={{
                   width: { xs: '100%', sm: 200 },
@@ -66,15 +105,16 @@ export default function Homework() {
               >
                 <Typography color="text.secondary">Image</Typography>
               </Box>
-
+              
+              {/* Modul Details */}
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Box 
-                  sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
                     mb: 1,
                     flexWrap: 'wrap',
-                    gap: 1
+                    gap: 1,
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', mr: 'auto' }}>
@@ -82,39 +122,30 @@ export default function Homework() {
                       src="/placeholder.svg"
                       sx={{ width: 24, height: 24, mr: 1 }}
                     />
-                    <Typography variant="subtitle2">{assignment.mentor}</Typography>
+                    <Typography variant="subtitle2">{modul.mentorID || 'Unknown Mentor'}</Typography>
                   </Box>
-                  <Typography
-                    variant="h6"
-                    sx={{ 
-                      fontWeight: 'bold',
-                      ml: { xs: 0, sm: 'auto' }
-                    }}
-                  >
-                    {assignment.score}
-                  </Typography>
                 </Box>
-
+                
                 <Typography variant="h6" gutterBottom>
-                  {assignment.title}
+                  {modul.namaModul}
                 </Typography>
-
+                
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 'auto' }}>
-                  <Typography 
-                    color="error.main" 
+                  <Typography
+                    color="error.main"
                     variant="caption"
                     sx={{ fontWeight: 'medium' }}
                   >
-                    Deadline {assignment.deadline}
+                    Deadline: {new Date(modul.Deadline).toLocaleString() || 'N/A'}
                   </Typography>
                   <Chip
-                    label={assignment.type}
+                    label={modul.soalID && modul.soalID.length > 0 ? 'Tugas' : 'Attendance'}
                     size="small"
-                    color={assignment.type === 'Tugas' ? 'primary' : 'secondary'}
+                    color={modul.soalID && modul.soalID.length > 0 ? 'primary' : 'secondary'}
                     sx={{
-                      bgcolor: assignment.type === 'Tugas'
-                        ? 'rgba(25, 118, 210, 0.1)'
-                        : 'rgba(255, 107, 107, 0.1)',
+                      bgcolor: modul.soalID && modul.soalID.length > 0
+                        ? 'rgba(25, 118, 210, 0.1)' // Blue for 'Tugas'
+                        : 'rgba(76, 175, 80, 0.1)', // Green for 'Attendance'
                       borderRadius: 1,
                     }}
                   />
@@ -127,4 +158,3 @@ export default function Homework() {
     </Layout>
   );
 }
-
