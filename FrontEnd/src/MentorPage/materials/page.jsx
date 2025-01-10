@@ -1,10 +1,10 @@
-import { Grid2 as Grid, Card, CardMedia, CardContent, Typography, Button, Box, Avatar } from '@mui/material'
+import { Grid, Card, CardMedia, CardContent, Typography, Button, Box, Avatar } from '@mui/material';
 import { AppBar, Toolbar, InputBase } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'
-import { Add as AddIcon } from '@mui/icons-material'
+import { Link, useNavigate } from 'react-router-dom';
+import { Add as AddIcon } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import Layout from '../components/layout'
+import Layout from '../components/layout';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { useSelector } from 'react-redux';
@@ -13,38 +13,67 @@ import axios from 'axios';
 const MotionGrid = motion(Grid);
 const MotionCard = motion(Card);
 
-const materials = [
-  {
-    id: 1,
-    title: 'Materi 1',
-    mentorName: 'Mentor Name',
-    mentorAvatar: '/placeholder.svg',
-    deadline: '12:30 pm',
-    type: 'Tugas',
-    thumbnail: '/placeholder.svg'
-  },
-  {
-    id: 3,
-    title: 'Materi 3',
-    mentorName: 'Mentor Name',
-    mentorAvatar: '/placeholder.svg',
-    deadline: '12:30 pm',
-    type: 'Latihan',
-    thumbnail: '/placeholder.svg'
-  },
-]
-
 export default function MaterialsPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const user = useSelector((state) => state.auth.user);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [modulList, setModulList] = useState([]); // State to store fetched modul data
 
-  const handleMaterialClick = (material) => {
-    if (material.type === 'Tugas') {
-      navigate(`/homeMentor/materials/check-tugas/${material.id}`)
-    } else if (material.type === 'Latihan') {
-      navigate(`/homeMentor/materials/check-latihan/${material.id}`)
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`);
+        console.log('Profile:', response.data);
+        setUserData(response.data);
+      } catch (err) {
+        setError(err.response?.data?.error || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user.id]);
+
+  // Fetch modul data based on courseID
+  useEffect(() => {
+    if (userData?.mentor?.courseID?.[0]) {
+      const fetchModulData = async () => {
+        try {
+          const courseID = userData.mentor.courseID[0];
+          const response = await axios.get(`http://localhost:3000/api/mentor/modul/${courseID}`);
+          console.log('Modul Data:', response.data.modulList);
+          setModulList(response.data.modulList); // Set the fetched modul data
+        } catch (err) {
+          console.error('Error fetching modul data:', err);
+          setError('Failed to fetch modul data');
+        }
+      };
+
+      fetchModulData();
     }
-  }
+  }, [userData]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  // Handle material click
+  const handleMaterialClick = (material) => {
+    const isTugas = material.soalID && material.soalID.length > 0;
+    const isAttendance = material.absensiID !== null;
+
+    if (isTugas) {
+      navigate(`/homeMentor/materials/check-tugas/${material._id}`);
+    } else if (isAttendance) {
+      navigate(`/homeMentor/materials/check-attendance/${material._id}`);
+    } else {
+      console.log('Unknown material type');
+    }
+  };
 
   return (
     <Layout>
@@ -63,55 +92,65 @@ export default function MaterialsPage() {
           </Search>
         </Toolbar>
       </AppBar>
-      <Typography variant="h4" sx={{ p: 3 }}>MATERIAL</Typography>
+      <Typography variant="h4" sx={{ p: 3 }}>
+        MATERIAL
+      </Typography>
       <Grid container spacing={3} sx={{ p: 3 }}>
-        {materials.map((material, index) => (
-          <MotionGrid 
-            item 
-            key={material.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-          >
-            <MotionCard 
-              sx={{ display: 'flex', height: '100%', cursor: 'pointer' }}
-              onClick={() => handleMaterialClick(material)}
-              whileHover={{ scale: 1.03 }}
-              transition={{ duration: 0.2 }}
+        {modulList.map((material, index) => {
+          const isTugas = material.soalID && material.soalID.length > 0;
+          const isAttendance = material.absensiID !== null;
+
+          return (
+            <MotionGrid
+              item
+              key={material._id} // Use _id from modulList
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
             >
-              <CardMedia
-                component="img"
-                sx={{ width: 151 }}
-                image={material.thumbnail}
-                alt={material.title}
-              />
-              <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                <CardContent sx={{ flex: '1 0 auto' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
-                      <Avatar src={material.mentorAvatar} sx={{ mr: 1 }} />
-                    </motion.div>
-                    <Typography variant="subtitle2">{material.mentorName}</Typography>
-                  </Box>
-                  <Typography variant="h6">{material.title}</Typography>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                    <Typography variant="body2" color="error">
-                      Deadline {material.deadline}
-                    </Typography>
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button
-                        size="small"
-                        sx={{ backgroundColor: '#e0e0e0', color: 'black' }}
-                      >
-                        {material.type}
-                      </Button>
-                    </motion.div>
-                  </Box>
-                </CardContent>
-              </Box>
-            </MotionCard>
-          </MotionGrid>
-        ))}
+              <MotionCard
+                sx={{ display: 'flex', height: '100%', cursor: 'pointer' }}
+                onClick={() => handleMaterialClick(material)}
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.2 }}
+              >
+                <CardMedia
+                  component="img"
+                  sx={{ width: 151 }}
+                  image={material.gambar || '/placeholder.svg'} // Use gambar from modulList
+                  alt={material.namaModul} // Use namaModul from modulList
+                />
+                <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                  <CardContent sx={{ flex: '1 0 auto' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
+                        <Avatar src="/placeholder.svg" sx={{ mr: 1 }} /> {/* Placeholder for mentor avatar */}
+                      </motion.div>
+                      <Typography variant="subtitle2">{userData?.mentor?.namaUser || 'Mentor Name'}</Typography>
+                    </Box>
+                    <Typography variant="h6">{material.namaModul}</Typography> {/* Use namaModul from modulList */}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+                      {/* Conditionally render Deadline */}
+                      {!isAttendance && (
+                        <Typography variant="body2" color="error">
+                          Deadline {new Date(material.Deadline).toLocaleString()} {/* Format deadline */}
+                        </Typography>
+                      )}
+                      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          size="small"
+                          sx={{ backgroundColor: '#e0e0e0', color: 'black' }}
+                        >
+                          {isTugas ? 'Tugas' : isAttendance ? 'Attendance' : 'Other'} {/* Display type */}
+                        </Button>
+                      </motion.div>
+                    </Box>
+                  </CardContent>
+                </Box>
+              </MotionCard>
+            </MotionGrid>
+          );
+        })}
         <Grid item xs={12} sm={6} md={4}>
           <Link to="/homeMentor/materials/add" style={{ textDecoration: 'none' }}>
             <Card
@@ -138,9 +177,10 @@ export default function MaterialsPage() {
         </Grid>
       </Grid>
     </Layout>
-  )
+  );
 }
 
+// Styled components
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   width: '100%',

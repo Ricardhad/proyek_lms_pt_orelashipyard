@@ -99,9 +99,9 @@ export default function InternsPage() {
     fetchInterns();
   }, [user.id, searchQuery]);
 
-  useEffect(() => {
-    console.log("Interns updated:", interns);
-  }, [interns]);
+  // useEffect(() => {
+  //   console.log("Interns updated:", interns);
+  // }, [interns]);
 
 
 
