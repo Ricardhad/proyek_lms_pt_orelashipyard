@@ -99,39 +99,115 @@ router.put("/:anakMagangId/ProfileEdit", async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
   });
+router.get('/modul/:courseID/getallmodul', async (req, res) => {
+  try {
+    const { courseID } = req.params;
 
-  router.get('/modul/:courseID', async (req, res) => {
-    try {
-      const { courseID } = req.params;
+    // Sanitize courseID to remove any unwanted characters
+    const sanitizedCourseID = courseID.trim();
+
+    // Validate the courseID format
+    if (!sanitizedCourseID.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ message: 'Invalid courseID format' });
+    }
+
+    // Find all modul documents with the given courseID
+    const modulList = await Modul.find({ courseID: sanitizedCourseID })
+      .populate({
+        path: 'soalID', // Populate the soalID array
+        model: 'SoalModul', // Reference the SoalModul model
+      })
+      .populate({
+        path: 'absensiID', // Populate the absensiID field
+        model: 'Absensi', // Reference the Absensi model
+        populate: {
+          path: 'absensiKelas.anakMagangID', // Populate the anakMagangID field inside absensiKelas
+          model: 'AnakMagang', // Reference the AnakMagang model
+        },
+      })
+      .exec();
+
+    // If no modul is found, return a 404 error
+    if (!modulList || modulList.length === 0) {
+      return res.status(404).json({ message: 'No modul found for the given courseID' });
+    }
+
+    // Return the modul list with populated soalModul, absensi, and mentor data
+    res.status(200).json({ modulList });
+  } catch (error) {
+    console.error('Error fetching modul:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+});
+
+
+  // router.get('/modul/:courseID/getallmodul', async (req, res) => {
+  //   try {
+  //     const { courseID } = req.params;
+  //     console.log('Fetching modul for courseID:', courseID); // Debug log
   
-      // Find all modul documents with the given courseID
-      const modulList = await Modul.find({ courseID })
+  //     // Find all modul documents with the given courseID
+  //     const modulList = await Modul.find({ courseID })
+  //       .populate({
+  //         path: 'soalID',
+  //         model: 'SoalModul',
+  //       })
+  //       .populate({
+  //         path: 'absensiID',
+  //         model: 'Absensi',
+  //         populate: {
+  //           path: 'absensiKelas.anakMagangID',
+  //           model: 'AnakMagang',
+  //         },
+  //       })
+  //       .exec();
+  
+  //     console.log('Fetched modulList:', modulList); // Debug log
+  
+  //     // If no modul is found, return a 404 error
+  //     if (!modulList || modulList.length === 0) {
+  //       return res.status(404).json({ message: 'No modul found for the given courseID' });
+  //     }
+  
+  //     // Return the modul list with populated soalModul and absensi
+  //     res.status(200).json({ modulList });
+  //   } catch (error) {
+  //     console.error('Error fetching modul:', error);
+  //     res.status(500).json({ message: 'Internal server error', error: error.message });
+  //   }
+  // });
+
+
+  router.get('/modul/:modulID', async (req, res) => {
+    try {
+      const { modulID } = req.params;
+  
+      // Validate if modulID is a valid ObjectId
+      if (!mongoose.Types.ObjectId.isValid(modulID)) {
+        return res.status(400).json({ message: 'Invalid modulID' });
+      }
+  
+      // Find the Modul by modulID and populate the soalID field
+      const modul = await Modul.findById(modulID)
         .populate({
           path: 'soalID', // Populate the soalID array
           model: 'SoalModul', // Reference the SoalModul model
         })
-        .populate({
-          path: 'absensiID', // Populate the absensiID field
-          model: 'Absensi', // Reference the Absensi model
-          populate: {
-            path: 'absensiKelas.anakMagangID', // Populate the anakMagangID field inside absensiKelas
-            model: 'AnakMagang', // Reference the AnakMagang model
-          },
-        })
         .exec();
   
-      // If no modul is found, return a 404 error
-      if (!modulList || modulList.length === 0) {
-        return res.status(404).json({ message: 'No modul found for the given courseID' });
+      if (!modul) {
+        return res.status(404).json({ message: 'Modul not found' });
       }
   
-      // Return the modul list with populated soalModul and absensi
-      res.status(200).json({ modulList });
+      // Return the Modul with populated soalID data
+      res.status(200).json(modul);
     } catch (error) {
-      console.error('Error fetching modul:', error);
-      res.status(500).json({ message: 'Internal server error', error: error.message });
+      console.error('Error fetching Modul:', error);
+      res.status(500).json({ message: 'Error fetching Modul' });
     }
   });
+
+
 
 router.get("/Jawaban",verifyToken([2]), async (req, res) => {
     const { namaCourse, namaSoal, namaUser, jawabanType } = req.query;
@@ -266,6 +342,42 @@ router.post("/Jawaban",verifyToken([2]), upload.single("uploadJawaban"), async (
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+
+// router.get('/modul/:courseID', async (req, res) => {
+//   try {
+//     const { courseID } = req.params;
+
+//     // Find all modul documents with the given courseID
+//     const modulList = await Modul.find({ courseID })
+//       .populate({
+//         path: 'soalID', // Populate the soalID array
+//         model: 'SoalModul', // Reference the SoalModul model
+//       })
+//       .populate({
+//         path: 'absensiID', // Populate the absensiID field
+//         model: 'Absensi', // Reference the Absensi model
+//         populate: {
+//           path: 'absensiKelas.anakMagangID', // Populate the anakMagangID field inside absensiKelas
+//           model: 'AnakMagang', // Reference the AnakMagang model
+//         },
+//       }) 
+    
+//       .exec();
+
+//     // If no modul is found, return a 404 error
+//     if (!modulList || modulList.length === 0) {
+//       return res.status(404).json({ message: 'No modul found for the given courseID' });
+//     }
+
+//     // Return the modul list with populated soalModul and absensi
+//     res.status(200).json({ modulList });
+//   } catch (error) {
+//     console.error('Error fetching modul:', error);
+//     res.status(500).json({ message: 'Internal server error', error: error.message });
+//   }
+// });
+
 
 // router.get('/:anakMagang_id/absensi', async (req, res) => {
 //     const { anakMagang_id } = req.params;
