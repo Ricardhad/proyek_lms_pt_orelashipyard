@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Edit, Info } from 'lucide-react';
+import client from "../client"; // Koneksi backend (axios instance)
 
 const Mentor = () => {
   const [mentors, setMentors] = useState([]);
@@ -11,7 +12,7 @@ const Mentor = () => {
   useEffect(() => {
     const fetchMentors = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/admin/mentors');
+        const response = await client.get('/api/admin/mentors');
         setMentors(response.data.mentors);
         setLoading(false);
       } catch (error) {
@@ -19,9 +20,10 @@ const Mentor = () => {
         setLoading(false);
       }
     };
-
+  
     fetchMentors();
   }, []);
+  
 
   if (loading) {
     return <div className="text-center text-gray-500">Loading...</div>;

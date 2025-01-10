@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import axios from 'axios';
+import client from "../client"; // Koneksi backend (axios instance)
 
 export default function DetailIntern() {
   const { id } = useParams();
@@ -13,7 +14,7 @@ export default function DetailIntern() {
   useEffect(() => {
     const fetchInternDetail = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/admin/intern/${id}`);
+        const response = await client.get(`/api/admin/intern/${id}`); // Using the axios instance from client.js
         setInternDetail(response.data);
       } catch (err) {
         console.error(err);

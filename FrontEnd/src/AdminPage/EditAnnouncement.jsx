@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "../client";
+
+import client from "../client"; // Koneksi backend (axios instance)
 
 const EditAnnouncement = () => {
   const { id } = useParams();
@@ -14,7 +15,7 @@ const EditAnnouncement = () => {
     // Fetch announcement data
     const fetchAnnouncement = async () => {
       try {
-        const response = await axios.get(`/api/admin/announcement/${id}`);
+        const response = await client.get(`/api/admin/announcement/${id}`);
         setTitle(response.data.title);
         setContent(response.data.description);
       } catch (error) {
@@ -24,6 +25,7 @@ const EditAnnouncement = () => {
     };
     fetchAnnouncement();
   }, [id]);
+  
 
   const handleFileChange = (e) => {
     setAttachments(e.target.files);
@@ -40,7 +42,7 @@ const EditAnnouncement = () => {
     }
 
     try {
-      await axios.put(`/api/admin/announcement/${id}`, formData, {
+      await client.put(`/api/admin/announcement/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

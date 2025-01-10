@@ -1081,33 +1081,22 @@ router.get('/modul/:courseID', async (req, res) => {
   }
 });
 
-router.get('/:modulID/attendace', async (req, res) => {
+// Endpoint untuk mendapatkan absensi berdasarkan modulId
+router.get('/:modulId/attendance', async (req, res) => {
+    const { modulId } = req.params;
+  
     try {
-      const { modulID } = req.params;
+      // Mencari absensi berdasarkan modulId
+      const absensi = await Absensi.find({ modulID: modulId });
   
-      // Find all modul documents with the given courseID
-      const modulList = await Modul.find({ modulID })
-        .populate({
-          path: 'absensiID', // Populate the absensiID field
-          model: 'Absensi', // Reference the Absensi model
-          populate: {
-            path: 'absensiKelas.anakMagangID', // Populate the anakMagangID field inside absensiKelas
-            model: 'AnakMagang', // Reference the AnakMagang model
-          },
-        }) 
-      
-        .exec();
-  
-      // If no modul is found, return a 404 error
-      if (!modulList || modulList.length === 0) {
-        return res.status(404).json({ message: 'No modul found for the given courseID' });
+      if (!absensi) {
+        return res.status(404).json({ message: "Absensi tidak ditemukan untuk modul ini." });
       }
   
-      // Return the modul list with populated soalModul and absensi
-      res.status(200).json({ modulList });
+      return res.status(200).json(absensi);
     } catch (error) {
-      console.error('Error fetching modul:', error);
-      res.status(500).json({ message: 'Internal server error', error: error.message });
+      console.error("Error fetching attendance:", error);
+      return res.status(500).json({ message: "Terjadi kesalahan saat mengambil data absensi." });
     }
   });
 

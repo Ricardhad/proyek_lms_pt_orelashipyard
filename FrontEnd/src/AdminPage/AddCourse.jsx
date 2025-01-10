@@ -1,6 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../client"; // Koneksi backend
+import client from '../client'; // Importing the axios instance from client.js
+
+const handleDelete = async (announcementId) => {
+  try {
+    await client.delete(`/api/admin/announcement/${announcementId}`); // Use client instead of axios
+    setAnnouncements((prev) =>
+      prev.filter((announcement) => announcement._id !== announcementId)
+    );
+  } catch (error) {
+    console.error("Error deleting announcement:", error);
+  }
+};
+
 
 const AddCourse = () => {
   const [namaCourse, setNamaCourse] = useState("");
@@ -12,25 +25,25 @@ const AddCourse = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!namaCourse.trim() || !deskripsi.trim()) {
       setErrorMessage("Course name and description are required.");
       return;
     }
-
+  
     const payload = {
       namaCourse,
       Deskripsi: deskripsi,
       mentorID: mentorID ? [mentorID] : [],
       daftarKelas: daftarKelas ? [daftarKelas] : []
     };
-
+  
     console.log("Payload being sent:", payload);
-
+  
     try {
-      const response = await axios.post("/api/admin/Course", payload);
+      const response = await client.post("/api/admin/Course", payload); // Use client instead of axios
       console.log("Response from server:", response);
-      navigate("/home"); // Redirect setelah berhasil
+      navigate("/home"); // Redirect after successful submission
     } catch (error) {
       console.error("Error creating course:", error);
       if (error.response) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import client from "../client"; // Import client.js untuk koneksi API
-import axios from "axios";  // Import axios untuk koneksi API
+
 
 const AddInterns = () => {
   const [userData, setUserData] = useState([]);
@@ -24,16 +24,15 @@ const AddInterns = () => {
 
   const updateVerificationStatus = async (internId) => {
     try {
-      const response = await axios.put(
-        `http://localhost:3000/api/admin/${internId}`,
-        {} // Body request jika diperlukan
+      const response = await client.put(
+        `/api/admin/${internId}`, // Use client and relative URL
+        {} // Body request if necessary
       );
       console.log('Verification successful:', response.data);
     } catch (error) {
       console.error('Failed to update verification:', error);
     }
   };
-  
 
   
 
