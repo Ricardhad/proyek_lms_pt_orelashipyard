@@ -14,7 +14,7 @@ const {
 } =require("./functions");
 
 const Joi = require('joi');
-const { upload,verifyToken } = require('./Middleware');
+const { upload,verifyToken, AnnouncementDir } = require('./Middleware');
 const Announcement = require('../models/Announcement');
 const Absensi = require('../models/Absensi');
 
@@ -628,7 +628,7 @@ router.post("/announcement", verifyToken([0]),upload.single("attachments"),  asy
       const attachments  = req.file
       ? {
           fileName: req.file.filename,
-          filePath: req.file.path,
+          filePath: AnnouncementDir,
           fileType: req.file.mimetype,
           uploadDate: new Date(),
       }
