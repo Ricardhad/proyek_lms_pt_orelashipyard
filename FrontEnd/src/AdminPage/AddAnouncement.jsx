@@ -43,13 +43,12 @@ const AddAnnouncement = () => {
         title: title,
         description: content,
         createdBy: "67624e55e0e2c189da418030",
-        attachments: Array.from(attachments).map(file => ({
-          fileName: file.name, // Use 'name' from the file object
-          filePath: file.path, // Assuming file has 'path' after uploading (on server)
-          fileType: file.type, // MIME type (e.g., 'application/pdf')
-          fileSize: file.size,
+        attachments: attachments ? [{
+          fileName: attachments.name, 
+          fileType: attachments.type, 
+          fileSize: attachments.size,
           uploadDate: new Date(),
-        })),
+        }] : [],
         date: new Date(),
       };
 
