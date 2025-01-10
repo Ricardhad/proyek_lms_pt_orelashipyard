@@ -13,6 +13,11 @@ import {
 // import Grid from '@mui/material/Unstable_Grid2';
 export default function Materials() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const user = useSelector((state) => state.auth.user);
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   // <Route path="/homeMagang/materials/:id/form" element={<MaterialForm />} />
   // <Route path="/homeMagang/materials/:id/zip" element={<MaterialZip />} />
   const handleMaterialClick = (material) => {
