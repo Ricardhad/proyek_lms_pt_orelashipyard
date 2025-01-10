@@ -39,6 +39,7 @@ import MentorAddMaterialPage from "./MentorPage/materials/add/page";
 import MentorAddFormPage from "./MentorPage/materials/add/form/page";
 import MentorZipSubmissionPage from "./MentorPage/materials/add/zip/page";
 import MentorAttendancePage from "./MentorPage/materials/add/attendance/page";
+import MentorCheckAttendancePage from "./MentorPage/materials/check-attendance/[id]/page";  
 import MentorCheckTugasPage from "./MentorPage/materials/check-tugas/[id]/page";
 import MentorCheckLatihanPage from "./MentorPage/materials/check-latihan/[id]/page";
 import MentorInternFormCheckPage from "./MentorPage/materials/check-latihan/[id]/[internId]/page";
@@ -96,6 +97,7 @@ function App() {
         <Route path="/homeMentor/materials/add/form" element={<ProtectedRoute element={MentorAddFormPage} requiredRole={1} />} />
         <Route path="/homeMentor/materials/add/zip" element={<ProtectedRoute element={MentorZipSubmissionPage} requiredRole={1} />} />
         <Route path="/homeMentor/materials/add/attendance" element={<ProtectedRoute element={MentorAttendancePage} requiredRole={1} />} />
+        <Route path="/homeMentor/materials/check-attendance/:id" element={<ProtectedRoute element={MentorCheckAttendancePage} requiredRole={1} />} />
         <Route path="/homeMentor/materials/check-tugas/:id" element={<ProtectedRoute element={MentorCheckTugasPage} requiredRole={1} />} />
         <Route path="/homeMentor/materials/check-latihan/:id" element={<ProtectedRoute element={MentorCheckLatihanPage} requiredRole={1} />} />
         <Route path="/homeMentor/materials/check-latihan/:id/:internId" element={<ProtectedRoute element={MentorInternFormCheckPage} requiredRole={1} />} />
