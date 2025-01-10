@@ -118,7 +118,7 @@ export default function MaterialsPage() {
                   component="img"
                   sx={{ width: 151 }}
                   image={material.gambar || '/placeholder.svg'} // Use gambar from modulList
-                  alt={material.namaModul} // Use namaModul from modulList
+                  // alt={material.namaModul} // Use namaModul from modulList
                 />
                 <Box sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
                   <CardContent sx={{ flex: '1 0 auto' }}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout';
 import {
@@ -10,6 +10,8 @@ import {
   Chip,
   Grid2 as Grid,
 } from '@mui/material';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 // import Grid from '@mui/material/Unstable_Grid2';
 export default function Materials() {
   const navigate = useNavigate();
@@ -18,6 +20,27 @@ export default function Materials() {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/anakMagang/${user.id}/Profile`); // Adjust the base URL if necessary
+        setUserData(response.data);
+        console.log("profile",userData);
+      } catch (err) {
+        setError(err.response?.data?.error || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [user.id]);
+  useEffect(() => {
+    console.log("material userdata",userData);
+  })
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
   // <Route path="/homeMagang/materials/:id/form" element={<MaterialForm />} />
   // <Route path="/homeMagang/materials/:id/zip" element={<MaterialZip />} />
   const handleMaterialClick = (material) => {
@@ -74,7 +97,7 @@ export default function Materials() {
                   HI, I&apos;m
                 </Typography>
                 <Typography variant="h2" gutterBottom>
-                  Learning and Developer
+                  {userData.courses[0].namaCourse}
                 </Typography>
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="h6" gutterBottom>
@@ -102,7 +125,7 @@ export default function Materials() {
                 <Grid item xs={12} md={4}>
                   <Box sx={{ textAlign: 'center', p: 2 }}>
                     <Avatar
-                      src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/User%20Intern%20Page-0oscu56Bk080b1fN7QeSgGNpjLSSmq.png"
+                      src={userData.user.Profile_Picture}
                       sx={{
                         width: 120,
                         height: 120,
@@ -110,9 +133,11 @@ export default function Materials() {
                         mb: 2,
                       }}
                     />
-                    <Typography variant="h6">{profileData.name}</Typography>
-                    <Typography color="text.secondary">{profileData.email}</Typography>
-                    <Typography>{profileData.school}</Typography>
+                    <Typography variant="h6">{userData.user.namaUser}
+                      {/* {userData.user.namaUser} */}
+                    </Typography>
+                    <Typography color="text.secondary">{userData.user.email}</Typography>
+                    <Typography>{userData.anakMagang.AsalSekolah}</Typography>
                     <Stack
                       direction="row"
                       spacing={2}
@@ -123,7 +148,7 @@ export default function Materials() {
                         <Typography variant="caption" color="text.secondary">
                           No Wa
                         </Typography>
-                        <Typography variant="body2">{profileData.noWa}</Typography>
+                        <Typography variant="body2">{userData.user.noTelpon}</Typography>
                       </Box>
                       <Box>
                         <Typography variant="caption" color="text.secondary">
