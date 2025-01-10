@@ -1085,29 +1085,29 @@ router.get('/:modulID/attendace', async (req, res) => {
     try {
       const { modulID } = req.params;
   
-      // Validate if modulID is a valid ObjectId
-      if (!mongoose.Types.ObjectId.isValid(modulID)) {
-        return res.status(400).json({ message: 'Invalid modulID' });
+      // Find all modul documents with the given courseID
+      const modulList = await Modul.find({ modulID })
+        .populate({
+          path: 'absensiID', // Populate the absensiID field
+          model: 'Absensi', // Reference the Absensi model
+          populate: {
+            path: 'absensiKelas.anakMagangID', // Populate the anakMagangID field inside absensiKelas
+            model: 'AnakMagang', // Reference the AnakMagang model
+          },
+        }) 
+      
+        .exec();
+  
+      // If no modul is found, return a 404 error
+      if (!modulList || modulList.length === 0) {
+        return res.status(404).json({ message: 'No modul found for the given courseID' });
       }
   
-      // Find the Modul by modulID and populate the absensi field
-      const modul = await Modul.findById(modulID).populate({
-        path: 'absensi', // Assuming 'absensi' is a field in the Modul schema
-        populate: {
-          path: 'absensiKelas.anakMagangID', // Populate anakMagangID in absensiKelas
-          model: 'AnakMagang', // Reference the AnakMagang model
-        },
-      });
-  
-      if (!modul) {
-        return res.status(404).json({ message: 'Modul not found' });
-      }
-  
-      // Return the Modul with populated absensi data
-      res.status(200).json(modul);
+      // Return the modul list with populated soalModul and absensi
+      res.status(200).json({ modulList });
     } catch (error) {
-      console.error('Error fetching Modul:', error);
-      res.status(500).json({ message: 'Error fetching Modul' });
+      console.error('Error fetching modul:', error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
     }
   });
 
