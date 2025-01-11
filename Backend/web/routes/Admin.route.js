@@ -76,19 +76,16 @@ router.get("/Course", async (req, res) => {
 
 // Aktifkan CORS hanya pada endpoint ini
 router.put('/:userId', async (req, res) => { 
-
   const { userId } = req.params;
-  const updatedData = req.body; // Data user yang akan diupdate
+  const updatedData = { ...req.body, isVerified: true }; // Pastikan isVerified selalu true
 
   try {
-    // Cari dan update data user berdasarkan userId
     const updatedUser = await UserData.findByIdAndUpdate(
       userId,
       updatedData,
       { new: true, runValidators: true }
     );
 
-    // Jika user tidak ditemukan
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found.' });
     }
