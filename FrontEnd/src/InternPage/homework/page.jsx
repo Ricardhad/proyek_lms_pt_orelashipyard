@@ -11,12 +11,14 @@ import {
   Chip,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Homework() {
   const user = useSelector((state) => state.auth.user);
   const [userData, setUserData] = useState(null);
   const [modulList, setModulList] = useState([]);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -66,8 +68,17 @@ export default function Homework() {
     console.log('modulList:', modulList);
   }, [modulList]);
 
+  const handleMaterialClick = (modul) => {
+    if (modul.soalID && modul.soalID.length > 0) {
+      navigate(`/homeMagang/materials/${modul._id}/form`); // Tugas
+    } else {
+      navigate(`/homeMagang/materials/${modul._id}/attendance`); // Attendance
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+
 
   return (
     <Layout>
@@ -88,7 +99,12 @@ export default function Homework() {
                 bgcolor: 'background.paper',
                 borderRadius: 2,
                 boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                cursor: 'pointer',
+                '&:hover': {
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                },
               }}
+              onClick={() => handleMaterialClick(modul)} // Use the click handler
             >
               {/* Placeholder for Image */}
               <Box
@@ -105,7 +121,7 @@ export default function Homework() {
               >
                 <Typography color="text.secondary">Image</Typography>
               </Box>
-              
+
               {/* Modul Details */}
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Box
@@ -125,11 +141,11 @@ export default function Homework() {
                     <Typography variant="subtitle2">{modul.mentorID || 'Unknown Mentor'}</Typography>
                   </Box>
                 </Box>
-                
+
                 <Typography variant="h6" gutterBottom>
                   {modul.namaModul}
                 </Typography>
-                
+
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 'auto' }}>
                   <Typography
                     color="error.main"

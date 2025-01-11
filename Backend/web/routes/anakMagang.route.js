@@ -178,14 +178,14 @@ router.get('/modul/:courseID/getallmodul', async (req, res) => {
   // });
 
 
-  router.get('/modul/:modulID', async (req, res) => {
+  router.get('/modul/:modulID/getformmodule', async (req, res) => {
     try {
       const { modulID } = req.params;
   
       // Validate if modulID is a valid ObjectId
-      if (!mongoose.Types.ObjectId.isValid(modulID)) {
-        return res.status(400).json({ message: 'Invalid modulID' });
-      }
+      // if (!mongoose.Types.ObjectId.isValid(modulID)) {
+      //   return res.status(400).json({ message: 'Invalid modulID' });
+      // }
   
       // Find the Modul by modulID and populate the soalID field
       const modul = await Modul.findById(modulID)
@@ -206,6 +206,43 @@ router.get('/modul/:courseID/getallmodul', async (req, res) => {
       res.status(500).json({ message: 'Error fetching Modul' });
     }
   });
+
+
+  router.get('/modul/:id/getAttendanceModule', async (req, res) => {
+    try {
+        const modul = await Modul.findById(req.params.id)
+            .populate({
+                path: 'absensiID',
+                populate: {
+                    path: 'absensiKelas.anakMagangID',
+                    populate: [
+                        {
+                            path: 'userID', // Populate userID within AnakMagang
+                            model: 'UserData',
+                        },
+                        {
+                            path: 'courseID', // Populate courseID within AnakMagang
+                            model: 'Course',
+                        },
+                    ],
+                },
+            })
+            .populate({
+                path: 'courseID', // Populate the courseID directly in the Modul
+                model: 'Course',
+            })
+            .exec();
+
+        if (!modul) {
+            return res.status(404).json({ message: 'Modul not found' });
+        }
+
+        res.status(200).json(modul);
+    } catch (error) {
+        console.error('Error fetching modul:', error);
+        res.status(500).json({ message: 'Internal server error', error });
+    }
+});
 
 
 
