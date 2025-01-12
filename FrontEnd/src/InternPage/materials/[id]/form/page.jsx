@@ -20,6 +20,7 @@ export default function MaterialForm() {
   const { id } = useParams(); // id corresponds to the modulID
   const [formData, setFormData] = useState({});
   const [modulData, setModulData] = useState(null);
+  const [answers, setAnswers] = useState([]); // State for answers with soalModulID, jawaban, jawabanType
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -41,14 +42,48 @@ export default function MaterialForm() {
     fetchModulData();
   }, [id]);
 
-  const handleInputChange = (e, field) => {
-    setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+  const handleInputChange = (e, soalModulID, jawabanType) => {
+    const value = e.target.value;
+
+    // Update formData for convenience
+    setFormData((prev) => ({ ...prev, [soalModulID]: value }));
+
+    // Update answers array with soalModulID, jawaban, and jawabanType
+    setAnswers((prev) => {
+      const existingAnswerIndex = prev.findIndex((answer) => answer.soalModulID === soalModulID);
+      if (existingAnswerIndex !== -1) {
+        // Update the existing answer
+        const updatedAnswers = [...prev];
+        updatedAnswers[existingAnswerIndex] = { soalModulID, jawaban: value, jawabanType };
+        return updatedAnswers;
+      }
+      // Add a new answer
+      return [...prev, { soalModulID, jawaban: value, jawabanType }];
+    });
   };
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    console.log('answers:', answers);
+  }, [answers]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    // Handle form submission logic here
+    console.log('Answers submitted:', answers);
+
+    try {
+      // Post answers to the backend
+      await axios.post(`http://localhost:3000/api/anakMagang/jawabanmodul`, {
+        courseID: modulData.courseID,
+        anakMagangID: modulData.anakMagangID,
+        answers, // Send the structured answers
+      });
+      alert('Answers submitted successfully!');
+      navigate(-1); // Navigate back
+    } catch (err) {
+      console.error('Error submitting answers:', err);
+      alert('Failed to submit answers.');
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -104,8 +139,8 @@ export default function MaterialForm() {
                 <TextField
                   fullWidth
                   placeholder="Your Answer"
-                  value={formData[`answer${index}`] || ''}
-                  onChange={(e) => handleInputChange(e, `answer${index}`)}
+                  value={formData[soal._id] || ''}
+                  onChange={(e) => handleInputChange(e, soal._id, 'essay')}
                   variant="outlined"
                   sx={{ mb: 2, bgcolor: 'background.paper' }}
                 />
@@ -113,8 +148,8 @@ export default function MaterialForm() {
                 // Render RadioGroup for SoalType: 0
                 <FormControl component="fieldset" fullWidth>
                   <RadioGroup
-                    value={formData[`choice${index}`] || ''}
-                    onChange={(e) => handleInputChange(e, `choice${index}`)}
+                    value={formData[soal._id] || ''}
+                    onChange={(e) => handleInputChange(e, soal._id, 'file')}
                   >
                     {soal.Pilihan.map((option, optIndex) => (
                       <FormControlLabel

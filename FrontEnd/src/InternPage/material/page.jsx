@@ -51,7 +51,7 @@ export default function Materials() {
       navigate(`/homeMagang/materials/${modul._id}/form`); // Attendance
     }
   };
-
+  
   const profileData = {
     name: 'Esthera Jackson',
     email: 'esthera@simmple.com',
