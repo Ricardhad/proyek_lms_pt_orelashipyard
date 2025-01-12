@@ -21,6 +21,7 @@ export default function Homework() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [modulnotfound, setModulnotfound] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -83,7 +84,7 @@ export default function Homework() {
   return (
     <Layout>
       <Box sx={{ p: 4 }}>
-        <Typography variant="h2" sx={{ mb: 4, fontWeight: 'bold', textAlign: 'center' }}>
+        <Typography variant="h2" sx={{ mb: 4, fontWeight: 'bold', textAlign: 'center' , color: 'darkblue'}}>
           Home Work
         </Typography>
 
