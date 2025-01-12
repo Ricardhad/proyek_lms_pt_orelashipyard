@@ -43,11 +43,12 @@ export default function Materials() {
   if (error) return <div>Error: {error}</div>;
   // <Route path="/homeMagang/materials/:id/form" element={<MaterialForm />} />
   // <Route path="/homeMagang/materials/:id/zip" element={<MaterialZip />} />
-  const handleMaterialClick = (material) => {
-    if (material.type === 'Latihan') {
-      navigate(`/homeMagang/materials/${material.id}/form`);
-    } else if (material.type === 'Tugas') {
-      navigate(`/homeMagang/materials/${material.id}/zip`);
+
+  const handleMaterialClick = (modul) => {
+    if (modul.soalID && modul.soalID.length > 0) {
+      navigate(`/homeMagang/materials/${modul._id}/zip`); // Tugas
+    } else {
+      navigate(`/homeMagang/materials/${modul._id}/form`); // Attendance
     }
   };
 

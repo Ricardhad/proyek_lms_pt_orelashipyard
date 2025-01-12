@@ -25,6 +25,7 @@ import InternViewAnnouncement from "./InternPage/announcement/[id]/page";
 import InternGroupChat from "./InternPage/group-chat/page";
 import InternMaterialForm from "./InternPage/materials/[id]/form/page";
 import InternMaterialZip from "./InternPage/materials/[id]/zip/page";
+import InternMaterialAttendance from "./InternPage/materials/[id]/attendance/page";
 
 // Import the pages we created before
 import MentorAnnouncementPage from "./MentorPage/announcement/page";
@@ -122,7 +123,7 @@ function App() {
         <Route path="/homeMagang/group-chat" element={<ProtectedRoute element={InternGroupChat} requiredRole={2} />} />
         <Route path="/homeMagang/materials/:id/form" element={<ProtectedRoute element={InternMaterialForm} requiredRole={2} />} />
         <Route path="/homeMagang/materials/:id/zip" element={<ProtectedRoute element={InternMaterialZip} requiredRole={2} />} />
-
+        <Route path="/homeMagang/materials/:id/attendance" element={<ProtectedRoute element={InternMaterialAttendance} requiredRole={2} />} />
         
       </Routes>
     </Router>

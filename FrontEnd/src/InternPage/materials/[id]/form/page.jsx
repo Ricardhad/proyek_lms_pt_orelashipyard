@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 import Layout from '../../../components/layout';
 import {
   Box,
@@ -16,139 +17,125 @@ import {
 
 export default function MaterialForm() {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const [formData, setFormData] = useState({
-    question1: '',
-    question2: '',
-    multipleChoice: '',
-  });
+  const { id } = useParams(); // id corresponds to the modulID
+  const [formData, setFormData] = useState({});
+  const [modulData, setModulData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Fetch data from the API
+    const fetchModulData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/anakMagang/modul/${id}/getformmodule`);
+        console.log('modulData:', response.data);
+        setModulData(response.data);
+      } catch (err) {
+        console.error('Error fetching modul data:', err);
+        setError(err.response?.data?.message || 'Failed to fetch modul data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchModulData();
+  }, [id]);
 
   const handleInputChange = (e, field) => {
-    setFormData(prev => ({ ...prev, [field]: e.target.value }));
+    setFormData((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    // Handle form submission
+    // Handle form submission logic here
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <Layout>
       <Box sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
         <Stack direction="row" justifyContent="space-between" sx={{ mb: 4 }}>
-          <Typography variant="h3">Materi {id}</Typography>
+          <Typography variant="h3">Materi {modulData?.namaModul || id}</Typography>
           <Stack direction="row" spacing={2}>
-            <Button
-              variant="contained"
-              color="inherit"
-              onClick={() => navigate(-1)}
-            >
+            <Button variant="contained" color="inherit" onClick={() => navigate(-1)}>
               Back
             </Button>
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-            >
+            <Button variant="contained" onClick={handleSubmit}>
               Submit
             </Button>
           </Stack>
         </Stack>
 
-        <Paper elevation={0} sx={{ p: 3, mb: 4, bgcolor: '#f5f5f5' }}>
-          <Box sx={{ width: 200, height: 150, bgcolor: 'grey.300', mb: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Paper elevation={0} sx={{ p: 3, mb: 4, bgcolor: '#f5f5f5', display: 'flex' }}>
+          <Box
+            sx={{
+              width: 200,
+              height: 150,
+              bgcolor: 'grey.300',
+              mb: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <Typography color="text.secondary">Image Placeholder</Typography>
           </Box>
-          <Typography variant="body1" paragraph>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-            enim ad minim veniam, quis nostrud exercitation ullamco laboris
-            nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-          </Typography>
-          <Typography color="error.main" variant="subtitle2">
-            DEADLINE : 12:30 pm
-          </Typography>
+          <Box sx={{ width: 600, height: 150, mb: 2, ml: 2 }}>
+            <Typography variant="body1" paragraph>
+              {modulData?.Deskripsi || 'No description available'}
+            </Typography>
+            <Typography color="error.main" variant="subtitle2">
+              DEADLINE: {new Date(modulData?.Deadline).toLocaleString() || 'N/A'}
+            </Typography>
+          </Box>
         </Paper>
 
         <Stack spacing={3}>
-          <Paper elevation={0} sx={{ p: 3, bgcolor: '#f5f5f5' }}>
-            <Typography variant="subtitle1" gutterBottom>
-              Pertanyaan no1
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="Value"
-              value={formData.question1}
-              onChange={(e) => handleInputChange(e, 'question1')}
-              variant="outlined"
-              sx={{ mb: 2, bgcolor: 'background.paper' }}
-            />
-            <TextField
-              fullWidth
-              multiline
-              rows={4}
-              placeholder="Value"
-              value={formData.question1Answer}
-              onChange={(e) => handleInputChange(e, 'question1Answer')}
-              variant="outlined"
-              sx={{ mb: 2, bgcolor: 'background.paper' }}
-            />
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <TextField
-                label="Score"
-                size="small"
-                sx={{ width: 100, bgcolor: 'background.paper' }}
-              />
-            </Box>
-          </Paper>
-
-          <Paper elevation={0} sx={{ p: 3, bgcolor: '#f5f5f5' }}>
-            <Typography variant="subtitle1" gutterBottom>
-              Soal
-            </Typography>
-            <TextField
-              fullWidth
-              placeholder="Value"
-              value={formData.question2}
-              onChange={(e) => handleInputChange(e, 'question2')}
-              variant="outlined"
-              sx={{ mb: 2, bgcolor: 'background.paper' }}
-            />
-            
-            <FormControl component="fieldset" fullWidth>
-              <RadioGroup
-                value={formData.multipleChoice}
-                onChange={(e) => handleInputChange(e, 'multipleChoice')}
-              >
-                {['A', 'B', 'C', 'D'].map((option) => (
-                  <FormControlLabel
-                    key={option}
-                    value={option}
-                    control={<Radio />}
-                    label={
-                      <TextField
-                        fullWidth
-                        placeholder="Pilihan Jawaban"
-                        variant="outlined"
-                        sx={{ ml: 1, bgcolor: 'background.paper' }}
+          {modulData?.soalID?.map((soal, index) => (
+            <Paper key={soal._id} elevation={0} sx={{ p: 3, bgcolor: '#f5f5f5' }}>
+              <Typography variant="subtitle1" gutterBottom>
+                Pertanyaan {index + 1}: {soal.Soal}
+              </Typography>
+              {soal.SoalType === 1 ? (
+                // Render TextField for SoalType: 1
+                <TextField
+                  fullWidth
+                  placeholder="Your Answer"
+                  value={formData[`answer${index}`] || ''}
+                  onChange={(e) => handleInputChange(e, `answer${index}`)}
+                  variant="outlined"
+                  sx={{ mb: 2, bgcolor: 'background.paper' }}
+                />
+              ) : soal.SoalType === 0 && soal.Pilihan ? (
+                // Render RadioGroup for SoalType: 0
+                <FormControl component="fieldset" fullWidth>
+                  <RadioGroup
+                    value={formData[`choice${index}`] || ''}
+                    onChange={(e) => handleInputChange(e, `choice${index}`)}
+                  >
+                    {soal.Pilihan.map((option, optIndex) => (
+                      <FormControlLabel
+                        key={optIndex}
+                        value={option}
+                        control={<Radio />}
+                        label={option}
                       />
-                    }
-                  />
-                ))}
-              </RadioGroup>
-            </FormControl>
-            
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <TextField
-                label="Score"
-                size="small"
-                sx={{ width: 100, bgcolor: 'background.paper' }}
-              />
-            </Box>
-          </Paper>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              ) : (
+                // Fallback for missing or unsupported SoalType
+                <Typography variant="body2" color="text.secondary">
+                  Unsupported question type or missing options.
+                </Typography>
+              )}
+            </Paper>
+          ))}
         </Stack>
       </Box>
     </Layout>
   );
 }
-
