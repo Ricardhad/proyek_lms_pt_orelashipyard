@@ -14,7 +14,7 @@ const soalModulSchema = new mongoose.Schema({
         enum: [0, 1, 2],
     },//soaltype 0 untuk pilgan 1 untuk essay 2 untuk file
     Pilihan: [{ type: String }],
-    kunciJawaban: { type: Number },
+    kunciJawaban: { type: String },
     nilai: { type: Number },
 }, {
     collection: 'SoalModul',
