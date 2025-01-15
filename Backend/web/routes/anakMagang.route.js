@@ -287,6 +287,37 @@ router.get('/modul/:courseID/getallmodul', async (req, res) => {
 });
 
 
+// Endpoint to submit answers
+router.post('/submit-answers', async (req, res) => {
+  try {
+    const { courseID, modulID, anakMagangID, answers } = req.body;
+
+    // Validate required fields
+    if (!courseID || !modulID || !anakMagangID || !Array.isArray(answers)) {
+      return res.status(400).json({ message: 'Invalid data provided' });
+    }
+
+    // Validate each answer object
+    answers.forEach(answer => {
+      if (!answer.soalModulID || !answer.jawaban || answer.jawabanType === undefined) {
+        throw new Error('Invalid answer data');
+      }
+    });
+
+    // Insert answers into the database
+    const insertedAnswers = await JawabanModul.insertMany(answers);
+
+    return res.status(200).json({
+      message: 'Answers submitted successfully',
+      data: insertedAnswers,
+    });
+  } catch (err) {
+    console.error('Error submitting answers:', err);
+    return res.status(500).json({
+      message: err.message || 'An error occurred while submitting answers',
+    });
+  }
+});
 
 router.get("/Jawaban",verifyToken([2]), async (req, res) => {
     const { namaCourse, namaSoal, namaUser, jawabanType } = req.query;

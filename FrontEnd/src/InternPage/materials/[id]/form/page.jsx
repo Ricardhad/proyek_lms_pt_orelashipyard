@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import axios from 'axios';
 import Layout from '../../../components/layout';
 import {
@@ -17,72 +18,91 @@ import {
 
 export default function MaterialForm() {
   const navigate = useNavigate();
-  const { id } = useParams(); // id corresponds to the modulID
-  const [formData, setFormData] = useState({});
+  const { id } = useParams(); // id corresponds to modulID
+  const user = useSelector((state) => state.auth.user); // Fetch logged-in user data from Redux
+  const [userData, setUserData] = useState(null);
   const [modulData, setModulData] = useState(null);
-  const [answers, setAnswers] = useState([]); // State for answers
+  const [formData, setFormData] = useState({});
+  const [answers, setAnswers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch data from the API
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/anakMagang/${user.id}/Profile`);
+        setUserData(response.data);
+      } catch (err) {
+        setError(err.response?.data?.error || 'An error occurred while fetching user profile');
+      }
+    };
+
     const fetchModulData = async () => {
       try {
         const response = await axios.get(`http://localhost:3000/api/anakMagang/modul/${id}/getformmodule`);
-        console.log('modulData:', response.data);
         setModulData(response.data);
       } catch (err) {
-        console.error('Error fetching modul data:', err);
         setError(err.response?.data?.message || 'Failed to fetch modul data');
+      }
+    };
+
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([fetchUserData(), fetchModulData()]);
+      } catch (err) {
+        console.error('Error during data fetch:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchModulData();
-  }, [id]);
+    fetchData();
+  }, [user.id, id]);
 
   const handleInputChange = (e, soalModulID, soalType) => {
     const value = e.target.value;
+    const jawabanType = soalType; // Convert to number (0 for multiple-choice, 1 for essay)
 
-    // Determine the jawabanType based on SoalType
-    const jawabanType = soalType === 0 ? 'multiple-choice' : 'essay';
-
-    // Update formData for convenience
     setFormData((prev) => ({ ...prev, [soalModulID]: value }));
 
-    // Update answers array with courseID, anakMagangID, soalModulID, jawaban, and jawabanType
     setAnswers((prev) => {
       const existingAnswerIndex = prev.findIndex((answer) => answer.soalModulID === soalModulID);
       const newAnswer = {
-        courseID: modulData?.courseID || '', // Get courseID from modulData
-        anakMagangID: modulData?.anakMagangID || '', // Get anakMagangID from modulData
+        courseID: modulData?.courseID || '',
+        modulID: modulData?._id || '',
+        anakMagangID: userData?.anakMagang._id || '',
         soalModulID,
         jawaban: value,
         jawabanType,
       };
 
       if (existingAnswerIndex !== -1) {
-        // Update the existing answer
         const updatedAnswers = [...prev];
         updatedAnswers[existingAnswerIndex] = newAnswer;
         return updatedAnswers;
       }
 
-      // Add a new answer
       return [...prev, newAnswer];
     });
   };
 
-  useEffect(() => {
-    console.log('answers:', answers);
-  }, [answers]);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    console.log('Answers submitted:', answers);
-    // Handle form submission logic here (e.g., POST answers to the backend)
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/anakMagang/submit-answers', {
+        courseID: modulData?.courseID,
+        modulID: modulData?._id,
+        anakMagangID: userData?.anakMagang._id,
+        answers,
+      });
+      console.log('Submission successful:', response.data);
+      alert('Submission successful');
+    } catch (err) {
+      console.error('Error submitting answers:', err);
+      alert('An error occurred while submitting answers');
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -134,7 +154,6 @@ export default function MaterialForm() {
                 Pertanyaan {index + 1}: {soal.Soal}
               </Typography>
               {soal.SoalType === 1 ? (
-                // Render TextField for SoalType: 1 (Essay)
                 <TextField
                   fullWidth
                   placeholder="Your Answer"
@@ -144,7 +163,6 @@ export default function MaterialForm() {
                   sx={{ mb: 2, bgcolor: 'background.paper' }}
                 />
               ) : soal.SoalType === 0 && soal.Pilihan ? (
-                // Render RadioGroup for SoalType: 0 (Multiple Choice)
                 <FormControl component="fieldset" fullWidth>
                   <RadioGroup
                     value={formData[soal._id] || ''}
@@ -161,7 +179,6 @@ export default function MaterialForm() {
                   </RadioGroup>
                 </FormControl>
               ) : (
-                // Fallback for unsupported SoalType
                 <Typography variant="body2" color="text.secondary">
                   Unsupported question type or missing options.
                 </Typography>
