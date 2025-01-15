@@ -20,7 +20,7 @@ export default function MaterialForm() {
   const { id } = useParams(); // id corresponds to the modulID
   const [formData, setFormData] = useState({});
   const [modulData, setModulData] = useState(null);
-  const [answers, setAnswers] = useState([]); // State for answers with soalModulID, jawaban, jawabanType
+  const [answers, setAnswers] = useState([]); // State for answers
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -42,23 +42,35 @@ export default function MaterialForm() {
     fetchModulData();
   }, [id]);
 
-  const handleInputChange = (e, soalModulID, jawabanType) => {
+  const handleInputChange = (e, soalModulID, soalType) => {
     const value = e.target.value;
+
+    // Determine the jawabanType based on SoalType
+    const jawabanType = soalType === 0 ? 'multiple-choice' : 'essay';
 
     // Update formData for convenience
     setFormData((prev) => ({ ...prev, [soalModulID]: value }));
 
-    // Update answers array with soalModulID, jawaban, and jawabanType
+    // Update answers array with courseID, anakMagangID, soalModulID, jawaban, and jawabanType
     setAnswers((prev) => {
       const existingAnswerIndex = prev.findIndex((answer) => answer.soalModulID === soalModulID);
+      const newAnswer = {
+        courseID: modulData?.courseID || '', // Get courseID from modulData
+        anakMagangID: modulData?.anakMagangID || '', // Get anakMagangID from modulData
+        soalModulID,
+        jawaban: value,
+        jawabanType,
+      };
+
       if (existingAnswerIndex !== -1) {
         // Update the existing answer
         const updatedAnswers = [...prev];
-        updatedAnswers[existingAnswerIndex] = { soalModulID, jawaban: value, jawabanType };
+        updatedAnswers[existingAnswerIndex] = newAnswer;
         return updatedAnswers;
       }
+
       // Add a new answer
-      return [...prev, { soalModulID, jawaban: value, jawabanType }];
+      return [...prev, newAnswer];
     });
   };
 
@@ -66,24 +78,11 @@ export default function MaterialForm() {
     console.log('answers:', answers);
   }, [answers]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
     console.log('Answers submitted:', answers);
-
-    try {
-      // Post answers to the backend
-      await axios.post(`http://localhost:3000/api/anakMagang/jawabanmodul`, {
-        courseID: modulData.courseID,
-        anakMagangID: modulData.anakMagangID,
-        answers, // Send the structured answers
-      });
-      alert('Answers submitted successfully!');
-      navigate(-1); // Navigate back
-    } catch (err) {
-      console.error('Error submitting answers:', err);
-      alert('Failed to submit answers.');
-    }
+    // Handle form submission logic here (e.g., POST answers to the backend)
   };
 
   if (loading) return <div>Loading...</div>;
@@ -135,21 +134,21 @@ export default function MaterialForm() {
                 Pertanyaan {index + 1}: {soal.Soal}
               </Typography>
               {soal.SoalType === 1 ? (
-                // Render TextField for SoalType: 1
+                // Render TextField for SoalType: 1 (Essay)
                 <TextField
                   fullWidth
                   placeholder="Your Answer"
                   value={formData[soal._id] || ''}
-                  onChange={(e) => handleInputChange(e, soal._id, 'essay')}
+                  onChange={(e) => handleInputChange(e, soal._id, soal.SoalType)}
                   variant="outlined"
                   sx={{ mb: 2, bgcolor: 'background.paper' }}
                 />
               ) : soal.SoalType === 0 && soal.Pilihan ? (
-                // Render RadioGroup for SoalType: 0
+                // Render RadioGroup for SoalType: 0 (Multiple Choice)
                 <FormControl component="fieldset" fullWidth>
                   <RadioGroup
                     value={formData[soal._id] || ''}
-                    onChange={(e) => handleInputChange(e, soal._id, 'file')}
+                    onChange={(e) => handleInputChange(e, soal._id, soal.SoalType)}
                   >
                     {soal.Pilihan.map((option, optIndex) => (
                       <FormControlLabel
@@ -162,7 +161,7 @@ export default function MaterialForm() {
                   </RadioGroup>
                 </FormControl>
               ) : (
-                // Fallback for missing or unsupported SoalType
+                // Fallback for unsupported SoalType
                 <Typography variant="body2" color="text.secondary">
                   Unsupported question type or missing options.
                 </Typography>
