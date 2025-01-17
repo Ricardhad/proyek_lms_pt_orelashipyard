@@ -9,6 +9,7 @@ export default function CheckLatihanPage() {
   const navigate = useNavigate();
   const {id} = useParams();
   const [interns, setInterns] = useState([]); // State to store interns data
+  const [detailModuls, setDetailModuls] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Fetch interns data from the API
@@ -17,6 +18,7 @@ export default function CheckLatihanPage() {
       try {
         const response = await axios.get(`http://localhost:3000/api/mentor/nilai-modul/${id}`);
         console.log('Interns nilai Data:', response.data);
+        setDetailModuls(response.data.modulDetails);
 
         const { data } = response;
 
@@ -60,7 +62,7 @@ export default function CheckLatihanPage() {
     <Layout>
       <Box sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h4">MATERIAL {id}</Typography>
+          <Typography variant="h4">MATERIAL</Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Button variant="contained" sx={{ backgroundColor: '#e0e0e0', color: 'black' }} onClick={() => navigate(-1)}>
               Back
@@ -85,14 +87,13 @@ export default function CheckLatihanPage() {
           </Paper>
 
           <Box sx={{ flex: 1 }}>
-            <Typography variant="h5" sx={{ mb: 2 }}>Materi {id}</Typography>
+            <Typography variant="h5" sx={{ mb: 2 }}>Materi {detailModuls.namaModul}</Typography>
             <Typography sx={{ mb: 2 }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              {detailModuls.Deskripsi} 
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography>DEADLINE: </Typography>
-              <Typography color="error">12:30 pm</Typography>
+              <Typography color="error">{detailModuls.Deadline}</Typography>
             </Box>
           </Box>
         </Box>
@@ -104,7 +105,7 @@ export default function CheckLatihanPage() {
                 <TableCell>ID</TableCell>
                 <TableCell>Name & Email</TableCell>
                 <TableCell>Phone Number</TableCell>
-                <TableCell>Course</TableCell>
+                <TableCell>Modul</TableCell>
                 <TableCell>Action</TableCell>
                 <TableCell>Score</TableCell>
               </TableRow>

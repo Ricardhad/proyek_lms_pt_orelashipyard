@@ -11,7 +11,6 @@ const {
 } = require("./functions");
 
 const Joi = require('joi');
-const mongoose = require('mongoose');
 const { upload, verifyToken } = require('./Middleware');
 const anakMagang = require('../models/AnakMagang');
 const Absensi = require('../models/Absensi');
@@ -228,6 +227,7 @@ router.get('/:userID/Profile', async (req, res) => {
  * GET /api/nilai-modul/:modulID
  * Endpoint to fetch all NilaiModul by modulID
  */
+
 router.get('/nilai-modul/:modulID', async (req, res) => {
     const { modulID } = req.params;
 
@@ -236,7 +236,7 @@ router.get('/nilai-modul/:modulID', async (req, res) => {
         const nilaiModuls = await NilaiModul.find({ modulID })
             .populate({
                 path: 'modulID',
-                select: 'namaModul Deskripsi Deadline gambar ', // Fields to include from Modul schema
+                select: 'namaModul Deskripsi Deadline gambar Dinilai', // Fields to include from Modul schema
             })
             .populate({
                 path: 'anakMagangID',
@@ -251,10 +251,14 @@ router.get('/nilai-modul/:modulID', async (req, res) => {
             return res.status(404).json({ message: 'No records found for the given modulID' });
         }
 
+        // Extract additional Modul details
+        const modulDetails = await Modul.findById(modulID).select('namaModul Deskripsi Deadline gambar Dinilai');
+
         // Send the response
         res.status(200).json({
             success: true,
-            data: nilaiModuls,
+            modulDetails, // Modul schema details
+            data: nilaiModuls, // NilaiModul entries with populated references
         });
     } catch (error) {
         console.error('Error fetching NilaiModul:', error);
@@ -264,6 +268,44 @@ router.get('/nilai-modul/:modulID', async (req, res) => {
         });
     }
 });
+
+
+// router.get('/nilai-modul/:modulID', async (req, res) => {
+//     const { modulID } = req.params;
+
+//     try {
+//         // Fetch NilaiModul entries with the given modulID and populate references
+//         const nilaiModuls = await NilaiModul.find({ modulID })
+//             .populate({
+//                 path: 'modulID',
+//                 select: 'namaModul Deskripsi Deadline gambar ', // Fields to include from Modul schema
+//             })
+//             .populate({
+//                 path: 'anakMagangID',
+//                 populate: {
+//                     path: 'userID',
+//                     select: 'namaUser email noTelpon Profile_Picture', // Fields from UserData schema
+//                 },
+//             });
+
+//         // Check if entries are found
+//         if (!nilaiModuls || nilaiModuls.length === 0) {
+//             return res.status(404).json({ message: 'No records found for the given modulID' });
+//         }
+
+//         // Send the response
+//         res.status(200).json({
+//             success: true,
+//             data: nilaiModuls,
+//         });
+//     } catch (error) {
+//         console.error('Error fetching NilaiModul:', error);
+//         res.status(500).json({
+//             success: false,
+//             message: 'An error occurred while fetching NilaiModul',
+//         });
+//     }
+// });
 
 
   // Get all JawabanModul by modulID

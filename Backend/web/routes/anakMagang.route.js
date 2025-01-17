@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express()
+const mongoose = require('mongoose');
 
 const {
     Course, Mentor, Admin, UserData, AnakMagang,
@@ -288,28 +289,61 @@ router.get('/modul/:courseID/getallmodul', async (req, res) => {
 
 
 // Endpoint to submit answers
+
 router.post('/submit-answers', async (req, res) => {
   try {
-    const { courseID, modulID, anakMagangID, answers } = req.body;
+    const { courseID, modulID, anakMagangID, mentorID, answers } = req.body;
 
     // Validate required fields
     if (!courseID || !modulID || !anakMagangID || !Array.isArray(answers)) {
       return res.status(400).json({ message: 'Invalid data provided' });
     }
 
-    // Validate each answer object
-    answers.forEach(answer => {
-      if (!answer.soalModulID || !answer.jawaban || answer.jawabanType === undefined) {
-        throw new Error('Invalid answer data');
-      }
-    });
+    let totalScore = 0;
 
-    // Insert answers into the database
-    const insertedAnswers = await JawabanModul.insertMany(answers);
+    // Process each answer and calculate the total score for multiple-choice answers
+    for (const answer of answers) {
+      const { soalModulID, jawaban, jawabanType } = answer;
+
+      // Validate each answer object
+      if (!soalModulID || jawaban === undefined || jawabanType === undefined) {
+        return res.status(400).json({ message: 'Invalid answer data' });
+      }
+
+      // Save the answer into JawabanModul
+      const jawabanModul = new JawabanModul({
+        courseID,
+        modulID,
+        anakMagangID,
+        soalModulID,
+        jawaban,
+        jawabanType,
+      });
+      await jawabanModul.save();
+
+      // Check if the answer is multiple-choice and matches the correct answer
+      if (jawabanType === 0) {
+        const soal = await SoalModul.findById(soalModulID);
+        if (soal && jawaban.trim() === soal.kunciJawaban.trim()) {
+          totalScore += soal.nilai; // Add the score for correct answers
+        }
+      }
+    }
+
+    // Save the total score into NilaiModul
+    const nilaiModul = new NilaiModul({
+      courseID,
+      modulID,
+      mentorID,
+      anakMagangID,
+      nilai: totalScore,
+      catatan: 'Score calculated from submitted answers',
+    });
+    await nilaiModul.save();
 
     return res.status(200).json({
-      message: 'Answers submitted successfully',
-      data: insertedAnswers,
+      message: 'Answers submitted and score calculated successfully',
+      totalScore,
     });
   } catch (err) {
     console.error('Error submitting answers:', err);
@@ -318,6 +352,37 @@ router.post('/submit-answers', async (req, res) => {
     });
   }
 });
+
+// router.post('/submit-answers', async (req, res) => {
+//   try {
+//     const { courseID, modulID, anakMagangID, answers } = req.body;
+
+//     // Validate required fields
+//     if (!courseID || !modulID || !anakMagangID || !Array.isArray(answers)) {
+//       return res.status(400).json({ message: 'Invalid data provided' });
+//     }
+
+//     // Validate each answer object
+//     answers.forEach(answer => {
+//       if (!answer.soalModulID || !answer.jawaban || answer.jawabanType === undefined) {
+//         throw new Error('Invalid answer data');
+//       }
+//     });
+
+//     // Insert answers into the database
+//     const insertedAnswers = await JawabanModul.insertMany(answers);
+
+//     return res.status(200).json({
+//       message: 'Answers submitted successfully',
+//       data: insertedAnswers,
+//     });
+//   } catch (err) {
+//     console.error('Error submitting answers:', err);
+//     return res.status(500).json({
+//       message: err.message || 'An error occurred while submitting answers',
+//     });
+//   }
+// });
 
 router.get("/Jawaban",verifyToken([2]), async (req, res) => {
     const { namaCourse, namaSoal, namaUser, jawabanType } = req.query;
