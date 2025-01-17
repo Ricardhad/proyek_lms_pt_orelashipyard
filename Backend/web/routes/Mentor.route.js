@@ -15,6 +15,7 @@ const mongoose = require('mongoose');
 const { upload, verifyToken } = require('./Middleware');
 const anakMagang = require('../models/AnakMagang');
 const Absensi = require('../models/Absensi');
+const mentor = require('../models/Mentor');
 
 
 
@@ -222,6 +223,434 @@ router.get('/:userID/Profile', async (req, res) => {
     }
   });
 
+  // Endpoint to get all NilaiModul by modulID
+/**
+ * GET /api/nilai-modul/:modulID
+ * Endpoint to fetch all NilaiModul by modulID
+ */
+router.get('/nilai-modul/:modulID', async (req, res) => {
+    const { modulID } = req.params;
+
+    try {
+        // Fetch NilaiModul entries with the given modulID and populate references
+        const nilaiModuls = await NilaiModul.find({ modulID })
+            .populate({
+                path: 'modulID',
+                select: 'namaModul Deskripsi Deadline gambar ', // Fields to include from Modul schema
+            })
+            .populate({
+                path: 'anakMagangID',
+                populate: {
+                    path: 'userID',
+                    select: 'namaUser email noTelpon Profile_Picture', // Fields from UserData schema
+                },
+            });
+
+        // Check if entries are found
+        if (!nilaiModuls || nilaiModuls.length === 0) {
+            return res.status(404).json({ message: 'No records found for the given modulID' });
+        }
+
+        // Send the response
+        res.status(200).json({
+            success: true,
+            data: nilaiModuls,
+        });
+    } catch (error) {
+        console.error('Error fetching NilaiModul:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while fetching NilaiModul',
+        });
+    }
+});
+
+
+  // Get all JawabanModul by modulID
+  router.get('/jawaban-modul/:modulID', async (req, res) => {
+    const { modulID } = req.params;
+  
+    try {
+      // Validate modulID
+      if (!modulID) {
+        return res.status(400).json({ message: 'modulID is required.' });
+      }
+  
+      // Find all JawabanModul with the specified modulID
+      const jawabanList = await JawabanModul.find({ modulID })
+        .populate('courseID', 'name') // Populate courseID field with the 'name'
+        .populate({
+          path: 'anakMagangID',
+          populate: {
+            path: 'userID',
+            model: 'UserData', // Populates userID from the UserData schema
+            select: 'namaUser Profile_Picture email', // Only include specific fields
+          },
+        })
+        .populate('soalModulID', 'Soal SoalType') // Populate soalModulID with relevant fields
+        .exec();
+  
+      // If no records are found
+      if (!jawabanList.length) {
+        return res.status(404).json({ message: 'No answers found for the provided modulID.' });
+      }
+  
+      // Return the list of answers
+      res.status(200).json({
+        message: 'JawabanModul records retrieved successfully.',
+        data: jawabanList,
+      });
+    } catch (error) {
+      console.error('Error fetching JawabanModul:', error);
+      res.status(500).json({
+        message: 'An error occurred while retrieving JawabanModul records.',
+        error: error.message,
+      });
+    }
+  });
+  
+
+// Route to handle form submission
+router.post('/form', async (req, res) => {
+    const { courseID, mentorID, namaModul, Deskripsi, Deadline, soalModul } = req.body;
+  
+    try {
+      // Validate course and mentor
+      const course = await Course.findById(courseID);
+      const mentor = await Mentor.findById(mentorID);
+  
+      if (!course || !mentor) {
+        return res.status(404).json({ message: 'Course or Mentor not found' });
+      }
+  
+      // Create the Modul
+      const newModul = new Modul({
+        courseID,
+        mentorID,
+        namaModul,
+        Deskripsi,
+        Deadline,
+        Dinilai: false, // Default to false
+      });
+  
+      // Save the Modul
+      const savedModul = await newModul.save();
+  
+      // Create SoalModul entries
+      if (soalModul && soalModul.length > 0) {
+        for (const soal of soalModul) {
+          const newSoalModul = new SoalModul({
+            namaSoal: soal.namaSoal,
+            Deskripsi: soal.Deskripsi,
+            Gambar: soal.Gambar,
+            SoalType: soal.SoalType,
+            Pilihan: soal.Pilihan,
+            kunciJawaban: soal.kunciJawaban,
+          });
+  
+          const savedSoalModul = await newSoalModul.save();
+  
+          // Add the SoalModul ID to the Modul
+          savedModul.soalID.push(savedSoalModul._id);
+        }
+  
+        // Save the updated Modul with SoalModul IDs
+        await savedModul.save();
+      }
+  
+      res.status(201).json({ message: 'Modul and SoalModul created successfully', modul: savedModul });
+    } catch (error) {
+      res.status(500).json({ message: 'Error creating Modul and SoalModul', error: error.message });
+    }
+  });
+
+  router.post('/createmodul', async (req, res) => {
+    try {
+      const { courseID, mentorID, gambar, namaModul, Deskripsi, Deadline, soalID, absensiID, Dinilai } = req.body;
+  
+      // Validate if the course and mentor exist
+    //   const course = await Course.findById(courseID);
+    //   const mentor = await Mentor.findById(mentorID);
+    //   if (!course || !mentor) {
+    //     return res.status(400).json({ message: 'Course or Mentor not found' });
+    //   }
+  
+      // Create a new Modul
+      const newModul = new Modul({
+        courseID,
+        mentorID,
+        gambar,
+        namaModul,
+        Deskripsi,
+        Deadline,
+        soalID,
+        absensiID,
+        Dinilai,
+      });
+  
+      // Save the Modul to the database
+      await newModul.save();
+  
+      res.status(201).json({ message: 'Modul created successfully', modul: newModul });
+    } catch (error) {
+      console.error('Error creating Modul:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
+  router.post('/materials/attendance', async (req, res) => {
+    try {
+      const { courseID, modulID, absensiKelas } = req.body;
+  
+      // Log the incoming request payload
+      console.log('Received attendance data:', req.body);
+  
+      // Validate if the module exists and belongs to the course
+      const modul = await Modul.findOne({ _id: modulID, courseID });
+      if (!modul) {
+        console.error('Module not found or does not belong to the course');
+        return res.status(400).json({ message: 'Module not found or does not belong to the course' });
+      }
+  
+      // Log the module data
+      console.log('Module found:', modul);
+  
+      // Create a new Absensi document
+      const newAbsensi = new Absensi({
+        courseID,
+        modulID,
+        absensiKelas: absensiKelas.map((attendance) => ({
+          anakMagangID: attendance.anakMagangID,
+          isPresent: attendance.isPresent,
+        })),
+      });
+  
+      // Log the new Absensi document
+      console.log('New Absensi document:', newAbsensi);
+  
+      // Save the Absensi document
+      await newAbsensi.save();
+  
+      // Log the saved Absensi document
+      console.log('Absensi document saved:', newAbsensi);
+  
+      // Update the AnakMagang documents with the new Absensi ID
+      for (const attendance of absensiKelas) {
+        await AnakMagang.findByIdAndUpdate(attendance.anakMagangID, {
+          $push: { absensiKelas: newAbsensi._id },
+        });
+      }
+  
+      // Log the updated AnakMagang documents
+      console.log('AnakMagang documents updated');
+  
+      // Update the Modul document with the new Absensi ID
+      await Modul.findByIdAndUpdate(modulID, {
+        $set: { absensiID: newAbsensi._id },
+      });
+  
+      // Log the updated Modul document
+      console.log('Modul document updated');
+  
+      res.status(201).json({ message: 'Attendance submitted successfully', absensi: newAbsensi });
+    } catch (error) {
+      console.error('Error submitting attendance:', error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  });
+  
+  router.post('/addquestions', async (req, res) => {
+    try {
+      const { modulID, questions } = req.body;
+  
+      // Validate if the module exists
+      const modul = await Modul.findById(modulID);
+      if (!modul) {
+        return res.status(400).json({ message: 'Module not found' });
+      }
+  
+      // Create and save the questions
+      const savedQuestions = await Promise.all(
+        questions.map(async (question) => {
+          const newQuestion = new SoalModul({
+            Soal: question.question,
+            SoalType: question.type === 'essay' ? 1 : 0, // 1 for essay, 0 for multiple choice
+            Pilihan: question.options || [], // For multiple-choice questions
+            kunciJawaban: question.answer || '', // For multiple-choice questions
+            nilai: question.score || 0,
+          });
+          return await newQuestion.save();
+        })
+      );
+  
+      // Update the module with the new questions
+      const questionIDs = savedQuestions.map((q) => q._id);
+      await Modul.findByIdAndUpdate(modulID, {
+        $push: { soalID: { $each: questionIDs } },
+      });
+  
+      res.status(201).json({ message: 'Questions added successfully', questions: savedQuestions });
+    } catch (error) {
+      console.error('Error adding questions:', error);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  });
+
+  router.get('/modul/:courseID', async (req, res) => {
+    try {
+        const { courseID } = req.params;
+
+        const modulList = await Modul.find({ courseID })
+            .populate('soalID', 'soal pertanyaan')
+            .populate({
+                path: 'absensiID',
+                model: 'Absensi',
+                populate: {
+                    path: 'absensiKelas.anakMagangID',
+                    model: 'AnakMagang',
+                },
+            })
+            .populate({
+                path: 'mentorID',
+                model: 'UserData',
+            });
+
+        if (!modulList || modulList.length === 0) {
+            return res.status(404).json({ message: 'No modul found for the given courseID' });
+        }
+
+        res.status(200).json({ modulList });
+    } catch (error) {
+        console.error('Error fetching modul:', error);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+});
+  
+
+// router.get('/modul/:courseID', async (req, res) => {
+//   try {
+//     const { courseID } = req.params;
+
+//     // Find all modul documents with the given courseID
+//     const modulList = await Modul.find({ courseID })
+//       .populate({
+//         path: 'soalID', // Populate the soalID array
+//         model: 'SoalModul', // Reference the SoalModul model
+//       })
+//       .populate({
+//         path: 'absensiID', // Populate the absensiID field
+//         model: 'Absensi', // Reference the Absensi model
+//         populate: {
+//           path: 'absensiKelas.anakMagangID', // Populate the anakMagangID field inside absensiKelas
+//           model: 'AnakMagang', // Reference the AnakMagang model
+//         },
+//       }) 
+    
+//       .exec();
+
+//     // If no modul is found, return a 404 error
+//     if (!modulList || modulList.length === 0) {
+//       return res.status(404).json({ message: 'No modul found for the given courseID' });
+//     }
+
+//     // Return the modul list with populated soalModul and absensi
+//     res.status(200).json({ modulList });
+//   } catch (error) {
+//     console.error('Error fetching modul:', error);
+//     res.status(500).json({ message: 'Internal server error', error: error.message });
+//   }
+// });
+
+// Endpoint untuk mendapatkan absensi berdasarkan modulId
+router.get('/:modulId/attendance', async (req, res) => {
+    const { modulId } = req.params;
+
+    // Validasi apakah modulId adalah ObjectId yang valid
+    if (!mongoose.Types.ObjectId.isValid(modulId)) {
+        return res.status(400).json({ message: "Invalid modulId parameter." });
+    }
+
+    try {
+        // Query Absensi dengan populate pada courseID, absensiKelas.anakMagangID, dan userID
+        const absensi = await Absensi.find({ modulID: modulId })
+            .populate({
+                path: 'courseID', // Populate courseID
+                model: 'Course'
+            })
+            .populate({
+                path: 'absensiKelas.anakMagangID', // Populate anakMagangID
+                model: 'AnakMagang',
+                populate: {
+                    path: 'userID', // Populate userID dari AnakMagang
+                    model: 'UserData'
+                },
+                
+            })
+            .populate({
+                path: 'absensiKelas.anakMagangID', // Populate anakMagangID
+                model: 'AnakMagang',
+                populate: {
+                    path: 'courseID', // Populate userID dari AnakMagang
+                    model: 'Course'
+                },
+                
+            })
+            .populate({
+                path: 'modulID', // Populate courseID
+                model: 'Modul'
+            });
+            
+
+        if (!absensi || absensi.length === 0) {
+            return res.status(404).json({ message: "Absensi tidak ditemukan untuk modul ini." });
+        }
+
+        return res.status(200).json(absensi);
+    } catch (error) {
+        console.error("Error fetching attendance:", error);
+        return res.status(500).json({ message: "Terjadi kesalahan saat mengambil data absensi." });
+    }
+});
+
+  router.get('/nilai-modul/:modulID', async (req, res) => {
+    const { modulID } = req.params;
+
+    try {
+        // Fetch NilaiModul entries with the given modulID and populate references
+        const nilaiModuls = await NilaiModul.find({ modulID })
+            .populate({
+                path: 'modulID',
+                select: 'namaModul Deskripsi Deadline gambar Dinilai', // Fields to include from Modul schema
+            })
+            .populate({
+                path: 'anakMagangID',
+                populate: {
+                    path: 'userID',
+                    select: 'namaUser email noTelpon Profile_Picture', // Fields from UserData schema
+                },
+            });
+
+        // Check if entries are found
+        if (!nilaiModuls || nilaiModuls.length === 0) {
+            return res.status(404).json({ message: 'No records found for the given modulID' });
+        }
+
+        // Send the response
+        res.status(200).json({
+            success: true,
+            data: nilaiModuls,
+        });
+    } catch (error) {
+        console.error('Error fetching NilaiModul:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while fetching NilaiModul',
+        });
+    }
+});
+
+
+  
 // router.get("/Modul",verifyToken([1]), async (req, res) => {
 //     const { filter } = req.query;
 //     let search;
@@ -700,6 +1129,11 @@ router.put("/:nilaiModulID/nilai",verifyToken([1]), async (req, res) => {
     }
 });
 
+
+
+
+
+
 //rey absensi
 // Endpoint untuk mengabsensi anak magang
 router.post('/absensi',verifyToken([1]), async (req, res) => {
@@ -862,243 +1296,5 @@ router.put('/:id/absensi',verifyToken([1]), async (req, res) => {
     }
 });
 
-// Route to handle form submission
-router.post('/form', async (req, res) => {
-    const { courseID, mentorID, namaModul, Deskripsi, Deadline, soalModul } = req.body;
-  
-    try {
-      // Validate course and mentor
-      const course = await Course.findById(courseID);
-      const mentor = await Mentor.findById(mentorID);
-  
-      if (!course || !mentor) {
-        return res.status(404).json({ message: 'Course or Mentor not found' });
-      }
-  
-      // Create the Modul
-      const newModul = new Modul({
-        courseID,
-        mentorID,
-        namaModul,
-        Deskripsi,
-        Deadline,
-        Dinilai: false, // Default to false
-      });
-  
-      // Save the Modul
-      const savedModul = await newModul.save();
-  
-      // Create SoalModul entries
-      if (soalModul && soalModul.length > 0) {
-        for (const soal of soalModul) {
-          const newSoalModul = new SoalModul({
-            namaSoal: soal.namaSoal,
-            Deskripsi: soal.Deskripsi,
-            Gambar: soal.Gambar,
-            SoalType: soal.SoalType,
-            Pilihan: soal.Pilihan,
-            kunciJawaban: soal.kunciJawaban,
-          });
-  
-          const savedSoalModul = await newSoalModul.save();
-  
-          // Add the SoalModul ID to the Modul
-          savedModul.soalID.push(savedSoalModul._id);
-        }
-  
-        // Save the updated Modul with SoalModul IDs
-        await savedModul.save();
-      }
-  
-      res.status(201).json({ message: 'Modul and SoalModul created successfully', modul: savedModul });
-    } catch (error) {
-      res.status(500).json({ message: 'Error creating Modul and SoalModul', error: error.message });
-    }
-  });
-
-  router.post('/createmodul', async (req, res) => {
-    try {
-      const { courseID, mentorID, gambar, namaModul, Deskripsi, Deadline, soalID, absensiID, Dinilai } = req.body;
-  
-      // Validate if the course and mentor exist
-    //   const course = await Course.findById(courseID);
-    //   const mentor = await Mentor.findById(mentorID);
-    //   if (!course || !mentor) {
-    //     return res.status(400).json({ message: 'Course or Mentor not found' });
-    //   }
-  
-      // Create a new Modul
-      const newModul = new Modul({
-        courseID,
-        mentorID,
-        gambar,
-        namaModul,
-        Deskripsi,
-        Deadline,
-        soalID,
-        absensiID,
-        Dinilai,
-      });
-  
-      // Save the Modul to the database
-      await newModul.save();
-  
-      res.status(201).json({ message: 'Modul created successfully', modul: newModul });
-    } catch (error) {
-      console.error('Error creating Modul:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
-
-  router.post('/materials/attendance', async (req, res) => {
-    try {
-      const { courseID, modulID, absensiKelas } = req.body;
-  
-      // Log the incoming request payload
-      console.log('Received attendance data:', req.body);
-  
-      // Validate if the module exists and belongs to the course
-      const modul = await Modul.findOne({ _id: modulID, courseID });
-      if (!modul) {
-        console.error('Module not found or does not belong to the course');
-        return res.status(400).json({ message: 'Module not found or does not belong to the course' });
-      }
-  
-      // Log the module data
-      console.log('Module found:', modul);
-  
-      // Create a new Absensi document
-      const newAbsensi = new Absensi({
-        courseID,
-        modulID,
-        absensiKelas: absensiKelas.map((attendance) => ({
-          anakMagangID: attendance.anakMagangID,
-          isPresent: attendance.isPresent,
-        })),
-      });
-  
-      // Log the new Absensi document
-      console.log('New Absensi document:', newAbsensi);
-  
-      // Save the Absensi document
-      await newAbsensi.save();
-  
-      // Log the saved Absensi document
-      console.log('Absensi document saved:', newAbsensi);
-  
-      // Update the AnakMagang documents with the new Absensi ID
-      for (const attendance of absensiKelas) {
-        await AnakMagang.findByIdAndUpdate(attendance.anakMagangID, {
-          $push: { absensiKelas: newAbsensi._id },
-        });
-      }
-  
-      // Log the updated AnakMagang documents
-      console.log('AnakMagang documents updated');
-  
-      // Update the Modul document with the new Absensi ID
-      await Modul.findByIdAndUpdate(modulID, {
-        $set: { absensiID: newAbsensi._id },
-      });
-  
-      // Log the updated Modul document
-      console.log('Modul document updated');
-  
-      res.status(201).json({ message: 'Attendance submitted successfully', absensi: newAbsensi });
-    } catch (error) {
-      console.error('Error submitting attendance:', error);
-      res.status(500).json({ message: 'Internal server error', error: error.message });
-    }
-  });
-  
-  router.post('/addquestions', async (req, res) => {
-    try {
-      const { modulID, questions } = req.body;
-  
-      // Validate if the module exists
-      const modul = await Modul.findById(modulID);
-      if (!modul) {
-        return res.status(400).json({ message: 'Module not found' });
-      }
-  
-      // Create and save the questions
-      const savedQuestions = await Promise.all(
-        questions.map(async (question) => {
-          const newQuestion = new SoalModul({
-            Soal: question.question,
-            SoalType: question.type === 'essay' ? 1 : 0, // 1 for essay, 0 for multiple choice
-            Pilihan: question.options || [], // For multiple-choice questions
-            kunciJawaban: question.answer || '', // For multiple-choice questions
-            nilai: question.score || 0,
-          });
-          return await newQuestion.save();
-        })
-      );
-  
-      // Update the module with the new questions
-      const questionIDs = savedQuestions.map((q) => q._id);
-      await Modul.findByIdAndUpdate(modulID, {
-        $push: { soalID: { $each: questionIDs } },
-      });
-  
-      res.status(201).json({ message: 'Questions added successfully', questions: savedQuestions });
-    } catch (error) {
-      console.error('Error adding questions:', error);
-      res.status(500).json({ message: 'Internal server error', error: error.message });
-    }
-  });
-
-router.get('/modul/:courseID', async (req, res) => {
-  try {
-    const { courseID } = req.params;
-
-    // Find all modul documents with the given courseID
-    const modulList = await Modul.find({ courseID })
-      .populate({
-        path: 'soalID', // Populate the soalID array
-        model: 'SoalModul', // Reference the SoalModul model
-      })
-      .populate({
-        path: 'absensiID', // Populate the absensiID field
-        model: 'Absensi', // Reference the Absensi model
-        populate: {
-          path: 'absensiKelas.anakMagangID', // Populate the anakMagangID field inside absensiKelas
-          model: 'AnakMagang', // Reference the AnakMagang model
-        },
-      }) 
-    
-      .exec();
-
-    // If no modul is found, return a 404 error
-    if (!modulList || modulList.length === 0) {
-      return res.status(404).json({ message: 'No modul found for the given courseID' });
-    }
-
-    // Return the modul list with populated soalModul and absensi
-    res.status(200).json({ modulList });
-  } catch (error) {
-    console.error('Error fetching modul:', error);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
-});
-
-// Endpoint untuk mendapatkan absensi berdasarkan modulId
-router.get('/:modulId/attendance', async (req, res) => {
-    const { modulId } = req.params;
-  
-    try {
-      // Mencari absensi berdasarkan modulId
-      const absensi = await Absensi.find({ modulID: modulId });
-  
-      if (!absensi) {
-        return res.status(404).json({ message: "Absensi tidak ditemukan untuk modul ini." });
-      }
-  
-      return res.status(200).json(absensi);
-    } catch (error) {
-      console.error("Error fetching attendance:", error);
-      return res.status(500).json({ message: "Terjadi kesalahan saat mengambil data absensi." });
-    }
-  });
 
 module.exports = router;

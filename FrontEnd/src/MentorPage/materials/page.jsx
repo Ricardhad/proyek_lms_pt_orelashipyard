@@ -67,7 +67,7 @@ export default function MaterialsPage() {
     const isAttendance = material.absensiID !== null;
 
     if (isTugas) {
-      navigate(`/homeMentor/materials/check-tugas/${material._id}`);
+      navigate(`/homeMentor/materials/check-latihan/${material._id}`);
     } else if (isAttendance) {
       navigate(`/homeMentor/materials/check-attendance/${material._id}`);
     } else {
@@ -124,9 +124,9 @@ export default function MaterialsPage() {
                   <CardContent sx={{ flex: '1 0 auto' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
-                        <Avatar src="/placeholder.svg" sx={{ mr: 1 }} /> {/* Placeholder for mentor avatar */}
+                        <Avatar src={material.mentorID.Profile_Picture} sx={{ mr: 1 }} /> {/* Placeholder for mentor avatar */}
                       </motion.div>
-                      <Typography variant="subtitle2">{userData?.mentor?.namaUser || 'Mentor Name'}</Typography>
+                      <Typography variant="subtitle2">{material.mentorID.namaUser || 'Mentor Name'}</Typography>
                     </Box>
                     <Typography variant="h6">{material.namaModul}</Typography> {/* Use namaModul from modulList */}
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
