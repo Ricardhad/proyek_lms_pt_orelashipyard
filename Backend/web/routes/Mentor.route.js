@@ -176,18 +176,79 @@ router.get('/:courseID/AnakMagang', async (req, res) => {
 // backend/routes/mentorRoutes.js
 router.get('/:id/anakMagangProfile', async (req, res) => {
     try {
+      // Find anakMagang and populate userID and courseID
       const anakMagang = await AnakMagang.findById(req.params.id)
-        .populate('userID');
+        .populate('userID') // Populate user details
+        .populate({
+          path: 'courseID', // Populate courseID
+          model: 'Course',
+        });
   
       if (!anakMagang) {
         return res.status(404).json({ message: 'AnakMagang not found' });
       }
+  
+      // Prepare the response
       res.status(200).json(anakMagang);
     } catch (error) {
       console.error('Server error:', error);
       res.status(500).json({ message: error.message });
     }
   });
+  
+//   router.get('/:anakMagangID/anakMagangProfile', async (req, res) => {
+//     const { anakMagangID } = req.params;
+  
+//     try {
+//       // Find the anakMagang record by anakMagangID
+//       const anakMagang = await AnakMagang.findById(anakMagangID);
+//       if (!anakMagang) {
+//         return res.status(404).json({ error: 'AnakMagang not found' });
+//       }
+  
+//       // Find the user associated with the anakMagang
+//       const user = await UserData.findById(anakMagang.userID);
+//       if (!user) {
+//         return res.status(404).json({ error: 'User not found' });
+//       }
+  
+//       // Prepare course data associated with the anakMagang
+//       const courses = await Course.find({ _id: { $in: anakMagang.courseID } });
+  
+//       // Find nilaiModul records associated with the anakMagang ID
+//       const nilaiModuls = await NilaiModul.find({ anakMagangID: anakMagang._id })
+//         .populate({
+//           path: 'modulID',
+//           model: 'Modul',
+//         })
+//         .populate({
+//           path: 'mentorID',
+//           model: 'Mentor',
+//           populate: {
+//             path: 'userID',
+//             model: 'UserData', // Populate userID inside MentorSchema
+//           },
+//         });
+  
+//       // Log the populated data for debugging
+//       console.log('Populated nilaiModuls:', nilaiModuls);
+  
+//       // Prepare the response data
+//       const responseData = {
+//         user,
+//         anakMagang,
+//         courses: courses || [], // Include courses if found, otherwise empty array
+//         nilaiModuls: nilaiModuls || [], // Include nilaiModul data if found, otherwise empty array
+//       };
+  
+//       res.status(200).json(responseData);
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: 'An error occurred while retrieving data' });
+//     }
+//   });
+  
+  
 
   
 router.get('/:userID/Profile', async (req, res) => {
