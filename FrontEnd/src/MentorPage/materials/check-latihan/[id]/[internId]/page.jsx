@@ -1,40 +1,45 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'
-import { Box, Typography, Paper, TextField, Button, Radio, RadioGroup } from '@mui/material'
-import Layout from '../../../../components/layout'
-import axios from 'axios'
+import { useParams, useNavigate } from 'react-router-dom';
+import { Box, Typography, Paper, TextField, Button, Radio, RadioGroup } from '@mui/material';
+import Layout from '../../../../components/layout';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
 const EssayQuestion = ({ number, questionText, answer, score, setScore }) => (
-  <Paper 
+  <Paper
     elevation={0}
-    sx={{ 
-      p: 3, 
-      mb: 2, 
-      backgroundColor: '#f5f5f5', 
+    sx={{
+      p: 3,
+      mb: 2,
+      backgroundColor: '#f5f5f5',
       borderRadius: '16px',
     }}
   >
     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-      <Typography>soal</Typography>
+      <Typography>Soal</Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography>Score</Typography>
         <TextField
           value={score}
           onChange={(e) => {
-            // Ensure the value entered is a number
-            if (!isNaN(e.target.value) || e.target.value === '') {
-              setScore(e.target.value);
+            const newValue = e.target.value;
+            if (!isNaN(newValue) && newValue !== '' && Number(newValue) >= 0) {
+              setScore(Number(newValue)); // Convert value to number and update state
             }
           }}
           variant="outlined"
           size="small"
-          type="number"  // Accepts only numbers
-          sx={{ 
-            width: '60px',
+          type="number" // Accepts only numbers
+          inputProps={{
+            min: 0,
+            max: score, // Same as maxScore
+          }}
+          sx={{
+            width: '75px',
             backgroundColor: 'white',
             '& .MuiOutlinedInput-root': {
-              borderRadius: '4px'
-            }
+              borderRadius: '4px',
+            },
           }}
         />
       </Box>
@@ -43,12 +48,12 @@ const EssayQuestion = ({ number, questionText, answer, score, setScore }) => (
       fullWidth
       value={questionText}
       variant="outlined"
-      sx={{ 
+      sx={{
         mb: 2,
         backgroundColor: 'white',
         '& .MuiOutlinedInput-root': {
-          borderRadius: '4px'
-        }
+          borderRadius: '4px',
+        },
       }}
     />
     <TextField
@@ -57,11 +62,11 @@ const EssayQuestion = ({ number, questionText, answer, score, setScore }) => (
       rows={4}
       value={answer}
       variant="outlined"
-      sx={{ 
+      sx={{
         backgroundColor: 'white',
         '& .MuiOutlinedInput-root': {
-          borderRadius: '4px'
-        }
+          borderRadius: '4px',
+        },
       }}
       InputProps={{
         readOnly: true,
@@ -69,7 +74,6 @@ const EssayQuestion = ({ number, questionText, answer, score, setScore }) => (
     />
   </Paper>
 );
-
 
 const MultipleChoiceQuestion = ({ questionText, options, selectedOption, score, kunciJawaban }) => (
   <Paper
@@ -93,10 +97,8 @@ const MultipleChoiceQuestion = ({ questionText, options, selectedOption, score, 
       </Box>
     </Box>
 
-    {/* Display the question */}
     <Typography sx={{ mb: 2 }}>{questionText}</Typography>
 
-    {/* Options with Radio Buttons */}
     <RadioGroup value={selectedOption} sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
       {options.map((option, index) => (
         <Box
@@ -104,12 +106,12 @@ const MultipleChoiceQuestion = ({ questionText, options, selectedOption, score, 
           sx={{
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: 
-              option === kunciJawaban 
-                ? '#c8e6c9' // Green for correct answer
+            backgroundColor:
+              option === kunciJawaban
+                ? '#c8e6c9'
                 : selectedOption === option
-                ? '#f8d7da' // Red for incorrect selected answer
-                : 'white', // Default white for unselected options
+                ? '#f8d7da'
+                : 'white',
             borderRadius: '4px',
             pl: 1,
           }}
@@ -130,7 +132,6 @@ const MultipleChoiceQuestion = ({ questionText, options, selectedOption, score, 
       ))}
     </RadioGroup>
 
-    {/* Correct Answer Display */}
     {selectedOption === kunciJawaban ? (
       <Typography sx={{ mb: 1, mt: 3, fontWeight: 'bold', color: '#49e52a' }}>
         Kunci Jawaban: {kunciJawaban}
@@ -143,14 +144,12 @@ const MultipleChoiceQuestion = ({ questionText, options, selectedOption, score, 
   </Paper>
 );
 
-
-
-export default function InternFormCheckPage() {     
+export default function InternFormCheckPage() {
   const { id, internId } = useParams();
+  const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const [formQuestions, setFormQuestions] = useState([]);
-  const [score, setScore] = useState(0);
-  
+  const [scores, setScore] = useState(0);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -173,7 +172,7 @@ export default function InternFormCheckPage() {
                 number: jawaban.soalModulID._id,
                 questionText: jawaban.soalModulID.Soal,
                 answer: jawaban.jawaban,
-                score: '',
+                score: jawaban.soalModulID.nilai,
               };
         });
         setFormQuestions(fetchedQuestions);
@@ -184,31 +183,44 @@ export default function InternFormCheckPage() {
 
     fetchQuestions();
   }, [id, internId]);
-
+  useEffect(() => {
+    console.log('formQuestions score:',scores);
+  })
 
   const handleScoreChange = (index, value) => {
-    const newQuestions = [...formQuestions]
-    newQuestions[index].score = value
-    setFormQuestions(newQuestions)
-  }
+    const newQuestions = [...formQuestions];
+    newQuestions[index].score = value;
+
+    const newTotalScore = newQuestions.reduce((total, question) => {
+      return question.type === 'essay' ? total + Number(question.score || 0) : total;
+    }, 0);
+
+    setFormQuestions(newQuestions);
+    setScore(newTotalScore);
+  };
+  const handleSubmit = async () => {
+    try {
+      const responseprofile = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`); // Adjust the base URL if necessary
+        console.log("profile check",responseprofile.data.mentor._id);
+      const response = await axios.put(`http://localhost:3000/api/mentor/${id}/${internId}/submit-check`, {
+        mentorID: responseprofile.data.mentor._id,
+        incrementValue: scores,
+      });
+      console.log('Update success:', response.data);
+      alert('Successfully submitted!');
+      navigate(-1);
+    } catch (error) {
+      console.error('Error submitting data:', error);
+      alert('Failed to submit. Please try again.');
+    }
+  };
 
   return (
     <Layout>
       <Box sx={{ p: 3 }}>
-        {/* Header Section */}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            gap: 2,
-            mb: 3,
-          }}
-        >
-          <Typography variant="h4">
-            Check Latihan
-          </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mb: 3 }}>
+          <Typography variant="h4">Check Latihan</Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
-            {/* Back Button */}
             <Button
               variant="contained"
               sx={{
@@ -220,19 +232,17 @@ export default function InternFormCheckPage() {
             >
               Back
             </Button>
-            {/* Submit Button */}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleSubmit()}
-            >
+            <Button variant="contained" color="primary" 
+            onClick={() => {
+              handleSubmit();
+              navigate(-1);
+            }}>
               Submit
             </Button>
           </Box>
         </Box>
-            
-        {/* Question List */}
-        {formQuestions.map((question, index) => (
+
+        {formQuestions.map((question, index) =>
           question.type === 'essay' ? (
             <EssayQuestion
               key={index}
@@ -252,9 +262,8 @@ export default function InternFormCheckPage() {
               kunciJawaban={question.kunciJawaban}
             />
           )
-        ))}
+        )}
       </Box>
     </Layout>
-  )
+  );
 }
-
