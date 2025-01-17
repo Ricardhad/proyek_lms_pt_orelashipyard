@@ -134,7 +134,7 @@ export default function InternDetailPage() {
             </Grid>
             <Grid item xs={12} md={8}>
               <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-                {internData.course}
+                {anakMagang.courseID.namaCourse}
               </Typography>
               <Paper sx={{ p: 2, backgroundColor: 'white', borderRadius: '8px', display:'flex'}}>
                 <Typography variant="h6" sx={{ mb: 2, mr:3}}>Absensi</Typography>
@@ -145,7 +145,7 @@ export default function InternDetailPage() {
                       <Typography
                         key={index}
                         sx={{
-                          color: index < 14 ? 'success.main' : 'text.disabled',
+                          color: index < anakMagang.absensiKelas.length ? 'success.main' : 'text.disabled',
                           fontSize: '24px',
                         }}
                       >

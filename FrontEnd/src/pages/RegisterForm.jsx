@@ -122,7 +122,7 @@ const RegisterForm = () => {
           />
           <label>Profile picture URL (optional)</label>
         </div>
-        <div className="input-field">
+        {/* <div className="input-field">
           <select
             name="roleType"
             value={formData.roleType}
@@ -133,7 +133,7 @@ const RegisterForm = () => {
             <option value="1">Mentor</option>
           </select>
           <label>Select your role</label>
-        </div>
+        </div> */}
         <div className="input-field">
           <select
             name="course" // Update to match the state property
