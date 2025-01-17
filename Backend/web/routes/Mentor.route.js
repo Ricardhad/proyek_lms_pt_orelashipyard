@@ -11,6 +11,7 @@ const {
 } = require("./functions");
 
 const Joi = require('joi');
+const mongoose = require('mongoose');
 const { upload, verifyToken } = require('./Middleware');
 const anakMagang = require('../models/AnakMagang');
 const Absensi = require('../models/Absensi');
@@ -309,53 +310,66 @@ router.get('/nilai-modul/:modulID', async (req, res) => {
 
 
   // Get all JawabanModul by modulID
-  router.get('/jawaban-modul/:modulID', async (req, res) => {
-    const { modulID } = req.params;
-  
-    try {
-      // Validate modulID
-      if (!modulID) {
-        return res.status(400).json({ message: 'modulID is required.' });
-      }
-  
-      // Find all JawabanModul with the specified modulID
-      const jawabanList = await JawabanModul.find({ modulID })
-        .populate('courseID', 'name') // Populate courseID field with the 'name'
-        .populate({
-          path: 'anakMagangID',
-          populate: {
-            path: 'userID',
-            model: 'UserData', // Populates userID from the UserData schema
-            select: 'namaUser Profile_Picture email', // Only include specific fields
-          },
-        })
-        .populate('soalModulID', 'Soal SoalType') // Populate soalModulID with relevant fields
-        .exec();
-  
-      // If no records are found
-      if (!jawabanList.length) {
-        return res.status(404).json({ message: 'No answers found for the provided modulID.' });
-      }
-  
-      // Return the list of answers
-      res.status(200).json({
-        message: 'JawabanModul records retrieved successfully.',
-        data: jawabanList,
-      });
-    } catch (error) {
-      console.error('Error fetching JawabanModul:', error);
-      res.status(500).json({
-        message: 'An error occurred while retrieving JawabanModul records.',
-        error: error.message,
-      });
-    }
-  });
-  
+  router.get('/jawaban-modul/:modulID/:anakMagangID', async (req, res) => {
+    const { modulID, anakMagangID } = req.params;
 
+    try {
+        // Validate modulID and anakMagangID
+        if (!modulID || !anakMagangID) {
+            return res.status(400).json({ message: 'Both modulID and anakMagangID are required.' });
+        }
+
+        // Find all JawabanModul with the specified modulID and anakMagangID
+        const jawabanList = await JawabanModul.find({ modulID, anakMagangID })
+            .populate('courseID', 'name') // Populate courseID field with the 'name'
+            .populate({
+                path: 'anakMagangID',
+                populate: {
+                    path: 'userID',
+                    model: 'UserData', // Populates userID from the UserData schema
+                    select: 'namaUser Profile_Picture email', // Only include specific fields
+                },
+            })
+            .populate({
+                path: 'soalModulID',
+                model: 'SoalModul', // Populate soalModulID using the SoalModul schema
+                select: 'Soal Gambar SoalType Pilihan kunciJawaban nilai', // Include specific fields
+            })
+            .exec();
+
+        // If no records are found
+        if (!jawabanList.length) {
+            return res.status(404).json({ message: 'No answers found for the provided modulID and anakMagangID.' });
+        }
+
+        // Return the list of answers
+        res.status(200).json({
+            message: 'JawabanModul records retrieved successfully.',
+            data: jawabanList,
+        });
+    } catch (error) {
+        console.error('Error fetching JawabanModul:', error);
+        res.status(500).json({
+            message: 'An error occurred while retrieving JawabanModul records.',
+            error: error.message,
+        });
+    }
+});
+
+
+//router.post('/form', upload.single('file'), async (req, res) => {
 // Route to handle form submission
 router.post('/form', async (req, res) => {
     const { courseID, mentorID, namaModul, Deskripsi, Deadline, soalModul } = req.body;
-  
+    // const file  = req.file
+    // ? {
+    //     fileName: req.file.filename,
+    //     filePath: AnnouncementDir,
+    //     fileType: req.file.mimetype,
+    //     uploadDate: new Date(),
+    // }
+    // : null;
+    
     try {
       // Validate course and mentor
       const course = await Course.findById(courseID);

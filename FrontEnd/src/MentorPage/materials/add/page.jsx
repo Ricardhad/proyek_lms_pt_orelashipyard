@@ -99,6 +99,7 @@ export default function AddMaterialPage() {
       // Clear form after successful submission
       // dispatch(clearMaterial());
       setImageFile(null);
+      navigate('/homeMentor/materials/');
       
     } catch (error) {
       console.error('Error submitting material:', error);
