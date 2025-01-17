@@ -1,0 +1,15 @@
+[
+    {
+        "_id": "677e52d2b7f40c77f9853faa",
+        "namaUser": "Reynaldy Gamer",
+        "Profile_Picture": "lorem",
+        "roleType": 1,
+        "noTelpon": "081353002672",
+        "email": "reykamadjaya1@gmail.com",
+        "password": "12341234",
+        "isVerified": true,
+        "createdAt": "2025-01-08T10:26:26.632Z",
+        "updatedAt": "2025-01-08T10:26:26.632Z",
+        "__v": 0
+    }
+]
