@@ -259,6 +259,10 @@ router.get('/modul/:courseID/getallmodul', async (req, res) => {
           model: 'AnakMagang',
         },
       })
+      .populate({
+        path: 'mentorID',
+        model: 'UserData',
+      })
       .exec();
 
     // Return an empty list with a friendly message if no modules are found
