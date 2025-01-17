@@ -11,6 +11,8 @@ import Course from "./AdminPage/Course";
 import AddCourse from "./AdminPage/AddCourse";
 import AddAnnouncement from "./AdminPage/AddAnouncement";
 import EditMentor from "./AdminPage/EditMentor";
+import DetailMentor from "./AdminPage/DetailMentor";
+import PopUp from "./AdminPage/PopUp";
 
 
 // import MentorPage from "./MentorPage/MentorPage";
@@ -49,10 +51,6 @@ import MentorProfilePage from "./MentorPage/profile/page";
 
 import ProtectedRoute from './component/ProtectedRoute';
 
-
-
-
-
 function App() {
   return (
     <Router>
@@ -70,27 +68,10 @@ function App() {
         <Route path="/addannouncement" element={<AddAnnouncement />} />
         <Route path="/detail/:id" element={<DetailIntern />} />
         <Route path="/editmentor/:id" element={<EditMentor />} />
+        <Route path="/detailmentor/:id" element={<DetailMentor />} />
+        <Route path="/popup" element={<PopUp />} />
 
-        {/* <Route path="/homeMentor" element={<MentorPage />} />
-        <Route path="/homeMentor/materials" element={<MaterialsPage />} />
-        <Route path="/homeMentor/interns" element={<InternsPage />} /> */}
-        {/* New routes for the pages we created before */}
-        {/* <Route path="/homeMentor/announcements" element={<MentorAnnouncementPage />} />
-        <Route path="/homeMentor/announcements/create" element={<MentorCreateAnnouncementPage />} />
-        <Route path="/homeMentor/announcements/edit/:id" element={<MentorEditAnnouncementPage />} />
-        <Route path="/homeMentor/announcements/:id" element={<MentorViewAnnouncementPage />} />
-        <Route path="/homeMentor/chat" element={<MentorChatPage />} />
-        <Route path="/homeMentor/interns/:id" element={<MentorInternDetailPage />} />
-        <Route path="/homeMentor/interns" element={<MentorInternsPage />} />
-        <Route path="/homeMentor/materials" element={<MentorMaterialsPage />} />
-        <Route path="/homeMentor/materials/add" element={<MentorAddMaterialPage />} />
-        <Route path="/homeMentor/materials/add/form" element={<MentorAddFormPage />} />
-        <Route path="/homeMentor/materials/add/zip" element={<MentorZipSubmissionPage />} />
-        <Route path="/homeMentor/materials/add/attendance" element={<MentorAttendancePage />} />
-        <Route path="/homeMentor/materials/check-tugas/:id" element={<MentorCheckTugasPage />} />
-        <Route path="/homeMentor/materials/check-latihan/:id" element={<MentorCheckLatihanPage />} />
-        <Route path="/homeMentor/materials/check-latihan/:id/:internId" element={<MentorInternFormCheckPage />} />
-        <Route path="/homeMentor/" element={<MentorProfilePage />} /> */}
+        
         {/* Mentor Protected Routes */}
         <Route path="/homeMentor/announcements" element={<ProtectedRoute element={MentorAnnouncementPage} requiredRole={1} />} />
         <Route path="/homeMentor/announcements/create" element={<ProtectedRoute element={MentorCreateAnnouncementPage} requiredRole={1} />} />
@@ -110,15 +91,6 @@ function App() {
         <Route path="/homeMentor/materials/check-latihan/:id/:internId" element={<ProtectedRoute element={MentorInternFormCheckPage} requiredRole={1} />} />
         <Route path="/homeMentor/" element={<ProtectedRoute element={MentorProfilePage} requiredRole={1} />} />
 
-
-        {/* <Route path="/homeMagang/" element={<InternProfile />} />
-        <Route path="/homeMagang/materials" element={<InternMaterials />} />
-        <Route path="/homeMagang/homework" element={<InternHomework />} />
-        <Route path="/homeMagang/edit-profile" element={<InternEditProfile />} />
-        <Route path="/homeMagang/announcements" element={<InternAnnouncements />} />
-        <Route path="/homeMagang/group-chat" element={<InternGroupChat />} />
-        <Route path="/homeMagang/materials/:id/form" element={<MaterialForm />} />
-        <Route path="/homeMagang/materials/:id/zip" element={<MaterialZip />} /> */}
         {/* Intern Protected Routes */}
         <Route path="/homeMagang/" element={<ProtectedRoute element={InternProfile} requiredRole={2} />} />
         <Route path="/homeMagang/materials" element={<ProtectedRoute element={InternMaterials} requiredRole={2} />} />

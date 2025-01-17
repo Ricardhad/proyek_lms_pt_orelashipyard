@@ -43,27 +43,28 @@ router.get("/Course", async (req, res) => {
       {
         $lookup: {
           from: "Mentor", // Koleksi Mentor
-          localField: "mentorID",
-          foreignField: "_id",
-          as: "mentors",
+          localField: "mentorID", // Menghubungkan dengan field mentorID di koleksi Course
+          foreignField: "_id", // Menghubungkan dengan _id di koleksi Mentor
+          as: "mentors", // Menyimpan hasil join di dalam array mentors
         },
       },
-      { $unwind: { path: "$mentors", preserveNullAndEmptyArrays: true } },
+      { $unwind: { path: "$mentors", preserveNullAndEmptyArrays: true } }, // Jika ada mentor, gabungkan data
       {
         $lookup: {
           from: "UserData", // Koleksi UserData
-          localField: "Mentor.userID",
-          foreignField: "_id",
-          as: "mentorDetails",
+          localField: "mentors.userID", // Menghubungkan dengan userID dari koleksi Mentor
+          foreignField: "_id", // Menghubungkan dengan _id di koleksi UserData
+          as: "mentorDetails", // Menyimpan hasil lookup mentorDetails
         },
       },
-      { $unwind: { path: "$mentorDetails", preserveNullAndEmptyArrays: true } },
+      { $unwind: { path: "$mentorDetails", preserveNullAndEmptyArrays: true } }, // Menggabungkan data mentorDetails
       {
         $project: {
           _id: 1,
           namaCourse: 1,
           Deskripsi: 1,
-          mentorName: "$mentorDetails.namaUser",
+          mentorName: "$mentorDetails.namaUser", // Nama mentor
+          mentorId: "$mentors._id", // Menambahkan mentorId
         },
       },
     ]);
@@ -73,6 +74,7 @@ router.get("/Course", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch courses" });
   }
 });
+
 
 // Aktifkan CORS hanya pada endpoint ini
 router.put('/:userId', async (req, res) => { 
@@ -98,24 +100,20 @@ router.put('/:userId', async (req, res) => {
 });
 
 
-
-
-//rey tambahkan edit user
-// Endpoint untuk edit user berdasarkan ID
 router.put('/:userId/editUser', async (req, res) => {
   const { userId } = req.params;
-  const { namaUser, roletype, password, noTelpon } = req.body;
+  const { namaUser, password, courseID, AsalSekolah, noTelpon } = req.body;
 
   // Validasi input menggunakan Joi
   const schema = Joi.object({
     namaUser: Joi.string().optional(),
-    roletype: Joi.number().integer().valid(0, 1, 2).optional(), // roletype sebagai integer
     password: Joi.string().min(6).optional(),
+    courseID: Joi.string().optional(), // courseID sebagai string (ObjectId)
+    AsalSekolah: Joi.string().optional(),
     noTelpon: Joi.string().pattern(/^[0-9]+$/).optional(),
   });
 
-  // Validasi request body
-  const { error } = schema.validate({ namaUser, roletype, password, noTelpon });
+  const { error } = schema.validate({ namaUser, password, courseID, AsalSekolah, noTelpon });
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
   }
@@ -124,25 +122,101 @@ router.put('/:userId/editUser', async (req, res) => {
     // Cari user berdasarkan ID
     const user = await UserData.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update field yang diberikan
+    // Periksa roleType
+    if (user.roleType !== 2) {
+      return res.status(403).json({ message: 'Invalid roleType: Must be 2 (Intern)' });
+    }
+
+    // Update data di UserData
     if (namaUser) user.namaUser = namaUser;
-    if (roletype !== undefined) user.roletype = roletype; // roletype sebagai integer
-    if (password) user.password = password; // Harap tambahkan hashing jika diperlukan
+    if (password) user.password = password; // Tambahkan hashing jika diperlukan
     if (noTelpon) user.noTelpon = noTelpon;
+    await user.save();
 
-    // Simpan perubahan
-    const updatedUser = await user.save();
+    // Cari data AnakMagang berdasarkan userID
+    const anakMagang = await AnakMagang.findOne({ userID: userId });
+    if (!anakMagang) {
+      return res.status(404).json({ message: 'Intern data not found' });
+    }
 
-    // Respon sukses
-    res.status(200).json({ message: "User updated successfully", updatedUser });
+    // Update courseID jika diberikan
+    if (courseID) {
+      const course = await Course.findById(courseID);
+      if (!course) {
+        return res.status(404).json({ message: 'Course not found' });
+      }
+      anakMagang.courseID = course._id;
+    }
+
+    // Update AsalSekolah
+    if (AsalSekolah) {
+      anakMagang.AsalSekolah = AsalSekolah;
+    }
+
+    // Simpan perubahan di AnakMagang
+    await anakMagang.save();
+
+    res.status(200).json({
+      message: 'User and intern data updated successfully',
+      updatedUser: user,
+      updatedIntern: anakMagang,
+    });
   } catch (err) {
-    console.error("Error updating user:", err);
-    res.status(500).json({ message: "Internal server error" });
+    console.error('Error updating user and intern data:', err);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
+
+
+
+//rey tambahkan edit user
+// Endpoint untuk edit user berdasarkan ID
+// router.put('/:userId/editUser', async (req, res) => {
+//   const { userId } = req.params;
+//   const { namaUser, roletype, password, noTelpon } = req.body;
+
+//   // Validasi input menggunakan Joi
+//   const schema = Joi.object({
+//     namaUser: Joi.string().optional(),
+//     roletype: Joi.number().integer().valid(0, 1, 2).optional(), // roletype sebagai integer
+//     password: Joi.string().min(6).optional(),
+//     noTelpon: Joi.string().pattern(/^[0-9]+$/).optional(),
+//   });
+
+//   // Validasi request body
+//   const { error } = schema.validate({ namaUser, roletype, password, noTelpon });
+//   if (error) {
+//     return res.status(400).json({ message: error.details[0].message });
+//   }
+
+//   try {
+//     // Cari user berdasarkan ID
+//     const user = await UserData.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     // Update field yang diberikan
+//     if (namaUser) user.namaUser = namaUser;
+//     if (roletype !== undefined) user.roletype = roletype; // roletype sebagai integer
+//     if (password) user.password = password; // Harap tambahkan hashing jika diperlukan
+//     if (noTelpon) user.noTelpon = noTelpon;
+
+//     // Simpan perubahan
+//     const updatedUser = await user.save();
+
+//     // Respon sukses
+//     res.status(200).json({ message: "User updated successfully", updatedUser });
+//   } catch (err) {
+//     console.error("Error updating user:", err);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// });
 
 router.get('/intern/:id', async (req, res) => {
   try {
@@ -258,6 +332,41 @@ router.put("/:anakMagangId/anakMagang",verifyToken([0]), async (req, res) => {
   }
 });
 
+router.put('/updateMentorCourse/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { courseId } = req.body;
+
+    // Validasi apakah courseId ada di database
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    // Cari UserData berdasarkan id
+    const userData = await UserData.findById(id);
+    if (!userData) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Cari Mentor berdasarkan userID yang ada di UserData
+    const mentor = await Mentor.findOne({ userID: userData._id });
+    if (!mentor) {
+      return res.status(404).json({ message: 'Mentor not found' });
+    }
+
+    // Update Mentor dengan courseId yang baru
+    mentor.courseID = courseId;
+    await mentor.save();
+
+    res.status(200).json({ message: 'Mentor updated successfully', mentor });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ message: 'Server error', error: err });
+  }
+});
+
+
 router.get('/mentors/:id', async (req, res) => {
   try {
     // Cari UserData berdasarkan ID
@@ -293,7 +402,46 @@ router.get('/mentors/:id', async (req, res) => {
 
 
 
+// // Endpoint untuk mendapatkan detail user berdasarkan ID
+// router.get('/detail/:id', async (req, res) => {
 
+//   try {
+//     const { id } = req.params;
+//     // Mencari mentor dan populate 'courseID' dan 'userID' untuk mendapatkan data terkait
+//     const mentor = await Mentor.findOne({userID:id})
+//     .populate('courseID') // Memastikan 'courseID' dipopulasi untuk mengambil detail kursus
+//     .populate('userID'); // Memastikan 'userID' dipopulasi untuk mengambil detail pengguna
+    
+//     if (!mentor) {
+//       return res.status(404).json({ message: 'Mentor not found' });
+//     }
+//     console.log(mentor)
+
+//     // Ambil nama-nama kursus dari courseID
+//     const courseNames = mentor.courseID.length
+//       ? mentor.courseID.map(course => course.namaCourse) // Ambil namaCourse dari courseID
+//       : [];
+
+//     // Ambil detail pengguna (user)
+//     const userDetail = mentor.userID
+//       ? {
+//           namaUser: mentor.userID.namaUser,
+//           email: mentor.userID.email,
+//           noTelpon: mentor.userID.noTelpon,
+//           profilePicture: mentor.userID.Profile_Picture,
+//         }
+//       : null;
+
+//     res.status(200).json({
+//       mentor,
+//       courses: courseNames, // Mengirimkan daftar nama kursus
+//       user: userDetail, // Mengirimkan detail user yang terkait
+//     });
+//   } catch (err) {
+//     console.error('Error:', err);
+//     res.status(500).json({ message: 'Server error', error: err });
+//   }
+// });
 router.put("/:MentorId/Mentor",verifyToken([0]), async (req, res) => {
   const { MentorId } = req.params;
   const { courseID } = req.body; // courseID should be an array of ObjectIds
@@ -409,6 +557,87 @@ router.get('/mentors', async (req, res) => {
   } catch (error) {
     console.error('Error fetching mentors:', error);
     res.status(500).json({ message: 'Error fetching mentors.', error });
+  }
+});
+
+router.get('/detailmentor/:id', async (req, res) => {
+
+  try {
+    const { id } = req.params;
+    // Mencari mentor dan populate 'courseID' dan 'userID' untuk mendapatkan data terkait
+    const mentor = await Mentor.findOne({userID:id})
+    .populate('courseID') // Memastikan 'courseID' dipopulasi untuk mengambil detail kursus
+    .populate('userID'); // Memastikan 'userID' dipopulasi untuk mengambil detail pengguna
+    
+    if (!mentor) {
+      return res.status(404).json({ message: 'Mentor not found' });
+    }
+    // console.log(mentor)
+
+    // Ambil nama-nama kursus dari courseID
+    const courseNames = mentor.courseID.length
+      ? mentor.courseID.map(course => course.namaCourse) // Ambil namaCourse dari courseID
+      : [];
+
+    // Ambil detail pengguna (user)
+    const userDetail = mentor.userID
+      ? {
+          namaUser: mentor.userID.namaUser,
+          email: mentor.userID.email,
+          noTelpon: mentor.userID.noTelpon,
+          profilePicture: mentor.userID.Profile_Picture,
+        }
+      : null;
+
+    res.status(200).json({
+      mentor,
+      courses: courseNames, // Mengirimkan daftar nama kursus
+      user: userDetail, // Mengirimkan detail user yang terkait
+    });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ message: 'Server error', error: err });
+  }
+});
+
+
+router.get('/detail/:id', async (req, res) => {
+
+  try {
+    const { id } = req.params;
+    // Mencari mentor dan populate 'courseID' dan 'userID' untuk mendapatkan data terkait
+    const mentor = await Mentor.findOne({userID:id})
+    .populate('courseID') // Memastikan 'courseID' dipopulasi untuk mengambil detail kursus
+    .populate('userID'); // Memastikan 'userID' dipopulasi untuk mengambil detail pengguna
+    
+    if (!mentor) {
+      return res.status(404).json({ message: 'Mentor not found' });
+    }
+    // console.log(mentor)
+
+    // Ambil nama-nama kursus dari courseID
+    const courseNames = mentor.courseID.length
+      ? mentor.courseID.map(course => course.namaCourse) // Ambil namaCourse dari courseID
+      : [];
+
+    // Ambil detail pengguna (user)
+    const userDetail = mentor.userID
+      ? {
+          namaUser: mentor.userID.namaUser,
+          email: mentor.userID.email,
+          noTelpon: mentor.userID.noTelpon,
+          profilePicture: mentor.userID.Profile_Picture,
+        }
+      : null;
+
+    res.status(200).json({
+      mentor,
+      courses: courseNames, // Mengirimkan daftar nama kursus
+      user: userDetail, // Mengirimkan detail user yang terkait
+    });
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ message: 'Server error', error: err });
   }
 });
 

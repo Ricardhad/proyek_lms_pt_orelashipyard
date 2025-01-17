@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import client from "../client"; // Import client.js untuk koneksi API
 
-
 const AddInterns = () => {
   const [userData, setUserData] = useState([]);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState(""); // Menambahkan state untuk pesan
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -20,26 +20,31 @@ const AddInterns = () => {
     fetchUserData();
   }, []);
 
-  
-
-  const updateVerificationStatus = async (internId) => {
+  const updateVerificationStatus = async (internId, action) => {
     try {
       const response = await client.put(
         `/api/admin/${internId}`, // Use client and relative URL
         {} // Body request if necessary
       );
       console.log('Verification successful:', response.data);
+
+      // Menampilkan pesan sesuai dengan tombol yang ditekan
+      if (action === "add") {
+        setMessage("User has been added successfully.");
+      } else {
+        setMessage("User has been declined.");
+      }
     } catch (error) {
       console.error('Failed to update verification:', error);
+      setMessage("An error occurred while updating verification.");
     }
   };
-
-  
 
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>Interns</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
+      {message && <p style={{ color: "green" }}>{message}</p>} {/* Menampilkan pesan */}
       <div style={styles.tableWrapper}>
         <table style={styles.table}>
           <thead>
@@ -75,13 +80,13 @@ const AddInterns = () => {
                   <td style={styles.td}>
                     <button
                       style={{ ...styles.button, ...styles.addButton }}
-                      onClick={() => updateVerificationStatus(user._id, true)}
+                      onClick={() => updateVerificationStatus(user._id, "add")}
                     >
                       Add
                     </button>
                     <button
                       style={{ ...styles.button, ...styles.declineButton }}
-                      onClick={() => updateVerificationStatus(user._id, false)}
+                      onClick={() => updateVerificationStatus(user._id, "decline")}
                     >
                       Decline
                     </button>
