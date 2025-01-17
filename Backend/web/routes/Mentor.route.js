@@ -582,6 +582,36 @@ router.post('/form', async (req, res) => {
     }
 });
   
+router.put('/:modulID/:anakMagangID/submit-check', async (req, res) => {
+    const { modulID, anakMagangID } = req.params;
+    const { mentorID, incrementValue } = req.body;
+
+    try {
+        // Find the specific NilaiModul document
+        const nilaiModul = await NilaiModul.findOne({ modulID, anakMagangID });
+
+        if (!nilaiModul) {
+            return res.status(404).json({ message: 'NilaiModul not found.' });
+        }
+
+        // Check if mentorID is already set
+        if (nilaiModul.mentorID) {
+            return res.status(400).json({ message: 'MentorID is already set and cannot be updated.' });
+        }
+
+        // Update the mentorID and increment the nilai
+        nilaiModul.mentorID = mentorID;
+        nilaiModul.nilai += incrementValue;
+
+        // Save the updated document
+        await nilaiModul.save();
+
+        return res.status(200).json({ message: 'NilaiModul updated successfully.', data: nilaiModul });
+    } catch (error) {
+        console.error('Error updating NilaiModul:', error);
+        return res.status(500).json({ message: 'An error occurred while updating NilaiModul.', error });
+    }
+});
 
 // router.get('/modul/:courseID', async (req, res) => {
 //   try {

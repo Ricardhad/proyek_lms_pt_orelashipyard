@@ -60,6 +60,97 @@ router.get('/:userID/Profile', async (req, res) => {
   });
 
 
+
+  router.get('/:userID/ProfileMaterials', async (req, res) => {
+    const { userID } = req.params;
+  
+    try {
+      // Find the user by userID
+      const user = await UserData.findById(userID);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Find the anakMagang record associated with the userID
+      const anakMagang = await AnakMagang.findOne({ userID: user._id });
+  
+      // Prepare course data if anakMagang exists
+      let courses = [];
+      if (anakMagang) {
+        courses = await Course.find({ _id: { $in: anakMagang.courseID } });
+      }
+  
+      // Find nilaiModul records associated with the anakMagang ID
+      let nilaiModuls = [];
+      if (anakMagang) {
+        nilaiModuls = await NilaiModul.find({ anakMagangID: anakMagang._id })
+          .populate({
+            path: 'modulID',
+            model: 'Modul',
+          })
+          .populate({
+            path: 'mentorID',
+            model: 'Mentor',
+            populate: {
+              path: 'userID',
+              model: 'UserData', // Populate userID inside MentorSchema
+            },
+          });
+      }
+  
+      // Log the populated data for debugging
+      console.log('Populated nilaiModuls:', nilaiModuls);
+  
+      // Prepare the response data
+      const responseData = {
+        user,
+        anakMagang: anakMagang || null, // Include anakMagang data if found, otherwise null
+        courses: courses || [], // Include courses if found, otherwise empty array
+        nilaiModuls: nilaiModuls || [], // Include nilaiModul data if found, otherwise empty array
+      };
+  
+      res.status(200).json(responseData);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while retrieving data' });
+    }
+  });
+  
+  
+
+  // router.get('/:userID/ProfileMaterials', async (req, res) => {
+  //   const { userID } = req.params;
+  
+  //   try {
+  //     // Find the user by userID
+  //     const user = await UserData.findById(userID);
+  //     if (!user) {
+  //       return res.status(404).json({ error: 'User not found' });
+  //     }
+  
+  //     // Find the anakMagang record associated with the userID
+  //     const anakMagang = await AnakMagang.findOne({ userID: user._id });
+  
+  //     // Prepare course data if anakMagang exists
+  //     let courses = [];
+  //     if (anakMagang) {
+  //       courses = await Course.find({ _id: { $in: anakMagang.courseID } }); // Access courseID from anakMagang instance
+  //     }
+  
+  //     // Prepare the response data
+  //     const responseData = {
+  //       user,
+  //       anakMagang: anakMagang || null, // Include anakMagang data if found, otherwise null
+  //       courses: courses || [], // Include courses if found, otherwise empty array
+  //     };
+  
+  //     res.status(200).json(responseData);
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ error: 'An error occurred while retrieving data' });
+  //   }
+  // });
+
 // Modify user and anakMagang information
 router.put("/:anakMagangId/ProfileEdit", async (req, res) => {
     const { anakMagangId } = req.params;
@@ -167,6 +258,10 @@ router.get('/modul/:courseID/getallmodul', async (req, res) => {
           path: 'absensiKelas.anakMagangID',
           model: 'AnakMagang',
         },
+      })
+      .populate({
+        path: 'mentorID',
+        model: 'UserData',
       })
       .exec();
 

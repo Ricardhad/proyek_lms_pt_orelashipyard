@@ -24,7 +24,7 @@ export default function Materials() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/anakMagang/${user.id}/Profile`); // Adjust the base URL if necessary
+        const response = await axios.get(`http://localhost:3000/api/anakMagang/${user.id}/ProfileMaterials`); // Adjust the base URL if necessary
         setUserData(response.data);
         console.log("profile",userData);
       } catch (err) {
@@ -111,7 +111,7 @@ export default function Materials() {
                         <Typography
                           key={index}
                           sx={{
-                            color: index < 14 ? 'success.main' : 'text.disabled',
+                            color: index < userData.anakMagang.absensiKelas.length ? 'success.main' : 'text.disabled',
                             fontSize: '24px',
                           }}
                         >
@@ -167,7 +167,7 @@ export default function Materials() {
 
         {/* Materials Section */}
         <Grid container spacing={2}>
-          {materials.map((material) => (
+          {userData.nilaiModuls.map((material) => (
             <Grid item xs={12} md={6} key={material.id}>
               <Card
                 sx={{
@@ -201,26 +201,26 @@ export default function Materials() {
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Avatar
-                        src="/placeholder.svg"
+                        src={material.mentorID.userID.Profile_Picture}
                         sx={{ width: 24, height: 24, mr: 1 }}
                       />
-                      <Typography variant="subtitle2">{material.mentor}</Typography>
+                      <Typography variant="subtitle2">{material.mentorID.userID.namaUser}</Typography>
                     </Box>
-                    {material.score && (
+                    {material.nilai && (
                       <Typography
                         variant="h6"
                         sx={{ ml: 'auto', fontWeight: 'bold' }}
                       >
-                        {material.score}
+                        {material.nilai}
                       </Typography>
                     )}
                   </Box>
                   <Typography variant="h6" gutterBottom>
                     {material.title}
                   </Typography>
-                  {material.deadline && (
+                  {material.modulID.Deadline && (
                     <Typography color="error.main" variant="caption" gutterBottom>
-                      Deadline {material.deadline}
+                      Deadline {material.modulID.Deadline}
                     </Typography>
                   )}
                   <Box sx={{ mt: 1 }}>

@@ -136,10 +136,10 @@ export default function Homework() {
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', mr: 'auto' }}>
                     <Avatar
-                      src="/placeholder.svg"
+                      src={modul.mentorID.Profile_Picture}
                       sx={{ width: 24, height: 24, mr: 1 }}
                     />
-                    <Typography variant="subtitle2">{modul.mentorID || 'Unknown Mentor'}</Typography>
+                    <Typography variant="subtitle2">{modul.mentorID.namaUser || 'Unknown Mentor'}</Typography>
                   </Box>
                 </Box>
 
