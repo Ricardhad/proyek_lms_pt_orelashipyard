@@ -632,9 +632,9 @@ router.post('/form', async (req, res) => {
                 model: 'UserData',
             });
 
-        if (!modulList || modulList.length === 0) {
-            return res.status(404).json({ message: 'No modul found for the given courseID' });
-        }
+        // if (!modulList || modulList.length === 0) {
+        //     return res.status(200).json({ message: 'No modul found for the given courseID' });
+        // }
 
         res.status(200).json({ modulList });
     } catch (error) {

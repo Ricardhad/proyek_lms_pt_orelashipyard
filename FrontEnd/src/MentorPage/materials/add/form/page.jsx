@@ -82,7 +82,7 @@ const EssayQuestion = ({ onDelete, number, onChange, questionData }) => {
   );
 };
 
-const MultipleChoiceQuestion = ({ onDelete, onChange, questionData }) => {
+const MultipleChoiceQuestion = ({ onDelete, onChange, questionData ,number}) => {
   const handleChange = (field, value) => {
     onChange({ ...questionData, [field]: value });
   };
@@ -109,7 +109,7 @@ const MultipleChoiceQuestion = ({ onDelete, onChange, questionData }) => {
       }}
     >
       <Typography variant="subtitle1" sx={{ mb: 2 }}>
-        Soal
+        Soal {number}
       </Typography>
       <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
         <TextField
@@ -407,6 +407,7 @@ export default function AddFormPage() {
           ) : (
             <MultipleChoiceQuestion
               key={question.id}
+              number={index + 1}
               onDelete={() => handleDeleteQuestion(question.id)}
               onChange={(updatedQuestion) => handleQuestionChange(question.id, updatedQuestion)}
               questionData={question}

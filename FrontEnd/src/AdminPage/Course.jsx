@@ -73,7 +73,7 @@ const Course = () => {
                 <h3 className="text-xl font-semibold mb-2">{course.namaCourse}</h3>
                 <p className="text-gray-600 text-sm mb-4">{course.Deskripsi}</p>
                 <div className="flex justify-between items-center">
-                  <span className="text-red-500 text-sm">Deadline: 12:30 pm</span>
+                  <span className="text-red-500 text-sm"></span>
                   <span className="px-3 py-1 bg-gray-200 rounded-full text-sm">
                     {course.type || "Materi"}
                   </span>

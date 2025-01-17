@@ -201,10 +201,10 @@ export default function Materials() {
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Avatar
-                        src={material.mentorID.userID.Profile_Picture}
+                        src={material.mentorID.userID.Profile_Picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"}
                         sx={{ width: 24, height: 24, mr: 1 }}
                       />
-                      <Typography variant="subtitle2">{material.mentorID.userID.namaUser}</Typography>
+                      <Typography variant="subtitle2">{material.mentorID.userID.namaUser|| "Mentor"}</Typography>
                     </Box>
                     {material.nilai && (
                       <Typography
