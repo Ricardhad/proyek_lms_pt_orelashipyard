@@ -10,6 +10,7 @@ import AddMentor from "./AdminPage/AddMentor";
 import Course from "./AdminPage/Course";
 import AddCourse from "./AdminPage/AddCourse";
 import AddAnnouncement from "./AdminPage/AddAnouncement";
+import EditMentor from "./AdminPage/EditMentor";
 
 
 // import MentorPage from "./MentorPage/MentorPage";
@@ -48,6 +49,10 @@ import MentorProfilePage from "./MentorPage/profile/page";
 
 import ProtectedRoute from './component/ProtectedRoute';
 
+
+
+
+
 function App() {
   return (
     <Router>
@@ -64,6 +69,7 @@ function App() {
         <Route path="/addcourse" element={<AddCourse />} />
         <Route path="/addannouncement" element={<AddAnnouncement />} />
         <Route path="/detail/:id" element={<DetailIntern />} />
+        <Route path="/editmentor/:id" element={<EditMentor />} />
 
         {/* <Route path="/homeMentor" element={<MentorPage />} />
         <Route path="/homeMentor/materials" element={<MaterialsPage />} />

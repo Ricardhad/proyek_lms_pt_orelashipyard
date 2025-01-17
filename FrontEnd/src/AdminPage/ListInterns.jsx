@@ -37,10 +37,11 @@ const ListInterns = () => {
     setFilteredInterns(filtered);
   };
 
-  // Fungsi untuk tombol Detail
   const handleDetail = (userId) => {
-    navigate(`/detail/${userId}`); // Navigasi ke halaman DetailIntern
+    console.log('Navigating to:', `/detail/${userId}`); // Debugging
+    navigate(`/detail/${userId}`);
   };
+  
 
   return (
     <div style={styles.container}>

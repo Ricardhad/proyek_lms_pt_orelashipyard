@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
-import axios from 'axios';
 import client from "../client"; // Koneksi backend (axios instance)
 
 export default function DetailIntern() {
@@ -14,7 +13,7 @@ export default function DetailIntern() {
   useEffect(() => {
     const fetchInternDetail = async () => {
       try {
-        const response = await client.get(`/api/admin/intern/${id}`); // Using the axios instance from client.js
+        const response = await client.get(`/api/admin/intern/${id}`); // Menggunakan axios instance dari client.js
         setInternDetail(response.data);
       } catch (err) {
         console.error(err);
@@ -46,9 +45,15 @@ export default function DetailIntern() {
       <div className="bg-white rounded-lg p-6 max-w-4xl mx-auto">
         <div className="flex flex-col items-center mb-6">
           <img
-            src={internDetail?.user?.Profile_Picture || '/placeholder.svg?height=200&width=200'} // Menambahkan fallback gambar profil
+            src={internDetail?.user?.Profile_Picture || "https://via.placeholder.com/30"}
             alt="Intern profile"
-            className="w-32 h-32 rounded-full mb-4"
+            style={{
+              width: "200px",
+              height: "200px",
+              borderRadius: "50%",
+              objectFit: "cover",
+            }}
+            className="mb-4"
           />
           <h2 className="text-xl font-bold">{internDetail?.user?.namaUser}</h2>
           <p className="text-gray-500">{internDetail?.user?.email}</p>
@@ -93,9 +98,14 @@ export default function DetailIntern() {
                 <div key={i} className="border rounded-lg p-4">
                   <div className="flex items-center gap-2 mb-2">
                     <img
-                      src={course.mentor?.Profile_Picture || '/placeholder.svg?height=40&width=40'} // Menambahkan gambar mentor dengan fallback
+                      src={course.mentor?.Profile_Picture || "https://via.placeholder.com/30"}
                       alt="Mentor profile"
-                      className="w-8 h-8 rounded-full"
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "50%",
+                        objectFit: "cover",
+                      }}
                     />
                     <div>
                       <p className="font-medium">{course.mentor?.namaUser}</p>
