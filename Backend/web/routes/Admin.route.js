@@ -144,20 +144,27 @@ router.put('/:userId/editUser', async (req, res) => {
   }
 });
 
-// Endpoint untuk mendapatkan detail intern
 router.get('/intern/:id', async (req, res) => {
   try {
     const internId = req.params.id;
 
+    // Pastikan ID valid
+    if (!mongoose.Types.ObjectId.isValid(internId)) {
+      return res.status(400).json({ message: 'Invalid ID format' });
+    }
+
+    // Konversi ke ObjectId
+    const internObjectId = new mongoose.Types.ObjectId(internId);
+
     // Ambil data user (Anak Magang)
-    const user = await UserData.findById(internId).select('namaUser Profile_Picture email noTelpon');
+    const user = await UserData.findById(internObjectId).select('namaUser Profile_Picture email noTelpon');
 
     if (!user) {
       return res.status(404).json({ message: 'Intern not found' });
     }
 
     // Cari course yang diikuti oleh intern
-    const courses = await Course.find({ daftarKelas: internId })
+    const courses = await Course.find({ daftarKelas: internObjectId })
       .populate({
         path: 'mentorID',
         select: 'userID',
@@ -169,7 +176,7 @@ router.get('/intern/:id', async (req, res) => {
       .select('namaCourse Deskripsi mentorID');
 
     // Cari absensi berdasarkan course yang diikuti
-    const absensi = await Absensi.find({ absensiKelas: internId })
+    const absensi = await Absensi.find({ absensiKelas: internObjectId })
       .populate('courseID', 'namaCourse')
       .select('tanggalAbsensi');
 
@@ -251,6 +258,41 @@ router.put("/:anakMagangId/anakMagang",verifyToken([0]), async (req, res) => {
   }
 });
 
+router.get('/mentors/:id', async (req, res) => {
+  try {
+    // Cari UserData berdasarkan ID
+    const userData = await UserData.findById(req.params.id);
+    if (!userData) {
+      return res.status(404).json({ message: 'UserData not found' });
+    }
+
+    // Pastikan user adalah mentor (roleType === 1)
+    if (userData.roleType !== 1) {
+      return res.status(403).json({ message: 'User is not a mentor' });
+    }
+
+    // Cari Mentor berdasarkan userID yang terhubung dengan UserData
+    const mentor = await Mentor.findOne({ userID: req.params.id })
+      .populate('courseID'); // Populasi data course yang diambil oleh mentor
+
+    if (!mentor) {
+      return res.status(404).json({ message: 'Mentor data not found' });
+    }
+
+    // Hapus password dari data UserData sebelum dikirim
+    const mentorResponse = mentor.toObject();
+    delete mentorResponse.userID.password; // Hapus password dari userID
+
+    // Kirimkan data mentor beserta course yang diambil dan data user tanpa password
+    res.status(200).json({ mentor: mentorResponse });
+  } catch (error) {
+    console.error('Error fetching mentor data:', error);
+    res.status(500).json({ message: 'Error fetching mentor data', error });
+  }
+});
+
+
+
 
 router.put("/:MentorId/Mentor",verifyToken([0]), async (req, res) => {
   const { MentorId } = req.params;
@@ -276,6 +318,97 @@ router.put("/:MentorId/Mentor",verifyToken([0]), async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "An error occurred while updating the mentor" });
+  }
+});
+
+// Endpoint untuk edit mentor dan data user
+router.put("/mentor/:id", async (req, res) => {
+  const { id } = req.params; // ID mentor (sebenarnya ini adalah userID dari UserData)
+  const { courseIDs, namaUser, password, noTelpon, Profile_Picture } = req.body;
+
+  try {
+    // Cari user berdasarkan ID (ini adalah userID, bukan mentorID)
+    const user = await UserData.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Cari mentor berdasarkan userID yang terkait dengan UserData
+    const mentor = await Mentor.findOne({ userID: id });
+    if (!mentor) {
+      return res.status(404).json({ message: "Mentor not found" });
+    }
+
+    // Update daftar course untuk mentor
+    if (courseIDs) {
+      // Pastikan courseIDs valid, hanya satu course yang diperbolehkan
+      const course = await Course.findById(courseIDs);
+      if (!course) {
+        return res.status(400).json({ message: "Invalid courseID" });
+      }
+
+      // Update courseID pada mentor
+      mentor.courseID = course._id;
+      await mentor.save();
+
+      // Update setiap course dengan mentorID baru
+      await Course.updateMany(
+        { mentorID: mentor._id },
+        { $pull: { mentorID: mentor._id } } // Hapus mentor dari course sebelumnya
+      );
+      await Course.updateMany(
+        { _id: course._id },
+        { $addToSet: { mentorID: mentor._id } } // Tambahkan mentor ke course baru
+      );
+    }
+
+    // Update data user (untuk user yang terkait dengan mentor)
+    if (namaUser) user.namaUser = namaUser;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+    if (noTelpon) user.noTelpon = noTelpon;
+    if (Profile_Picture !== undefined) user.Profile_Picture = Profile_Picture;
+
+    await user.save();
+
+    // Respons data mentor yang telah diperbarui
+    return res.status(200).json({
+      message: "Mentor updated successfully",
+      mentor: {
+        ...mentor.toObject(),
+        userData: {
+          namaUser: user.namaUser,
+          Profile_Picture: user.Profile_Picture,
+          noTelpon: user.noTelpon,
+          email: user.email,
+        },
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+
+// Endpoint untuk mengambil semua data UserData dengan roleType 1 (mentor)
+router.get('/mentors', async (req, res) => {
+  try {
+    // Cari semua user dengan roleType 1 (mentor)
+    const mentors = await UserData.find({ roleType: 1 });
+
+    // Jika tidak ada mentor ditemukan
+    if (mentors.length === 0) {
+      return res.status(404).json({ message: 'No mentors found.' });
+    }
+
+    // Kirimkan data mentor yang ditemukan
+    res.status(200).json({ mentors });
+  } catch (error) {
+    console.error('Error fetching mentors:', error);
+    res.status(500).json({ message: 'Error fetching mentors.', error });
   }
 });
 
@@ -442,24 +575,7 @@ router.get("/anakMagang",verifyToken([0]), async (req, res) => {
 
 
 
-// Endpoint untuk mengambil semua data UserData dengan roleType 1 (mentor)
-router.get('/mentors', async (req, res) => {
-  try {
-    // Cari semua user dengan roleType 1 (mentor)
-    const mentors = await UserData.find({ roleType: 1 });
 
-    // Jika tidak ada mentor ditemukan
-    if (mentors.length === 0) {
-      return res.status(404).json({ message: 'No mentors found.' });
-    }
-
-    // Kirimkan data mentor yang ditemukan
-    res.status(200).json({ mentors });
-  } catch (error) {
-    console.error('Error fetching mentors:', error);
-    res.status(500).json({ message: 'Error fetching mentors.', error });
-  }
-});
 
 
 

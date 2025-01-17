@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Edit, Info } from 'lucide-react';
-import client from "../client"; // Koneksi backend (axios instance)
+import client from '../client'; // Koneksi backend (axios instance)
 
 const Mentor = () => {
   const [mentors, setMentors] = useState([]);
@@ -20,10 +20,9 @@ const Mentor = () => {
         setLoading(false);
       }
     };
-  
+
     fetchMentors();
   }, []);
-  
 
   if (loading) {
     return <div className="text-center text-gray-500">Loading...</div>;

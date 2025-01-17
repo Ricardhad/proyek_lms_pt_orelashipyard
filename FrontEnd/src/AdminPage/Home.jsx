@@ -78,7 +78,7 @@ const Home = () => {
       <aside className="w-64 bg-white shadow-md fixed top-0 left-0 h-full z-10">
         <div className="p-4">
           <img 
-            src="/placeholder.svg?height=80&width=80" 
+            src="https://via.placeholder.com/30" 
             alt="Logo" 
             className="w-20 h-20 rounded-full mb-4"
           />
