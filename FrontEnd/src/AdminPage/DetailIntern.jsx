@@ -66,7 +66,7 @@ export default function DetailIntern() {
             </div>
             <div>
               <p className="text-gray-500">NRP</p>
-              <p>{internDetail?.user?._id}</p>
+              <p>222117054</p>{internDetail?.user?._id}
             </div>
           </div>
         </div>
