@@ -7,13 +7,14 @@ const socketIo = require('socket.io');
 const api = require('./routes/index'); // Import your API routes
  require('dotenv').config();
 const DBURL = process.env.MONGODB_URI
+const FrontEndCors = process.env.CORS_ORIGIN
 // Initialize Express app and HTTP server
 const app = express();
 const server = http.createServer(app);
 
 const port = 3000;
 const corsOptions = {
-  origin: 'http://localhost:5173', // Allow frontend origin
+  origin: FrontEndCors, // Allow frontend origin
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
   allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers, tambahkan Authorization
 };
