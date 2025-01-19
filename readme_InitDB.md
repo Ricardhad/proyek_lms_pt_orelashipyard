@@ -17,6 +17,7 @@ nanti ngecek versinya
 
 4. untuk importnya nanti tinggal kasih command : 
 mongorestore --gzip --archive=projectFPW.gz --db projectFPW
+mongorestore --gzip --archive=projectFPW.gz --uri="mongodb+srv://richardhad2004:fb4g7ZvCr0jOaCY8@clusterprojectfpw.cchpw.mongodb.net/" --nsInclude="projectFPW.*"
 
 optional
 5. mongodump --archive=projectFPW.gz --gzip --db projectFPW ini untuk ngedump nya (export nya )
