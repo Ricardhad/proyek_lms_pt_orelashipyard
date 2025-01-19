@@ -15,8 +15,8 @@ import {
   Checkbox,
 } from '@mui/material';
 import Layout from '../../../components/layout';
-import { Image } from '@mui/icons-material';
-import axios from 'axios';
+
+import client from '../../../../client';
 
 const MaterialAttendance = () => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ const MaterialAttendance = () => {
   useEffect(() => {
     const fetchAttendanceData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/anakMagang/modul/${id}/getAttendanceModule`);
+        const response = await client.get(`api/anakMagang/modul/${id}/getAttendanceModule`);
         setModulData(response.data);
         setAttendanceData(response.data.absensiID?.absensiKelas || []);
       } catch (err) {

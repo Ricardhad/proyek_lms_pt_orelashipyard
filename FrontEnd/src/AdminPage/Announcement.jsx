@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../client"; // Pastikan ini mengarah ke instance Axios Anda
 import client from "../client"; // Koneksi backend (axios instance)
 
 const Announcement = () => {

@@ -19,12 +19,10 @@ import {
   Notifications,
   Edit,
 } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
-import { MessageCircle, BellRing } from 'lucide-react';
 import { Link,useLocation,useNavigate} from 'react-router-dom'; // Changed to react-router-dom
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import client from '../../client'
 
 
 const menuItems = [
@@ -49,7 +47,7 @@ export default function Layout({ children }) {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/Mentor/${user.id}/Profile`); // Adjust the base URL if necessary
+        const response = await client.get(`api/Mentor/${user.id}/Profile`); // Adjust the base URL if necessary
         console.log(response.data);
         setUserData(response.data);
       } catch (err) {

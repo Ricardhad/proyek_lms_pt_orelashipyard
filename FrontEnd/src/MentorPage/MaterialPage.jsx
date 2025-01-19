@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, CardContent, Typography, TextField, Box, CircularProgress } from '@mui/material';
 import Sidebar from './Sidebar';    
-import axios from 'axios';
+import client from '../client';
 
 const MaterialPage = () => {
   const [materials, setMaterials] = useState([]); // Ensure materials is initialized as an empty array
@@ -13,7 +13,7 @@ const MaterialPage = () => {
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
-        const response = await axios.get('/api/Mentor/Modul', {
+        const response = await client.get('/api/Mentor/Modul', {
           params: {
             filter: searchTerm, // Add your query parameter here
           },

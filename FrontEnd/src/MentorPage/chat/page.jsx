@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import io from 'socket.io-client';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import client from '../../client';
 
 const MotionBox = motion.create(Box);
 
@@ -25,12 +25,13 @@ export default function ChatPage() {
       message: ''
     }
   });
-
+  const baseURL = client.defaults.baseURL || 'http://localhost:3000'; // Fallback to a default URL if baseURL isn't set
+  const frontEndBaseURL= process.env.REACT_APP_FRONT_END_BASE_URL || 'http://localhost:5173';
   // Initialize socket connection
   useEffect(() => {
-    const newSocket = io('http://localhost:3000', {
+    const newSocket = io(baseURL, {
       cors: {
-        origin: 'http://localhost:5173',
+        origin: frontEndBaseURL,
         methods: ['GET', 'POST'],
         credentials: true
       },
@@ -62,7 +63,7 @@ export default function ChatPage() {
     const fetchData = async () => {
       try {
         // Fetch user profile data
-        const userResponse = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`);
+        const userResponse = await client.get(`api/mentor/${user.id}/Profile`);
         console
         if (!userResponse.data.courses?.length) {
           throw new Error('No courses found');
@@ -72,7 +73,7 @@ export default function ChatPage() {
         setUserData(courseId);
 
         // Fetch chat messages for the course
-        const messagesResponse = await axios.get(`http://localhost:3000/api/chat/${courseId}`);
+        const messagesResponse = await client.get(`api/chat/${courseId}`);
         console.log("messagesResponse",messagesResponse.data);
         const formattedMessages = messagesResponse.data.chats.map(msg => ({
           id: msg._id,
@@ -126,7 +127,7 @@ export default function ChatPage() {
         chatDate: new Date()
       };
 
-      const response = await axios.post('http://localhost:3000/api/chat', messageData);
+      const response = await client.post('api/chat', messageData);
       reset();
     } catch (err) {
       console.error('Error sending message:', err);

@@ -5,6 +5,7 @@ const cors = require('cors');
 const http = require('http');
 const socketIo = require('socket.io');
 const api = require('./routes/index'); // Import your API routes
+require('dotenv').config();
 
 // Initialize Express app and HTTP server
 const app = express();

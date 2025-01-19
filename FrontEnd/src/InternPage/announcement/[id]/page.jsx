@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import Layout from '../../components/layout';
-import axios from 'axios';
+import client from '../../../client';
 
 const MotionPaper = motion.create(Paper);
 
@@ -32,7 +32,7 @@ export default function ViewAnnouncementPage() {
   useEffect(() => {
     const loadAnnouncement = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/announcement/${params.id}/singleAnnouncement`);
+        const response = await client.get(`api/announcement/${params.id}/singleAnnouncement`);
         setAnnouncement(response.data.data);
         console.log('Announcement fetched:', response.data);
       } catch (err) {

@@ -16,12 +16,10 @@ import {
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { use } from 'react';
+import client from '../../client';
 
 
 const MotionPaper = motion.create(Paper);
-const MotionFab = motion.create(Fab);
 
 const initialAnnouncements = [
   {
@@ -40,7 +38,7 @@ export default function Announcements() {
   // Fetch announcements from the API
   const fetchAnnouncements = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/announcement/allAnnouncement?title=${searchQuery}`);
+      const response = await client.get(`api/announcement/allAnnouncement?title=${searchQuery}`);
       setAnnouncements(response.data.data);
       console.log('Announcements fetched:', response.data);
     } catch (error) {

@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import Layout from '../../../components/layout';
 import { Image } from '@mui/icons-material';
-import axios from 'axios';
+import client from '../../../../client';
 
 const CheckAttendancePage = () => {
   const { id } = useParams(); // Get the modulId from the URL
@@ -22,7 +22,7 @@ const CheckAttendancePage = () => {
     const fetchAttendanceData = async () => {
       try {
         // Call the API endpoint to get attendance data based on modulId
-        const response = await axios.get(`http://localhost:3000/api/mentor/${id}/attendance`);
+        const response = await client.get(`api/mentor/${id}/attendance`);
         console.log('Response received:', response.data);
         setAttendanceData(response.data); // Update state with fetched data
         setLoading(false);

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, TextField, Button, Radio, RadioGroup } from '@mui/material';
 import Layout from '../../../../components/layout';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import client from '../../../../../client';
 
 const EssayQuestion = ({ number, questionText, answer, score, setScore }) => (
   <Paper
@@ -154,7 +154,7 @@ export default function InternFormCheckPage() {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/mentor/jawaban-modul/${id}/${internId}`);
+        const response = await client.get(`api/mentor/jawaban-modul/${id}/${internId}`);
         console.log('Response question received:', response.data);
         const fetchedQuestions = response.data.data.map((jawaban) => {
           const soalType = jawaban.soalModulID.SoalType;
@@ -200,9 +200,9 @@ export default function InternFormCheckPage() {
   };
   const handleSubmit = async () => {
     try {
-      const responseprofile = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`); // Adjust the base URL if necessary
+      const responseprofile = await client.get(`api/mentor/${user.id}/Profile`); // Adjust the base URL if necessary
         console.log("profile check",responseprofile.data.mentor._id);
-      const response = await axios.put(`http://localhost:3000/api/mentor/${id}/${internId}/submit-check`, {
+      const response = await client.put(`api/mentor/${id}/${internId}/submit-check`, {
         mentorID: responseprofile.data.mentor._id,
         incrementValue: scores,
       });

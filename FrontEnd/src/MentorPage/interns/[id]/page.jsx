@@ -6,7 +6,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Add this import
 import { IconButton } from '@mui/material';
 import Layout from '../../components/layout'
 import { motion, AnimatePresence } from 'framer-motion'
-import axios from 'axios'
+import client from '../../../client'
 
 // Mock data for the intern
 const internData = {
@@ -45,7 +45,7 @@ export default function InternDetailPage() {
     const fetchAnakMagang = async () => {
       try {
         console.log('Fetching data for ID:', id);
-        const response = await axios.get(`http://localhost:3000/api/mentor/${id}/anakMagangProfile`);
+        const response = await client.get(`api/mentor/${id}/anakMagangProfile`);
         console.log('Response received:', response.data);
         setAnakMagang(response.data);
         setLoading(false);

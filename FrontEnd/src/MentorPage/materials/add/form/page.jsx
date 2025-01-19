@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/layout';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMaterial, setGambar, clearMaterial } from '../../../../redux/materialSlice';
-import axios from 'axios';
+import client from '../../../../client';
 
 // Question type components
 const EssayQuestion = ({ onDelete, number, onChange, questionData }) => {
@@ -245,7 +245,7 @@ export default function AddFormPage() {
       const { courseID, mentorID, imagePreview, namaModul, Deskripsi, Deadline } = material;
   
       // Step 1: Create the module
-      const modulResponse = await axios.post('http://localhost:3000/api/mentor/createmodul', {
+      const modulResponse = await client.post('api/mentor/createmodul', {
         courseID, // Assuming you have courseID in the material state
         mentorID: user.id, // Use the logged-in user's ID as the mentor ID
         gambar: imagePreview, // Use the image preview URL
@@ -260,7 +260,7 @@ export default function AddFormPage() {
       const modulID = modulResponse.data.modul._id;
   
       // Step 2: Add questions to the module
-      const questionsResponse = await axios.post('http://localhost:3000/api/mentor/addquestions', {
+      const questionsResponse = await client.post('api/mentor/addquestions', {
         modulID,
         questions: questions.map((q) => ({
           question: q.question,

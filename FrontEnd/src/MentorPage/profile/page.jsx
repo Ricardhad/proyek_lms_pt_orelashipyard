@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Avatar, Grid2 as Grid } from '@mui/material'
 import Layout from '../components/layout'
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import client from '../../client';
 
 export default function ProfilePage() {
   const token = localStorage.getItem("token");
@@ -15,7 +15,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`); // Adjust the base URL if necessary
+        const response = await client.get(`api/mentor/${user.id}/Profile`); // Adjust the base URL if necessary
         console.log("profile",response.data);
         setUserData(response.data);
       } catch (err) {

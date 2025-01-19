@@ -13,7 +13,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import client from '../../client'
 
 const Input = styled('input')({
   display: 'none',
@@ -38,7 +38,7 @@ export default function EditProfile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/anakMagang/${user.id}/Profile`);
+        const response = await client.get(`api/anakMagang/${user.id}/Profile`);
         setUserData(response.data);
         console.log("edit profile",response.data);
         // console.log("edit profile",userData.data);
@@ -88,7 +88,7 @@ export default function EditProfile() {
     e.preventDefault();
     
     try {
-      const response = await axios.put(`http://localhost:3000/api/anakMagang/${userData.anakMagang._id}/ProfileEdit`, {
+      const response = await client.put(`api/anakMagang/${userData.anakMagang._id}/ProfileEdit`, {
         namaUser: profileData.name,
         email: profileData.email,
         noTelpon: profileData.noWa,

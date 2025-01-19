@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import client from '../../../../client';
 import Layout from '../../../components/layout';
 import {
   Box,
@@ -30,7 +30,7 @@ export default function MaterialForm() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/anakMagang/${user.id}/Profile`);
+        const response = await client.get(`api/anakMagang/${user.id}/Profile`);
         setUserData(response.data);
       } catch (err) {
         setError(err.response?.data?.error || 'An error occurred while fetching user profile');
@@ -39,7 +39,7 @@ export default function MaterialForm() {
 
     const fetchModulData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/anakMagang/modul/${id}/getformmodule`);
+        const response = await client.get(`api/anakMagang/modul/${id}/getformmodule`);
         setModulData(response.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Failed to fetch modul data');
@@ -91,7 +91,7 @@ export default function MaterialForm() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:3000/api/anakMagang/submit-answers', {
+      const response = await client.post('api/anakMagang/submit-answers', {
         courseID: modulData?.courseID,
         modulID: modulData?._id,
         anakMagangID: userData?.anakMagang._id,

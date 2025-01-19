@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import Layout from '../components/layout';
 import { useSelector,useDispatch } from 'react-redux';
-import axios from 'axios';// Import useDispatch
+import client from '../../client';// Import useDispatch
 import { setUser } from "../../redux/authSlice"; // Import the setUser action
 import * as jwtdecode from 'jwt-decode';// Default import
 export default function Profile() {
@@ -23,7 +23,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/anakMagang/${user.id}/Profile`); // Adjust the base URL if necessary
+        const response = await client.get(`api/anakMagang/${user.id}/Profile`); // Adjust the base URL if necessary
         setUserData(response.data);
         console.log("profile",userData);
       } catch (err) {

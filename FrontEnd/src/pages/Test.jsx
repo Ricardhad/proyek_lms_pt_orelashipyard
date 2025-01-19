@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import client from "../client";
 
 const Test = () => {
   const [formData, setFormData] = useState({
@@ -30,7 +30,7 @@ const Test = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:3000/api/user/register", {
+      const response = await client.post("api/user/register", {
         namaUser,
         Profile_Picture: Profile_Picture || null,
         roleType: parseInt(roleType, 10),

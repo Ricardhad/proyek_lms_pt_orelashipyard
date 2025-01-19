@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import client from '../../client';
 
 export default function Homework() {
   const user = useSelector((state) => state.auth.user);
@@ -27,7 +27,7 @@ export default function Homework() {
     const fetchUserData = async () => {
       try {
         // Fetch user profile data
-        const response = await axios.get(`http://localhost:3000/api/anakMagang/${user.id}/Profile`);
+        const response = await client.get(`api/anakMagang/${user.id}/Profile`);
         const profileData = response.data;
 
         if (profileData?.courses?.length > 0) {
@@ -37,8 +37,8 @@ export default function Homework() {
           const firstCourseId = profileData.courses[0]._id;
 
           try {
-            const modulResponse = await axios.get(
-              `http://localhost:3000/api/anakMagang/modul/${firstCourseId}/getallmodul`
+            const modulResponse = await client.get(
+              `api/anakMagang/modul/${firstCourseId}/getallmodul`
             );
             const modulData = modulResponse.data.modulList;
 

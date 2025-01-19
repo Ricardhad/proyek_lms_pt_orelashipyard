@@ -11,7 +11,7 @@ import {
   Grid2 as Grid,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import client from '../../client'
 // import Grid from '@mui/material/Unstable_Grid2';
 export default function Materials() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export default function Materials() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/anakMagang/${user.id}/ProfileMaterials`); // Adjust the base URL if necessary
+        const response = await client.get(`api/anakMagang/${user.id}/ProfileMaterials`); // Adjust the base URL if necessary
         setUserData(response.data);
         console.log("profile",userData);
       } catch (err) {

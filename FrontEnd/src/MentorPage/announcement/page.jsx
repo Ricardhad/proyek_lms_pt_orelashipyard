@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Import Axios
+import client from '../../client';
 import {
   Box,
   Typography,
@@ -39,7 +39,7 @@ export default function AnnouncementPage() {
   // Fetch announcements from the API
   const fetchAnnouncements = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/announcement/allAnnouncement?title=${searchQuery}`);
+      const response = await client.get(`api/announcement/allAnnouncement?title=${searchQuery}`);
       setAnnouncements(response.data.data);
       console.log('Announcements fetched:', response.data);
     } catch (error) {
@@ -58,7 +58,7 @@ export default function AnnouncementPage() {
     const confirmed = window.confirm('Are you sure you want to delete this announcement?');
     if (confirmed) {
       try {
-        await axios.delete(`http://localhost:3000/api/announcement/${id}/deleteAnnouncement`);
+        await client.delete(`api/announcement/${id}/deleteAnnouncement`);
         setAnnouncements(prevAnnouncements => prevAnnouncements.filter(announcement => announcement._id !== id));
         alert('Announcement deleted successfully');
       } catch (error) {

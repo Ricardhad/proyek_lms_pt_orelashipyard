@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography, Paper } from '@mui/material';
 import { motion } from 'framer-motion';
 import Layout from '../../../components/layout';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import client from '../../../../client';
 
 const MotionPaper = motion.create(Paper);
 
@@ -18,7 +18,7 @@ export default function EditAnnouncementPage() {
   useEffect(() => {
     const fetchAnnouncementData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/announcement/${id}/singleAnnouncement`);
+        const response = await client.get(`api/announcement/${id}/singleAnnouncement`);
         setAnnouncement(response.data.data);
         console.log('Announcement fetched:', response.data);
       } catch (err) {
@@ -43,8 +43,8 @@ export default function EditAnnouncementPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(
-        `http://localhost:3000/api/announcement/${id}/editAnnouncement`,
+      const response = await client.put(
+        `api/announcement/${id}/editAnnouncement`,
         announcement
       );
       console.log('Announcement updated:', response.data);

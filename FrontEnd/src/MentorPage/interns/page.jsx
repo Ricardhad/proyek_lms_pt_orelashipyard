@@ -6,7 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import client from '../../client';
 import Layout from '../components/layout';
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -50,7 +50,7 @@ export default function InternsPage() {
   useEffect(() => {
     const fetchInterns = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`);
+        const response = await client.get(`api/mentor/${user.id}/Profile`);
         console.log("Mentor Profile Response:", response.data);
 
         if (response.data.mentor.courseID && response.data.mentor.courseID.length > 0) {
@@ -62,7 +62,7 @@ export default function InternsPage() {
             params.namaUser = searchQuery; // Include the search query as a query parameter
           }
 
-          const response2 = await axios.get(`http://localhost:3000/api/Mentor/${courseID}/AnakMagang`, {
+          const response2 = await client.get(`api/Mentor/${courseID}/AnakMagang`, {
             params: { namaUser: searchQuery }
           });
           console.log("AnakMagang Response:", response2.data);

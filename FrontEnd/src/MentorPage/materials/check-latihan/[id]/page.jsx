@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar } from '@mui/material';
 import Layout from '../../../components/layout';
 import { Image } from '@mui/icons-material';
-import axios from 'axios';
+import client from '../../../../client';
 
 export default function CheckLatihanPage() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function CheckLatihanPage() {
   useEffect(() => {
     const fetchInterns = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/mentor/nilai-modul/${id}`);
+        const response = await client.get(`api/mentor/nilai-modul/${id}`);
         console.log('Interns nilai Data:', response.data);
         setDetailModuls(response.data.modulDetails);
 

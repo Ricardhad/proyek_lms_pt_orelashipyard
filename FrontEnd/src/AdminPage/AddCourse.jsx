@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../client"; // Koneksi backend
 import client from '../client'; // Importing the axios instance from client.js
 
 const handleDelete = async (announcementId) => {

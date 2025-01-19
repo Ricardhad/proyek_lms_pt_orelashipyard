@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Edit, Info } from 'lucide-react';
 import client from '../client'; // Koneksi backend (axios instance)

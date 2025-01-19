@@ -17,7 +17,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { Image, Add } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
-import axios from 'axios';
+import client from '../../../../client';
 import Layout from '../../../components/layout';
 import { setMaterial } from '../../../../redux/materialSlice'; // Import the action
 
@@ -34,12 +34,12 @@ export default function AttendancePage() {
     const fetchInterns = async () => {
       try {
         // Fetch mentor profile to get courseID
-        const mentorResponse = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`);
+        const mentorResponse = await client.get(`api/mentor/${user.id}/Profile`);
         const courseID = mentorResponse.data.mentor.courseID[0];
 
         // Fetch interns for the course
         const params = searchQuery ? { namaUser: searchQuery } : {};
-        const internsResponse = await axios.get(`http://localhost:3000/api/Mentor/${courseID}/AnakMagang`, { params });
+        const internsResponse = await client.get(`api/Mentor/${courseID}/AnakMagang`, { params });
 
         // Format interns data
         const formattedInterns = internsResponse.data.anakMagang.map((intern) => ({
@@ -97,7 +97,7 @@ export default function AttendancePage() {
   //     };
 
   //     // Call the API to submit attendance
-  //     const response = await axios.post('http://localhost:3000/api/mentor/attendance', interns);
+  //     const response = await client.post('api/mentor/attendance', interns);
 
   //     console.log('Attendance submitted successfully:', response.data);
   //     alert('Attendance submitted successfully!');
@@ -128,7 +128,7 @@ export default function AttendancePage() {
       console.log('Modul Data:', modulData);
   
       // Call the API to create a new module
-      const response = await axios.post('http://localhost:3000/api/mentor/createmodul', modulData);
+      const response = await client.post('api/mentor/createmodul', modulData);
   
       console.log('Module created successfully:', response.data);
       alert('Module created successfully!');
@@ -146,7 +146,7 @@ export default function AttendancePage() {
       console.log('Submitting attendance with data:', attendanceData);
   
       // Call the API to submit attendance
-      const responseAttendance = await axios.post('http://localhost:3000/api/mentor/materials/attendance', attendanceData);
+      const responseAttendance = await client.post('api/mentor/materials/attendance', attendanceData);
   
       console.log('Attendance submitted successfully:', responseAttendance.data);
       alert('Attendance submitted successfully!');

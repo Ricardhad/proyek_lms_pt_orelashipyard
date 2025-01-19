@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import client from '../client'
 import * as jwtdecode from 'jwt-decode';
 
 const Login = () => {
@@ -22,7 +22,7 @@ const Login = () => {
     setLoading(true);
   
     try {
-      const response = await axios.post("http://localhost:3000/api/user/login", {
+      const response = await client.post("api/user/login", {
         email,
         password,
       });

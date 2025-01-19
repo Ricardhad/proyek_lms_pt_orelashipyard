@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Layout from '../../components/layout';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import client from '../../../client';
 
 const MotionPaper = motion.create(Paper);
 
@@ -40,7 +40,7 @@ export default function CreateAnnouncementPage() {
     });
   
     try {
-      const response = await axios.post('http://localhost:3000/api/announcement/createannouncement', formData, {
+      const response = await client.post('api/announcement/createannouncement', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

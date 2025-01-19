@@ -5,7 +5,7 @@ import { Image, Description, Add, Person } from '@mui/icons-material';
 import Layout from '../../components/layout';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMaterial, setGambar, clearMaterial, selectMaterial } from '../../../redux/materialSlice';
-import axios from 'axios';
+import client from '../../../client';
 
 
 export default function AddMaterialPage() {
@@ -22,7 +22,7 @@ export default function AddMaterialPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`); // Adjust the base URL if necessary
+        const response = await client.get(`api/mentor/${user.id}/Profile`); // Adjust the base URL if necessary
         // console.log("profile response",response.data);
         setUserData(response.data);
       } catch (err) {

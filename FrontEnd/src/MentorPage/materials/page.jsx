@@ -8,7 +8,7 @@ import Layout from '../components/layout';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import client from '../../client';
 
 const MotionGrid = motion(Grid);
 const MotionCard = motion(Card);
@@ -26,7 +26,7 @@ export default function MaterialsPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/mentor/${user.id}/Profile`);
+        const response = await client.get(`api/mentor/${user.id}/Profile`);
         console.log('Profile:', response.data);
         setUserData(response.data);
       } catch (err) {
@@ -45,7 +45,7 @@ export default function MaterialsPage() {
       const fetchModulData = async () => {
         try {
           const courseID = userData.mentor.courseID[0];
-          const response = await axios.get(`http://localhost:3000/api/mentor/modul/${courseID}`);
+          const response = await client.get(`api/mentor/modul/${courseID}`);
           console.log('Modul Data:', response.data.modulList);
           setModulList(response.data.modulList); // Set the fetched modul data
         } catch (err) {
