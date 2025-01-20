@@ -3,3 +3,4 @@ node_modules
 /Backend/web/node_modules
 /Frontend/node_modules
 
+Backend/web/.env
