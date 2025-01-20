@@ -11,6 +11,7 @@ const FrontEndCors = process.env.CORS_ORIGIN
 // Initialize Express app and HTTP server
 const app = express();
 const server = http.createServer(app);
+console.log(FrontEndCors)
 
 const port = 3000;
 const corsOptions = {
