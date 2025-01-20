@@ -7,26 +7,22 @@ const socketIo = require('socket.io');
 const api = require('./routes/index'); // Import your API routes
  require('dotenv').config();
 const DBURL = process.env.MONGODB_URI
-// const FrontEndCors = process.env.CORS_ORIGIN
-// Initialize Express app and HTTP server
 const app = express();
 const server = http.createServer(app);
-// console.log(FrontEndCors)
-const allowedOrigins = process.env.CORS_ORIGIN.split(',');
+const allowedOrigins = process.env.CORS_ORIGIN;
 const port = 3000;
 
-console.log(allowedOrigins[0])
+// console.log(allowedOrigins[0])
 const corsOptions = {
   origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin)) {
-      console.log(origin)
-      callback(null, true);
+    if (origin === undefined || allowedOrigins.includes(origin)) {
+      callback(null, true);  // Allow the request if there's no origin or it's in the allowed list
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Origin'],
 };
 
 app.use(cors(corsOptions));
