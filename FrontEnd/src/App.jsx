@@ -59,16 +59,16 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/test" element={<Test />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/home" element={<ProtectedRoute  element={Home}requiredRole={0}/>}/>
         <Route path="/listinterns" element={<ListInterns />} />
-        <Route path="/edit/:userId" element={<EditUser />} />
-        <Route path="/addmentor" element={<AddMentor />} />
-        <Route path="/course" element={<Course />} />
-        <Route path="/addcourse" element={<AddCourse />} />
-        <Route path="/addannouncement" element={<AddAnnouncement />} />
-        <Route path="/detail/:id" element={<DetailIntern />} />
-        <Route path="/editmentor/:id" element={<EditMentor />} />
-        <Route path="/detailmentor/:id" element={<DetailMentor />} />
+        <Route path="/edit/:userId" element={<ProtectedRoute  element={EditUser}requiredRole={0}/>} />
+        <Route path="/addmentor" element={<ProtectedRoute  element={AddMentor} requiredRole={0}/>} />
+        <Route path="/course" element={<ProtectedRoute  element={Course} requiredRole={0}/>} />
+        <Route path="/addcourse" element={<ProtectedRoute  element={AddCourse} requiredRole={0}/>} />
+        <Route path="/addannouncement" element={<ProtectedRoute  element={AddAnnouncement} requiredRole={0}/>} />
+        <Route path="/detail/:id" element={<ProtectedRoute  element={DetailIntern} requiredRole={0}/>}  />
+        <Route path="/editmentor/:id" element={<ProtectedRoute  element={EditMentor} requiredRole={0}/>} />
+        <Route path="/detailmentor/:id" element={<ProtectedRoute  element={DetailMentor} requiredRole={0}/>} />
         <Route path="/popup" element={<PopUp />} />
 
         
