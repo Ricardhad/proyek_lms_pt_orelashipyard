@@ -37,7 +37,7 @@
       },
       {
         "source": "/api/test",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/test"
+        "destination": "./index.js"
       }
     ]
   }
