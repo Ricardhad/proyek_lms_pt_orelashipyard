@@ -32,9 +32,9 @@ app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
 
 // Simple route to test server
-app.use("/", (req, res) => {
-  res.send("server is running");
-});
+// app.use("/", (req, res) => {
+//   res.send("server is running");
+// });
 
 // Mount API Routes
 app.use('/api', api);
