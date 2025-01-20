@@ -6,38 +6,10 @@
         "use": "@vercel/node"
       }
     ],
-    "rewrites": [
+    "routes": [
       {
-        "source": "/api/user/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/user/:path*"
-      },
-      {
-        "source": "/api/anakmagang/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/anakmagang/:path*"
-      },
-      {
-        "source": "/api/admin/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/admin/:path*"
-      },
-      {
-        "source": "/api/mentor/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/mentor/:path*"
-      },
-      {
-        "source": "/api/modul/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/modul/:path*"
-      },
-      {
-        "source": "/api/announcement/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/announcement/:path*"
-      },
-      {
-        "source": "/api/chat/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/chat/:path*"
-      },
-      {
-        "source": "/api/test",
-        "destination": "./index.js"
+        "source": "/(.*)",
+        "destination": "/"
       }
     ]
   }
