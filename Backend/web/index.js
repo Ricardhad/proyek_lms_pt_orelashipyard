@@ -26,6 +26,18 @@ app.get('/api/test', (req, res) => {
   res.json({ message: "Test route" });
 });
 
+app.get('/api/db', (req, res) => {
+  mongoose.connection.on('connected', () => {
+    console.log('MongoDB connected successfully');
+    res.json({ message: "Database connected" });
+  });
+
+  // If already connected, you can send the response immediately
+  if (mongoose.connection.readyState === 1) {
+    return res.json({ message: "Database connected" });
+  }
+});
+
 // Mount API Routes
 app.use('/api', api); // Now correctly points to routes/index.js
 
