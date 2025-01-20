@@ -35,7 +35,9 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bo
 // app.use("/", (req, res) => {
 //   res.send("server is running");
 // });
-
+app.get('/api/test', (req, res) => {
+  res.json({ message: "Test route" });
+});
 // Mount API Routes
 app.use('/api', api);
 
