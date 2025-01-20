@@ -2,30 +2,14 @@
     "version": 2,
     "builds": [
       {
-        "src": "./index.js",
+        "src": "index.js",
         "use": "@vercel/node"
       }
     ],
-    "rewrites": [
+    "routes": [
       {
-        "source": "/api/user/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/user/:path*"
-      },
-      {
-        "source": "/api/anakmagang/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/anakmagang/:path*"
-      },
-      {
-        "source": "/api/admin/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/admin/:path*"
-      },
-      {
-        "source": "/api/mentor/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/mentor/:path*"
-      },
-      {
-        "source": "/api/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/:path*"
+        "src": "/api/(.*)",
+        "dest": "/index.js"
       }
     ]
   }
