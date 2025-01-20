@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
 
 // MongoDB connection
 mongoose
-  .connect(DBURL, {})
+  .connect("mongodb+srv://richardhad2004:fb4g7ZvCr0jOaCY8@clusterprojectfpw.cchpw.mongodb.net/projectFPW", {})
   .then(() => {
     console.log('Database connected');
   })
