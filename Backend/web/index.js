@@ -5,7 +5,7 @@ const socketIo = require('socket.io');
 const api = require('./routes'); // Import your API routes (no need for .index.js)
 require('dotenv').config();
 
-const DBURL = "mongodb+srv://richardhad2004:fb4g7ZvCr0jOaCY8@clusterprojectfpw.cchpw.mongodb.net/projectFPW";
+const DBURL = process.env.MONGODB_URI;
 const app = express();
 
 const corsOptions = {
