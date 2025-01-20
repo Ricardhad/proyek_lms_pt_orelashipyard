@@ -4,7 +4,7 @@ const cors = require('cors');
 const socketIo = require('socket.io');
 const api = require('./routes/index'); // Import your API routes
 require('dotenv').config();
-// const DBURL = process.env.MONGODB_URI;
+const DBURL = "mongodb+srv://richardhad2004:fb4g7ZvCr0jOaCY8@clusterprojectfpw.cchpw.mongodb.net/projectFPW";
 const app = express();
 // const allowedOrigins = process.env.CORS_ORIGIN;
 const port = 3000;
@@ -56,8 +56,7 @@ io.on('connection', (socket) => {
 });
 
 // MongoDB connection
-mongoose
-  .connect("mongodb+srv://richardhad2004:fb4g7ZvCr0jOaCY8@clusterprojectfpw.cchpw.mongodb.net/projectFPW", 
+mongoose.connect(DBURL, 
    { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Database connected');
