@@ -1,7 +1,22 @@
 {
-    "version":2,
-    "builds":[
-        {"src":"./index.js","use":"@vercel/node"}
+    "version": 2,
+    "builds": [
+      {
+        "src": "./index.js",
+        "use": "@vercel/node"
+      }
     ],
-    "routes":[{"src":"/(.*)","dest":"/"}]
-}
+    "rewrites": [
+      {
+        "source": "/api/:path*",
+        "destination": "https://proyek-lms-pt-orelashipyard-odma.vercel.app/api/:path*"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/"
+      }
+    ]
+  }
+  
