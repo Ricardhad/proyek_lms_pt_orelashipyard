@@ -11,12 +11,6 @@
         "source": "/api/:path*",
         "destination": "https://proyek-lms-pt-orelashipyard-odma.vercel.app/api/:path*"
       }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "/"
-      }
     ]
   }
   
