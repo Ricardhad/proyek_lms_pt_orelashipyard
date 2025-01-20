@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import client from "../client"; // Koneksi backend (axios instance)
+import client from "@client";// Koneksi backend (axios instance)
 
 const EditAnnouncement = () => {
   const { id } = useParams();

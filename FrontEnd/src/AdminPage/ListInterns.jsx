@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import client from "../client"; // Koneksi backend (axios instance)
+import client from "@client";
 
 const ListInterns = () => {
   const [interns, setInterns] = useState([]);

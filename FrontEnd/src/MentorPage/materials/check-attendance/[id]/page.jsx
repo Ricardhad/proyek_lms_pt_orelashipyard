@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import Layout from '../../../components/layout';
 import { Image } from '@mui/icons-material';
-import client from '../../../../client';
+import client from "@client";
 
 const CheckAttendancePage = () => {
   const { id } = useParams(); // Get the modulId from the URL

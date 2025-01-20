@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import Layout from '../../../components/layout';
 
-import client from '../../../../client';
+import client from "@client";
 
 const MaterialAttendance = () => {
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import client from "../client"; // Axios instance
+import client from "@client"; // Axios instance
 import { useNavigate } from "react-router-dom";
 
 const AddMentor = () => {

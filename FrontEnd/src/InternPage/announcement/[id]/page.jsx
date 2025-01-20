@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import Layout from '../../components/layout';
-import client from '../../../client';
+import client from "@client";
 
 const MotionPaper = motion.create(Paper);
 

@@ -6,8 +6,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Add this import
 import { IconButton } from '@mui/material';
 import Layout from '../../components/layout'
 import { motion, AnimatePresence } from 'framer-motion'
-import client from '../../../client'
-
+import client from "@client";
 // Mock data for the intern
 const internData = {
   name: 'Esthera Jackson',

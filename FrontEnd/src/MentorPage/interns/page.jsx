@@ -6,7 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
-import client from '../../client';
+import client from "@client";
 import Layout from '../components/layout';
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({

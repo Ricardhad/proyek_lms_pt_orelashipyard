@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import client from "../client"
+import client from "@client";
 
 const Course = () => {
   const [courses, setCourses] = useState([])

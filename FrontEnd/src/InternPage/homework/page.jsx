@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import client from '../../client';
+import client from "@client";
 
 export default function Homework() {
   const user = useSelector((state) => state.auth.user);

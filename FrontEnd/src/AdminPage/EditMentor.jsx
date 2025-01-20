@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import client from '../client'; // Axios instance untuk koneksi ke backend
+import client from "@client";// Axios instance untuk koneksi ke backend
 
 const EditMentor = () => {
   const { id } = useParams(); // Mengambil mentor ID dari URL

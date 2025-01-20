@@ -17,7 +17,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { Image, Add } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
-import client from '../../../../client';
+import client from "@client";
 import Layout from '../../../components/layout';
 import { setMaterial } from '../../../../redux/materialSlice'; // Import the action
 

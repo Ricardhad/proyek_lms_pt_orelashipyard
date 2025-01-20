@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Layout from '../../components/layout';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import client from '../../../client';
+import client from "@client";
 
 const MotionPaper = motion.create(Paper);
 

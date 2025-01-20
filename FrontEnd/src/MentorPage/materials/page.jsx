@@ -8,7 +8,7 @@ import Layout from '../components/layout';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import { useSelector } from 'react-redux';
-import client from '../../client';
+import client from "@client";
 
 const MotionGrid = motion(Grid);
 const MotionCard = motion(Card);

@@ -4,7 +4,7 @@ import ListInterns from "./ListInterns";
 import Course from "./Course"; // Tambahkan komponen Course
 import Announcement from "./Announcement";
 import Mentor from "./Mentor";
-import client from "../client"; // Axios instance for API calls
+import client from "@client"; // Axios instance for API calls
 import { useNavigate } from "react-router-dom"; // Untuk navigasi logout
 import { UserPlus, Users, BookOpen, Calendar, Bell } from 'lucide-react';
 

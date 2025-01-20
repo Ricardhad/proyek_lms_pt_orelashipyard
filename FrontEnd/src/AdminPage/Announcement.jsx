@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import client from "../client"; // Koneksi backend (axios instance)
+import client from "@client"; // Koneksi backend (axios instance)
 
 const Announcement = () => {
   const [announcements, setAnnouncements] = useState([]);

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import client from '../client'; // Importing the axios instance from client.js
+import client from "@client"; // Importing the axios instance from client.js
 
 const handleDelete = async (announcementId) => {
   try {

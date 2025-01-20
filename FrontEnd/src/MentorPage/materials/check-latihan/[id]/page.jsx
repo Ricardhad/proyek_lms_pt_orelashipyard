@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Box, Typography, Paper, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar } from '@mui/material';
 import Layout from '../../../components/layout';
 import { Image } from '@mui/icons-material';
-import client from '../../../../client';
+import client from "@client";
 
 export default function CheckLatihanPage() {
   const navigate = useNavigate();

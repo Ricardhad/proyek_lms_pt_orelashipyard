@@ -11,7 +11,7 @@ import {
   Grid2 as Grid,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-import client from '../../client'
+import client from "@client";
 // import Grid from '@mui/material/Unstable_Grid2';
 export default function Materials() {
   const navigate = useNavigate();

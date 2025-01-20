@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import client from "../client"; // Import client.js untuk koneksi API
+import client from "@client"; // Import client.js untuk koneksi API
 
 const AddInterns = () => {
   const [userData, setUserData] = useState([]);

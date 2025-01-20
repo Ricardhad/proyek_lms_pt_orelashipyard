@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button, Paper } from '@mui/material';
 import Sidebar from './Sidebar';
-import Client from '../client';
+import client from "@client";
 
 const InternsPage = () => {
   const [interns, setInterns] = useState([]);

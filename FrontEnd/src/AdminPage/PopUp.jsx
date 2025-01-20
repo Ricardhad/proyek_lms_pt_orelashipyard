@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import client from '../client'; // Pastikan client axios sudah dikonfigurasi
+import client from "@client";// Pastikan client axios sudah dikonfigurasi
 
 class PopUp extends Component {
   constructor(props) {

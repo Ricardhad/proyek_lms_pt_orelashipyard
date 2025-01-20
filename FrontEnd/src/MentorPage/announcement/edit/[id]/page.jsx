@@ -3,7 +3,7 @@ import { Box, Button, TextField, Typography, Paper } from '@mui/material';
 import { motion } from 'framer-motion';
 import Layout from '../../../components/layout';
 import { useNavigate, useParams } from 'react-router-dom';
-import client from '../../../../client';
+import client from "@client";
 
 const MotionPaper = motion.create(Paper);
 

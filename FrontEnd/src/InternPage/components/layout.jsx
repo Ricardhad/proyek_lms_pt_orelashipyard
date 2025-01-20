@@ -22,7 +22,7 @@ import {
 import { Link,useLocation,useNavigate} from 'react-router-dom'; // Changed to react-router-dom
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import client from '../../client'
+import client from "@client";
 
 
 const menuItems = [

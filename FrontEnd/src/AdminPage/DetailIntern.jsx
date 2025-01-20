@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Check } from 'lucide-react';
-import client from "../client"; // Koneksi backend (axios instance)
+import client from "@client"; // Koneksi backend (axios instance)
 
 export default function DetailIntern() {
   const { id } = useParams();

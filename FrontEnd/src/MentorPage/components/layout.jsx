@@ -8,7 +8,7 @@ import { Link,useLocation,useNavigate} from 'react-router-dom'; // Changed to re
 // import { useLocation,useNavigate } from 'react-router-dom'; // To get the current path
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import client from '../../client';
+import client from "@client";
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',

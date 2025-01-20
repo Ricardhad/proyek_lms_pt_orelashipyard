@@ -5,7 +5,7 @@ import { Image, Description, Add, Person } from '@mui/icons-material';
 import Layout from '../../components/layout';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMaterial, setGambar, clearMaterial, selectMaterial } from '../../../redux/materialSlice';
-import client from '../../../client';
+import client from "@client";
 
 
 export default function AddMaterialPage() {

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Image, Add } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux';
 import { setMaterial, setGambar, clearMaterial, selectMaterial } from '../../../../redux/materialSlice';
-import axios from 'axios';
+import client from "@client";
 import Layout from '../../../components/layout'
 
 export default function ZipSubmissionPage() {

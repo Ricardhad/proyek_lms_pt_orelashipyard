@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import client from '../client'; // Pastikan client axios sudah dikonfigurasi
+import client from "@client"; // Pastikan client axios sudah dikonfigurasi
 
 export default function DetailMentor() {
   const { id } = useParams(); // Mendapatkan ID dari URL params

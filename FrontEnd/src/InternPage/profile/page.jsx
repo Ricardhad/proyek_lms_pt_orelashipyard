@@ -10,9 +10,8 @@ import {
 } from '@mui/material';
 import Layout from '../components/layout';
 import { useSelector,useDispatch } from 'react-redux';
-import client from '../../client';// Import useDispatch
-import { setUser } from "../../redux/authSlice"; // Import the setUser action
-import * as jwtdecode from 'jwt-decode';// Default import
+import client from "@client";
+
 export default function Profile() {
   const token = localStorage.getItem("token");
   const user = useSelector((state) => state.auth.user);

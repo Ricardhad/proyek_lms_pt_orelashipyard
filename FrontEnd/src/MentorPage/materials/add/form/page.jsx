@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../../../components/layout';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMaterial, setGambar, clearMaterial } from '../../../../redux/materialSlice';
-import client from '../../../../client';
+import client from "@client";
 
 // Question type components
 const EssayQuestion = ({ onDelete, number, onChange, questionData }) => {

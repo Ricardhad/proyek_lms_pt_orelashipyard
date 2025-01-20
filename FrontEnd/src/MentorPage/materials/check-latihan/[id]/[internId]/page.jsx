@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, TextField, Button, Radio, RadioGroup } from '@mui/material';
 import Layout from '../../../../components/layout';
 import { useSelector } from 'react-redux';
-import client from '../../../../../client';
+import client from "@client";
 
 const EssayQuestion = ({ number, questionText, answer, score, setScore }) => (
   <Paper

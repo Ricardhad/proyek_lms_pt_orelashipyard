@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import io from 'socket.io-client';
 import { useSelector } from 'react-redux';
-import client from '../../client';
+import client from "@client";
 
 const MotionBox = motion.create(Box);
 
