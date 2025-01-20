@@ -36,8 +36,8 @@
         "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/chat/:path*"
       },
       {
-        "source": "/api/:path*",
-        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/:path*"
+        "source": "/api/test",
+        "destination": "https://proyek-lms-pt-orelashipyard-backend-krn67egol.vercel.app/api/test"
       }
     ]
   }
