@@ -10,7 +10,7 @@ const ProtectedRoute = ({ element: Element, requiredRole, ...rest }) => {
 
   // Check if the token exists
   if (!token) {
-    return <Navigate to="/" />;
+    return <Navigate to="/unauthorised" />;
   }
 
   // Decode the token to check role
@@ -34,7 +34,8 @@ const ProtectedRoute = ({ element: Element, requiredRole, ...rest }) => {
   }
 
   // Redirect if the role does not match
-  return <Navigate to="/" />;
+
+  return <Navigate to="/Unauthorised" />;
 };
 
 export default ProtectedRoute;

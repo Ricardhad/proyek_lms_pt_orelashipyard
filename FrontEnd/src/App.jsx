@@ -50,12 +50,14 @@ import MentorInternFormCheckPage from "./MentorPage/materials/check-latihan/[id]
 import MentorProfilePage from "./MentorPage/profile/page";
 
 import ProtectedRoute from './component/ProtectedRoute';
+import Unauthorized from "./component/Unauthorised";
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* Existing routes */}
+        <Route path="/Unauthorised" element={<Unauthorized />} />
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/test" element={<Test />} />
