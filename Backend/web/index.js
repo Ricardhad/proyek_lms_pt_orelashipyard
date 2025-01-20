@@ -26,6 +26,10 @@ app.get('/api/test', (req, res) => {
   res.json({ message: "Test route" });
 });
 
+app.listen(3000, () => {
+  console.log("Listening on port 3000");
+});
+
 app.get('/api/db', (req, res) => {
   mongoose.connection.db.admin().ping((err, result) => {
     if (err) {
