@@ -27,22 +27,23 @@ app.get('/api/test', (req, res) => {
 });
 
 app.get('/api/db', (req, res) => {
-  mongoose.connection.on('connected', () => {
-    console.log('MongoDB connected successfully');
-    res.json({ message: "Database connected" });
+  mongoose.connection.db.admin().ping((err, result) => {
+    if (err) {
+      console.error('Database connection error:', err);
+      return res.status(500).json({ message: 'Failed to connect to database' });
+    }
+    res.status(200).json({ message: 'Database connected successfully' });
   });
-
-  // If already connected, you can send the response immediately
-  if (mongoose.connection.readyState === 1) {
-    return res.json({ message: "Database connected" });
-  }
 });
 
 // Mount API Routes
 app.use('/api', api); // Now correctly points to routes/index.js
 
 // MongoDB connection
-mongoose.connect(DBURL)
+mongoose.connect(DBURL,{
+  serverSelectionTimeoutMS: 5000, 
+  socketTimeoutMS: 45000,
+})
   .then(() => {
     console.log('Database connected');
   })
