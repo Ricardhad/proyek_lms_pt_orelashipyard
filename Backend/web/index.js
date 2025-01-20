@@ -32,6 +32,9 @@ const io = socketIo(server, { cors: corsOptions });
 app.set('io', io);
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
+app.use("/",(req,res)=>{
+  res.send("server is running")
+}); // Parse URL-encoded request bodies
 
 // Routes
 app.use('/api', api); // Mount the API routes
