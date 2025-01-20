@@ -11,19 +11,14 @@ const port = 3000;
 
 // CORS Configuration
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (origin === undefined || allowedOrigins.includes(origin)) {
-      callback(null, true);  // Allow the request if there's no origin or it's in the allowed list
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
+  origin: 'https://proyek-lms-pt-orelashipyard-henna.vercel.app', // Your frontend's origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+  credentials: true, // If you use cookies or Authorization headers
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Handle preflight requests
 
 // Attach Socket.IO to Express App
 const server = app.listen(port, () => {
