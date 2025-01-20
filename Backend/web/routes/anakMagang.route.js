@@ -154,7 +154,7 @@ router.get('/:userID/Profile', async (req, res) => {
 // Modify user and anakMagang information
 router.put("/:anakMagangId/ProfileEdit", async (req, res) => {
     const { anakMagangId } = req.params;
-    const { namaUser, email, noTelpon, asalSekolah } = req.body;
+    const { namaUser, noTelpon, asalSekolah } = req.body;
   
     try {
       // Find the AnakMagang record
@@ -167,7 +167,7 @@ router.put("/:anakMagangId/ProfileEdit", async (req, res) => {
       // Prepare updates for UserData
       const updates = {};
       if (namaUser) updates.namaUser = namaUser;
-      if (email) updates.email = email;
+      // if (email) updates.email = email;
       if (noTelpon) updates.noTelpon = noTelpon;
   
       // Update UserData if there are changes

@@ -46,7 +46,7 @@ export default function EditProfile() {
         setProfileData({
           avatar: response.data.user.Profile_Picture,
           name: response.data.user.namaUser,
-          email: response.data.user.email,
+          // email: response.data.user.email,
           noWa: response.data.user.noTelpon,
           // nrp: response.data.nrp,
           school: response.data.anakMagang.AsalSekolah, // Assuming this maps to school
@@ -90,7 +90,7 @@ export default function EditProfile() {
     try {
       const response = await client.put(`api/anakMagang/${userData.anakMagang._id}/ProfileEdit`, {
         namaUser: profileData.name,
-        email: profileData.email,
+        // email: profileData.email,
         noTelpon: profileData.noWa,
         asalSekolah: profileData.school
       });
@@ -162,7 +162,7 @@ export default function EditProfile() {
                     required
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                {/* <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
                     label="Email"
@@ -172,7 +172,7 @@ export default function EditProfile() {
                     onChange={handleInputChange}
                     required
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
