@@ -12,13 +12,21 @@ const FrontEndCors = process.env.CORS_ORIGIN
 const app = express();
 const server = http.createServer(app);
 console.log(FrontEndCors)
+const allowedOrigins = process.env.CORS_ORIGIN.split(',');
 
 const port = 3000;
 const corsOptions = {
-  origin: FrontEndCors, // Allow frontend origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers, tambahkan Authorization
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
 app.use(cors(corsOptions));
 
 // Konfigurasi Socket.IO dengan CORS yang sama
