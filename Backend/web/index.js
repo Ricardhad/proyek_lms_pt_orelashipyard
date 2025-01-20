@@ -29,10 +29,20 @@ app.get('/api/test', (req, res) => {
 app.get('/api/db', (req, res) => {
   mongoose.connection.db.admin().ping((err, result) => {
     if (err) {
+      // Log the detailed error for debugging
       console.error('Database connection error:', err);
-      return res.status(500).json({ message: 'Failed to connect to database' });
+      // Send response indicating failure
+      return res.status(500).json({
+        message: 'Failed to connect to the database',
+        error: err.message // Include the error message in the response
+      });
     }
-    res.status(200).json({ message: 'Database connected successfully' });
+    // Log successful connection
+    console.log('MongoDB connection successful:', result);
+    // Send response indicating success
+    res.status(200).json({
+      message: 'Database connected successfully'
+    });
   });
 });
 
