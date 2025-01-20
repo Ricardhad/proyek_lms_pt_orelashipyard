@@ -20,7 +20,7 @@ const EditUser = () => {
     const fetchData = async () => {
       try {
         const userResponse = await client.get(`/api/admin/${userId}/editUser`);
-        const coursesResponse = await client.get("/api/admin/courses"); // Mengambil data courses
+        const coursesResponse = await client.get("/api/admin/Course"); // Mengambil data courses
         // setFormData({
         //   namaUser: userResponse.data.namaUser || "",
         //   noTelpon: userResponse.data.noTelpon || "",
