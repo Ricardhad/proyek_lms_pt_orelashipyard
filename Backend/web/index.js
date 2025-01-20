@@ -1,18 +1,15 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const http = require('http');
 const socketIo = require('socket.io');
 const api = require('./routes/index'); // Import your API routes
- require('dotenv').config();
-const DBURL = process.env.MONGODB_URI
+require('dotenv').config();
+const DBURL = process.env.MONGODB_URI;
 const app = express();
-const server = http.createServer(app);
 const allowedOrigins = process.env.CORS_ORIGIN;
 const port = 3000;
 
-// console.log(allowedOrigins[0])
+// CORS Configuration
 const corsOptions = {
   origin: (origin, callback) => {
     if (origin === undefined || allowedOrigins.includes(origin)) {
@@ -27,17 +24,24 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Konfigurasi Socket.IO dengan CORS yang sama
+// Attach Socket.IO to Express App
+const server = app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+
 const io = socketIo(server, { cors: corsOptions });
 app.set('io', io);
+
 app.use(express.json()); // Parse JSON request bodies
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
-app.use("/",(req,res)=>{
-  res.send("server is running")
-}); // Parse URL-encoded request bodies
 
-// Routes
-app.use('/api', api); // Mount the API routes
+// Simple route to test server
+app.use("/", (req, res) => {
+  res.send("server is running");
+});
+
+// Mount API Routes
+app.use('/api', api);
 
 // Socket.IO connection handler
 io.on('connection', (socket) => {
@@ -53,20 +57,15 @@ io.on('connection', (socket) => {
   });
 });
 
+// MongoDB connection
 mongoose
-  .connect(DBURL, {
-  })
+  .connect(DBURL, {})
   .then(() => {
     console.log('Database connected');
   })
   .catch((e) => {
     console.error('Error connecting to the database:', e);
   });
-
-// Start the server
-server.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
 
 // Error handling for unhandled promise rejections
 process.on('unhandledRejection', (error) => {
